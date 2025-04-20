@@ -1,25 +1,23 @@
 import { PageHeader, PageHeaderHeading } from '@/components/common/page-header';
-import { getAllUsers } from '@/services/user.service';
-import { GetAllUsersResponse } from '@/types/user.type';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { GET_ALL_USERS, getUsers } from '@/services/user.service';
+import { useQuery } from '@tanstack/react-query';
 
 const Home = () => {
-    const [users, setUsers] = useState<GetAllUsersResponse>([]);
+    const { data: users, isLoading } = useQuery({
+        queryKey: [GET_ALL_USERS],
+        queryFn: getUsers,
+        select: (data) => data.data,
+    });
 
-    useEffect(() => {
-        getAllUsers().then((res) => {
-            setUsers(res.data);
-        });
-    }, []);
     return (
         <>
             <PageHeader>
                 <PageHeaderHeading>Home</PageHeaderHeading>
             </PageHeader>
+            {isLoading && <div>Loading...</div>}
             <div className="container">
                 <div className="row">
-                    {users.map((user) => (
+                    {users?.map((user) => (
                         <div
                             className="col-md-4"
                             key={user.id}

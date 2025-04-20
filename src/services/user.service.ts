@@ -1,9 +1,6 @@
-import { get } from '@/utils/api';
+import { GetAllUsersResponse } from '@/types/user.type';
+import http from '@/utils/http';
 
-export const getAllUsers = () => {
-    return get(`/users`);
-};
+export const GET_ALL_USERS = 'GET_ALL_USERS';
 
-export const getUser = (id: number) => {
-    return get(`/users/${id}`);
-};
+export const getUsers = () => http.get<GetAllUsersResponse>('/users');
