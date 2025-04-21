@@ -1,12 +1,12 @@
 export interface User {
-    id: number;
-    name: string;
-    email: string;
-    learn: number[];
-    teach: number[];
-    connections: number[];
-    requestConnections: number[];
-    sentConnections: number[];
+  id: number;
+  name: string;
+  email: string;
+  learn: number[];
+  teach: number[];
+  connections: number[];
+  requestConnections: number[];
+  sentConnections: number[];
 }
 
 export type GetAllUsersResponse = User[];

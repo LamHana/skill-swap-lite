@@ -1,7 +1,7 @@
 export interface Skill {
-    id: number;
-    name: string;
-    category: string;
+  id: number;
+  name: string;
+  category: string;
 }
 
 export type GetAllSkillsResponse = Skill[];
