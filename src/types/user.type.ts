@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   learn: number[];
@@ -7,6 +7,7 @@ export interface User {
   connections: number[];
   requestConnections: number[];
   sentConnections: number[];
+  photoURL: string;
 }
 
 export type GetAllUsersResponse = User[];
