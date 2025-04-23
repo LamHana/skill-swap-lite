@@ -1,7 +1,8 @@
-import PreviewCard, { PreviewCardProps } from './preview-card';
+import PreviewCard, { PreviewCardProps } from '@/components/common/preview-card';
+import { Button } from '@/components/ui/button';
 
 interface PreviewCardListProps {
-  results: PreviewCardProps[];
+  results: Omit<PreviewCardProps, 'button'>[];
 }
 
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
@@ -17,6 +18,11 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             teach={result.teach}
             learn={result.learn}
             photoUrl={result.photoUrl}
+            button={
+              <Button className='w-[100%]' onClick={() => alert(`Connecting with ${result.name}`)}>
+                Connect
+              </Button>
+            }
           />
         ))}
       </div>

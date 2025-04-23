@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { ReactNode } from 'react';
 
 export interface PreviewCardProps {
   id: number;
@@ -9,9 +9,10 @@ export interface PreviewCardProps {
   teach: string[];
   learn: string[];
   photoUrl?: string;
+  button: ReactNode;
 }
 
-export default function PreviewCard({ id, name, percent, teach, learn, photoUrl }: PreviewCardProps) {
+export default function PreviewCard({ id, name, percent, teach, learn, photoUrl, button }: PreviewCardProps) {
   const getDisplayData = (): { teachDisplay: string[]; learnDisplay: string[] } => {
     const teachDisplay: string[] = teach.length <= 2 ? teach : [teach[0], teach[1], '+' + (teach.length - 2)];
     const learnDisplay: string[] = learn.length <= 2 ? learn : [learn[0], learn[1], '+' + (learn.length - 2)];
@@ -19,11 +20,6 @@ export default function PreviewCard({ id, name, percent, teach, learn, photoUrl 
   };
 
   const { teachDisplay, learnDisplay } = getDisplayData();
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    console.log('Button clicked');
-  };
 
   return (
     <Card className='w-full md:max-w-[400px] md:max-h-[315px] relative mx-auto overflow-hidden' key={id}>
@@ -47,7 +43,7 @@ export default function PreviewCard({ id, name, percent, teach, learn, photoUrl 
           <div className='flex gap-2'>
             {teachDisplay.map((item, index) => (
               <span key={index} className={index !== 2 ? 'rounded-full px-3 py-1 border border-gray-300' : 'py-1'}>
-                {item}  
+                {item}
               </span>
             ))}
           </div>
@@ -63,11 +59,7 @@ export default function PreviewCard({ id, name, percent, teach, learn, photoUrl 
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button className='w-[100%]' onClick={handleClick}>
-          Connect
-        </Button>
-      </CardFooter>
+      <CardFooter>{button}</CardFooter>
     </Card>
   );
 }
