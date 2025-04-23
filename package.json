@@ -36,6 +36,7 @@
     "react-hook-form": "^7.56.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.3.0",
+    "react-shadcn-starter": "file:",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.14",
     "tailwindcss-animate": "^1.0.7",

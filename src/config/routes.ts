@@ -3,6 +3,7 @@ const routes = {
   login: '/login',
   register: '/register',
   profile: '/profile',
+  myNetwork: '/my-network',
   notFound: '*',
 };
 
