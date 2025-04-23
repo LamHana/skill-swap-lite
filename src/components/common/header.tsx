@@ -10,15 +10,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
-import { baseUrl } from '@/config/app';
 import { AppSidebar } from '@/components/common/app-sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ModeToggle } from '@/components/common/mode-toggle';
+import { useAuth } from '@/hooks';
 import Logo from './logo';
+import { signOut } from '@/contexts/auth/auth.reducer';
 
 const Header = () => {
   const location = useLocation();
+  const { dispatch, user } = useAuth();
 
   return (
     <header className='bg-background sticky top-0 z-50 border-b'>
@@ -95,8 +97,8 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant='default' className='relative h-8 w-8 rounded-full cursor-pointer ml-2'>
                   <Avatar className='h-8 w-8'>
-                    <AvatarImage src={baseUrl + '/avatars/shadcn.jpg'} alt='shadcn' />
-                    <AvatarFallback className='rounded-lg'>SC</AvatarFallback>
+                    <AvatarImage src={user?.photoURL || ''} alt='shadcn' />
+                    <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -108,7 +110,7 @@ const Header = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => dispatch(signOut())}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>

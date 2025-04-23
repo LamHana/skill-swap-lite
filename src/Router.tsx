@@ -1,19 +1,58 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import NotFound from './pages/404';
-import MainLayout from './layout/MainLayout/MainLayout';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { config } from './config/app';
+import AuthGuard from './guards/AuthGuard';
+import GuestGuard from './guards/GuestGuard';
 
-export default function Router() {
-  return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path='' element={<Home />} />
-        <Route path='login'>
-          <Route path='' element={<Login />} />
-        </Route>
-        <Route path='*' element={<NotFound />} />
-      </Route>
-    </Routes>
-  );
-}
+const router = createBrowserRouter([
+  // Guest routes
+  {
+    element: (
+      <GuestGuard>
+        <Outlet />
+      </GuestGuard>
+    ),
+    children: [
+      {
+        path: config.routes.login,
+        lazy: async () => ({
+          Component: (await import('./pages/Login')).default,
+        }),
+      },
+    ],
+  },
+
+  // Auth routes
+  {
+    element: (
+      <AuthGuard>
+        <Outlet />
+      </AuthGuard>
+    ),
+    children: [
+      {
+        path: config.routes.home,
+        lazy: async () => ({
+          Component: (await import('./layout/MainLayout')).default,
+        }),
+        children: [
+          {
+            index: true,
+            lazy: async () => ({
+              Component: (await import('./pages/Home')).default,
+            }),
+          },
+        ],
+      },
+    ],
+  },
+
+  // Not found route
+  {
+    path: config.routes.notFound,
+    lazy: async () => ({
+      Component: (await import('./pages/404')).default,
+    }),
+  },
+]);
+
+export default router;
