@@ -91,7 +91,7 @@ export const signUpWithEmail = async (
   return result;
 };
 
-export const signOut = async (): Promise<void> => {
+export const signOutSystem = async (): Promise<void> => {
   return firebaseSignOut(config.firebase.auth);
 };
 

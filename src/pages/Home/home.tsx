@@ -1,6 +1,4 @@
 import { PageHeader } from '@/components/common/page-header';
-import { GET_ALL_USERS, getUsers } from '@/services/user.service';
-import { useQuery } from '@tanstack/react-query';
 import PreviewCardList from './components/preview-card-list';
 import { Categories, Profiles } from './data';
 import { Input } from '@/components/ui/input';
@@ -25,11 +23,6 @@ const searchFormDefaultValues = {
 
 const Home = () => {
   const form = useForm({ defaultValues: searchFormDefaultValues });
-  const { data: users, isLoading } = useQuery({
-    queryKey: [GET_ALL_USERS],
-    queryFn: getUsers,
-    select: (data) => data.data,
-  });
 
   const onSubmit = (e: any) => {
     console.log(e);
@@ -89,18 +82,6 @@ const Home = () => {
       <div className='container mx-auto p-4 md:p-8'>
         <p className='text-3xl font-bold'>Top Related</p>
         <PreviewCardList results={Profiles} />
-        {/* {isLoading && <div>Loading...</div>}
-        <div className='container'>
-          <div className='row'>
-            {users?.map((user) => (
-              <div className='col-md-4' key={user.id}>
-                <div className='card'>
-                  <div className='card-body'>{user.name}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
       </div>
     </>
   );
