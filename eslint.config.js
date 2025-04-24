@@ -1,9 +1,11 @@
-import eslintPluginPrettier from 'eslint-plugin-prettier'
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import eslintPluginPrettier from 'eslint-plugin-prettier';
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+
+const eslintPluginSimpleImportSort = require('eslint-plugin-simple-import-sort');
 
 export default tseslint.config(
   { ignores: ['dist', 'vite.config.ts'] },
@@ -18,6 +20,7 @@ export default tseslint.config(
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       prettier: eslintPluginPrettier,
+      'simple-import-sort': eslintPluginSimpleImportSort,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -36,6 +39,25 @@ export default tseslint.config(
           jsxSingleQuote: true,
         },
       ],
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            ['^@(/.*)?$'],
+            // Packages starting with a character
+            ['^[a-z]'],
+            // Imports starting with `../`
+            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+            // Imports starting with `./`
+            ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+            // Style imports
+            ['^.+\\.s?css$'],
+            // Side effect imports
+            ['^\\u0000'],
+          ],
+        },
+      ],
+      'simple-import-sort/exports': 'error',
     },
   },
-)
+);

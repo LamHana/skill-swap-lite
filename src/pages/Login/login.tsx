@@ -4,12 +4,14 @@ import { signInWithEmail, signInWithGoogle } from '@/services/auth.service';
 import { useAuth } from '@/hooks';
 import { useMutation } from '@tanstack/react-query';
 import { FaGoogle } from 'react-icons/fa';
-import { z } from 'zod';
 import loginSchema from './login.schema';
+import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { signIn } from '@/contexts/auth/auth.reducer';
+import Thumbnail from '@/assets/images/thumbnail.png';
+
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 const loginFormDefaultValues: LoginFormType = {
@@ -59,8 +61,8 @@ const Login = () => {
   };
 
   return (
-    <div className='flex min-h-screen'>
-      <div className='flex flex-col justify-center w-full max-w-md p-8'>
+    <div className='flex h-[calc(100vh-96px)] gap-16 items-center justify-center m-6 '>
+      <div className='flex flex-col max-w-md justify-center p-8'>
         <div className='mb-8'>
           <h1 className='text-3xl font-bold'>Sign In</h1>
           <p className='text-muted-foreground'>Teach What You Know, Learn What You Love</p>
@@ -114,6 +116,9 @@ const Login = () => {
             </div>
           </form>
         </Form>
+      </div>
+      <div className='flex  items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
+        <img src={Thumbnail} alt='login' className='w-full h-[57%] object-contain rounded-lg ' />
       </div>
     </div>
   );
