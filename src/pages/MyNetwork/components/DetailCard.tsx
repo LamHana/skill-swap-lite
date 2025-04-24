@@ -17,11 +17,11 @@ const DetailCard = ({ user }: { user: User }) => {
 
       <div className='flex flex-col md:flex-row gap-4'>
         <Avatar className='h-[80px] w-[80px] md:h-[100px] md:w-[100px] rounded-md border'>
-          <AvatarImage src={user.photoURL || '/placeholder.svg'} alt={user.name} />
+          <AvatarImage src={user.photoURL || '/placeholder.svg'} alt={user.fullName} />
           <AvatarFallback className='rounded-md text-xs'>
             {user.photoURL
               ? '100 x 100'
-              : user.name
+              : user.fullName
                   .split(' ')
                   .map((n) => n[0])
                   .join('')}
@@ -31,7 +31,7 @@ const DetailCard = ({ user }: { user: User }) => {
         <div className='flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4'>
           <div className='flex-1'>
             <CardHeader className='p-0 pb-2'>
-              <h2 className='text-lg md:text-xl font-bold'>{user.name}</h2>
+              <h2 className='text-lg md:text-xl font-bold'>{user.fullName}</h2>
             </CardHeader>
 
             <CardContent className='p-0 space-y-4'>

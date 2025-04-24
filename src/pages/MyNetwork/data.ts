@@ -3,7 +3,7 @@ import { User } from '@/types/user.type';
 export const mockUsers: User[] = [
   {
     id: '1',
-    name: 'Alice Nguyen',
+    fullName: 'Alice Nguyen',
     email: 'alice.nguyen@example.com',
     bio: 'Frontend developer who loves React and TypeScript.',
     learn: [2, 3],
@@ -15,7 +15,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '2',
-    name: 'Bob Tran',
+    fullName: 'Bob Tran',
     email: 'bob.tran@example.com',
     bio: 'Backend enthusiast with a passion for Node.js.',
     learn: [1],
@@ -27,7 +27,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '3',
-    name: 'Charlie Le',
+    fullName: 'Charlie Le',
     email: 'charlie.le@example.com',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure do',
     learn: [4],
@@ -39,7 +39,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '4',
-    name: 'Diana Pham',
+    fullName: 'Diana Pham',
     email: 'diana.pham@example.com',
     bio: 'UI/UX designer diving into coding.',
     learn: [1],
@@ -51,7 +51,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '5',
-    name: 'Ethan Vo',
+    fullName: 'Ethan Vo',
     email: 'ethan.vo@example.com',
     bio: 'QA engineer getting into automation testing.',
     learn: [3],
@@ -63,7 +63,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '6',
-    name: 'Fiona Do',
+    fullName: 'Fiona Do',
     email: 'fiona.do@example.com',
     bio: 'Tech enthusiast and project manager.',
     learn: [5],
@@ -75,7 +75,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '7',
-    name: 'George Dang',
+    fullName: 'George Dang',
     email: 'george.dang@example.com',
     bio: 'Cybersecurity student exploring coding.',
     learn: [1, 2],
@@ -87,7 +87,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '8',
-    name: 'Hannah Ngo',
+    fullName: 'Hannah Ngo',
     email: 'hannah.ngo@example.com',
     bio: 'Python developer expanding into web development.',
     learn: [1],
@@ -99,7 +99,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '9',
-    name: 'Ian Bui',
+    fullName: 'Ian Bui',
     email: 'ian.bui@example.com',
     bio: 'Blockchain dev sharing his Solidity knowledge.',
     learn: [1, 7],
@@ -111,7 +111,7 @@ export const mockUsers: User[] = [
   },
   {
     id: '10',
-    name: 'Jasmine Huynh',
+    fullName: 'Jasmine Huynh',
     email: 'jasmine.huynh@example.com',
     bio: 'Product designer curious about data science.',
     learn: [8],
