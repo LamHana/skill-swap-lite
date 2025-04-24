@@ -23,6 +23,8 @@ export type StepCardType = {
   Icon: LucideIcon;
 };
 
+export type ContributorsType = { name: string; github: string };
+
 export const HERO_CARD_INFO: HeroCardInfoType[] = [
   {
     id: 1,
@@ -94,5 +96,32 @@ export const STEPS: StepCardType[] = [
     title: '3. Exchange Skills',
     subtitle: 'Chat with your matches, arrange the details, and execute your skill swap - no money needed!',
     Icon: ArrowLeftRight,
+  },
+];
+
+export const CONTRIBUTORS: ContributorsType[] = [
+  {
+    name: 'Nhi Nguyen',
+    github: 'https://github.com/nhinbm',
+  },
+  {
+    name: 'Luong Bui',
+    github: 'https://github.com/LuongBui1311',
+  },
+  {
+    name: 'Han Lam',
+    github: 'https://github.com/LamHana',
+  },
+  {
+    name: 'Thao Dao',
+    github: 'https://github.com/DaoHuongThao',
+  },
+  {
+    name: 'My Nguyen',
+    github: 'https://github.com/mirumiru215',
+  },
+  {
+    name: 'Anh Nguyen',
+    github: 'https://github.com/alicee-19',
   },
 ];

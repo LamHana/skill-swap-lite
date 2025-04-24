@@ -1,3 +1,4 @@
+import Contributors from './contributors';
 import Features from './features';
 import Hero from './hero';
 import Steps from './steps';
@@ -8,6 +9,7 @@ const Landing: React.FC = () => {
       <Hero />
       <Features />
       <Steps />
+      <Contributors />
     </div>
   );
 };
