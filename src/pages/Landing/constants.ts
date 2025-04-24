@@ -1,3 +1,5 @@
+import { ArrowLeftRight, LucideIcon, Search, UserRoundPlus } from 'lucide-react';
+
 export type HeroCardInfoType = {
   id: number;
   avatar: string;
@@ -13,6 +15,12 @@ export type FeaturesType = {
   title: string;
   desc: string;
   background: string;
+};
+
+export type StepCardType = {
+  title: string;
+  subtitle: string;
+  Icon: LucideIcon;
 };
 
 export const HERO_CARD_INFO: HeroCardInfoType[] = [
@@ -68,5 +76,23 @@ export const FEATURES: FeaturesType[] = [
     title: 'AI-Powered Matching (Coming Soon)',
     desc: 'Get matched with traders who need your skills and have what you need',
     background: '#f38ba3',
+  },
+];
+
+export const STEPS: StepCardType[] = [
+  {
+    title: '1. Create Your Profile',
+    subtitle: 'Sign up and list skills you can offer and skills you want to receive from others.',
+    Icon: UserRoundPlus,
+  },
+  {
+    title: '2. Find Perfect Matches',
+    subtitle: 'Our AI instantly matches you with users who need your skills and offer what you want.',
+    Icon: Search,
+  },
+  {
+    title: '3. Exchange Skills',
+    subtitle: 'Chat with your matches, arrange the details, and execute your skill swap - no money needed!',
+    Icon: ArrowLeftRight,
   },
 ];
