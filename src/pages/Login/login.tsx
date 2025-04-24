@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { signIn } from '@/contexts/auth/auth.reducer';
 import Thumbnail from '@/assets/images/thumbnail.png';
-
+import { Link } from 'react-router-dom';
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 const loginFormDefaultValues: LoginFormType = {
@@ -116,6 +116,11 @@ const Login = () => {
             </div>
           </form>
         </Form>
+        <div className='mt-4'>
+          <p className='text-muted-foreground'>
+            Don't have an account? <Link to='/register'>Register</Link>
+          </p>
+        </div>
       </div>
       <div className='flex  items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
         <img src={Thumbnail} alt='login' className='w-full h-[57%] object-contain rounded-lg ' />

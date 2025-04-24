@@ -4,6 +4,7 @@ const routes = {
   register: '/register',
   profile: '/profile',
   chat: '/chat',
+  myNetwork: '/my-network',
   notFound: '*',
 };
 
