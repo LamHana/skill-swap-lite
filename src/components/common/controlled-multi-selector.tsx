@@ -19,6 +19,7 @@ const ControlledMultiSelector = ({
   label,
   placeholder,
   description,
+  required = false,
   data,
 }: ControlledMultiSelectorProps) => {
   return (
@@ -27,7 +28,9 @@ const ControlledMultiSelector = ({
       name={name}
       render={({ field }) => (
         <FormItem className='w-full'>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>
+            {label} {required && <span className='text-primary'>*</span>}
+          </FormLabel>
           <FormControl>
             <MultiSelector onValuesChange={field.onChange} values={field.value}>
               <MultiSelectorTrigger>

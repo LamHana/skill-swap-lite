@@ -41,30 +41,31 @@ const EditProfile = () => {
   }
 
   return (
-    <div className='mt-10 mb-20 m-auto px-40 w-full'>
-      <Button variant={'ghost'} className='mb-10'>
+    <div className='mt-5 mb-10 md:mt-8 md:mb-16 md:px-20 xl:mt-10 xl:mb-20 m-auto xl:px-40 w-full'>
+      <Button variant={'ghost'} className='mb-6 md:mb-8 xl:mb-10'>
         <ChevronLeft /> Back
       </Button>
-      <div className='flex items-center justify-between mb-10'>
-        <Avatar className='h-52 w-52'>
+      <div className='flex flex-col gap-6 mb-6 md:flex-row md:mb-8 items-center md:justify-between xl:mb-10'>
+        <Avatar className='h-40 w-40 xl:h-52 xl:w-52'>
           <AvatarImage src={user?.photoURL || ''} alt='shadcn' />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <div className='h-min flex gap-6 content-center'>
-          <Button className='px-10 py-6'>Change Picture</Button>
-          <Button variant={'outline'} className='px-10 py-6'>
+        <div className='h-min flex gap-3 xl:gap-6 content-center'>
+          <Button className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>Select Picture</Button>
+          <Button variant={'outline'} className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
             Delete Picture
           </Button>
         </div>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 md:space-y-8 xl:space-y-10'>
           <ControlledInput
             form={form}
             name='name'
             label='Name'
             placeholder='Your name'
             description='This is your public display name.'
+            required={true}
           />
           <ControlledTextarea
             form={form}
@@ -77,21 +78,23 @@ const EditProfile = () => {
             form={form}
             name='learn'
             label='Learning Skills'
-            placeholder='Select skills you want to learn.'
+            required={true}
+            description='You must select at least one skill to learn.'
             data={skills}
           />
           <ControlledMultiSelector
             form={form}
             name='teach'
             label='Teaching Skills'
-            placeholder='Select skills you want to teach.'
+            required={true}
+            description='You must select at least one skill to teach.'
             data={skills}
           />
-          <div className='float-end flex gap-6'>
-            <Button variant={'outline'} className='px-10 py-5'>
+          <div className='float-end flex gap-3 xl:gap-6'>
+            <Button variant={'outline'} className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
               Cancel
             </Button>
-            <Button type='submit' className='px-10 py-5'>
+            <Button type='submit' className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
               Submit
             </Button>
           </div>

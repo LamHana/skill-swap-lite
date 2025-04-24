@@ -2,14 +2,23 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { Textarea } from '../ui/textarea';
 import { ControlledItemsProps } from './controlled-input';
 
-const ControlledTextarea = ({ form, name, label, placeholder, description }: ControlledItemsProps) => {
+const ControlledTextarea = ({
+  form,
+  name,
+  label,
+  placeholder,
+  description,
+  required = false,
+}: ControlledItemsProps) => {
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>
+            {label} {required && <span className='text-primary'>*</span>}
+          </FormLabel>
           <FormControl>
             <Textarea placeholder={placeholder} className='resize-none' {...field} />
           </FormControl>
