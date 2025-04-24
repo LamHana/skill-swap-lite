@@ -9,6 +9,7 @@ import {
   User,
 } from 'firebase/auth';
 import updateDocument, { getDocument, setDocument } from './firebase.service';
+import { RegisterFormData } from '@/pages/Register/register.schema';
 
 export const AUTH_KEYS = {
   currentUser: 'auth.currentUser',
@@ -61,37 +62,28 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
   return result;
 };
 
-export const signUpWithEmail = async (
-  email: string,
-  password: string,
-  fullName: string,
-  learn: number[],
-  teach: number[],
-  connections: number[],
-  requestConnections: number[],
-  sentConnections: number[],
-) => {
-  const result = await createUserWithEmailAndPassword(config.firebase.auth, email, password);
+export const signUpWithEmail = async (body: RegisterFormData) => {
+  const result = await createUserWithEmailAndPassword(config.firebase.auth, body.email, body.password);
 
   await updateProfile(result.user, {
-    displayName: fullName,
+    displayName: body.fullname,
   });
 
   await setDocument(config.collections.users, result.user.uid, {
-    name: fullName,
-    email: email,
-    learn: learn,
-    teach: teach,
-    connections: connections,
-    requestConnections: requestConnections,
-    sentConnections: sentConnections,
+    fullName: body.fullname,
+    email: body.email,
+    learn: body.learnSkills,
+    teach: body.teachSkills,
+    connections: [],
+    requestConnections: [],
+    sentConnections: [],
     photoURL: '',
   });
 
   return result;
 };
 
-export const signOut = async (): Promise<void> => {
+export const signOutSystem = async (): Promise<void> => {
   return firebaseSignOut(config.firebase.auth);
 };
 

@@ -29,8 +29,8 @@ export const getDocumentId = documentId;
  * @param _id - The document ID to retrieve
  * @returns A Promise that resolves to the DocumentSnapshot
  */
-export async function getDocument(_collection: CollectionValue, _id: string): Promise<DocumentSnapshot> {
-  const docRef = doc(config.firebase.db, _collection, _id);
+export async function getDocument(_collection: CollectionValue, _id?: string): Promise<DocumentSnapshot> {
+  const docRef = doc(config.firebase.db, _collection, _id ?? '');
   const docSnap = await getDoc(docRef);
 
   return docSnap;
