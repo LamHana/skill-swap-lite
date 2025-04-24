@@ -9,6 +9,12 @@ export type HeroCardInfoType = {
   colorOval: string;
 };
 
+export type FeaturesType = {
+  title: string;
+  desc: string;
+  background: string;
+};
+
 export const HERO_CARD_INFO: HeroCardInfoType[] = [
   {
     id: 1,
@@ -37,7 +43,30 @@ export const HERO_CARD_INFO: HeroCardInfoType[] = [
     skill: 'Advanced JavaScript',
     stars: 5,
     desc: '“Mind blown. Every other moment a light bulb was going off in my head. Without a traditional CS background sometimes it can be hard to wrap my head around ‘why’ things are done. This really bridged some huge gaps for me. Fabulous, well done.”',
-    background: '#0ba901',
+    background: '#0ba95b',
     colorOval: '#f38ba3',
+  },
+];
+
+export const FEATURES: FeaturesType[] = [
+  {
+    title: 'No Money Required',
+    desc: 'Exchange skills directly without any financial transactions',
+    background: '#0ba95b',
+  },
+  {
+    title: 'Equal Value Exchange',
+    desc: 'Trade your expertise for services of equivalent value',
+    background: '#ed203d',
+  },
+  {
+    title: 'Trust Score System',
+    desc: 'Trade confidently with verified users and their reputation scores',
+    background: '#fcba28',
+  },
+  {
+    title: 'AI-Powered Matching (Coming Soon)',
+    desc: 'Get matched with traders who need your skills and have what you need',
+    background: '#f38ba3',
   },
 ];
