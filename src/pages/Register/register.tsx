@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterFormData } from './register.schema';
-import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import MultipleSelector, { Option } from '@/components/common/multi-select';
 import { LoadingButton } from '@/components/common/loading-button';
@@ -21,7 +20,6 @@ const registerFormDefaultValues: RegisterFormData = {
 };
 
 const Register = () => {
-  const navigate = useNavigate();
   const [skillOptions, setSkillOptions] = useState<Option[]>([]);
 
   const form = useForm<RegisterFormData>({
@@ -45,7 +43,6 @@ const Register = () => {
         onSuccess: () => {
           form.reset();
           console.log('success');
-          navigate('/login');
         },
         onError: (error) => {
           console.error(error);
@@ -58,19 +55,15 @@ const Register = () => {
 
   useEffect(() => {
     if (skills) {
-      console.log('Raw skills data:', skills);
       const options: Option[] = skills.map((skill) => ({
         label: skill.name,
         value: skill.id.toString(),
       }));
-      console.log('Converted options:', options);
       setSkillOptions(options);
-      console.log('Updated skillOptions state:', options);
     }
   }, [skills]);
 
   const handleLearnSkillsChange = (options: Option[]) => {
-    console.log('Selected learn skills:', options);
     form.setValue(
       'learnSkills',
       options.map((o) => o.value),
@@ -78,7 +71,6 @@ const Register = () => {
   };
 
   const handleTeachSkillsChange = (options: Option[]) => {
-    console.log('Selected teach skills:', options);
     form.setValue(
       'teachSkills',
       options.map((o) => o.value),

@@ -70,7 +70,7 @@ export const signUpWithEmail = async (body: RegisterFormData) => {
   });
 
   await setDocument(config.collections.users, result.user.uid, {
-    name: body.fullname,
+    fullName: body.fullname,
     email: body.email,
     learn: body.learnSkills,
     teach: body.teachSkills,

@@ -54,6 +54,12 @@ const router = createBrowserRouter([
               Component: (await import('./pages/Home')).default,
             }),
           },
+          {
+            path: config.routes.myNetwork,
+            lazy: async () => ({
+              Component: (await import('./pages/MyNetwork')).default,
+            }),
+          },
         ],
       },
     ],

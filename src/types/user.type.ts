@@ -1,7 +1,8 @@
 export interface User {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
+  bio: string;
   learn: number[];
   teach: number[];
   connections: number[];
