@@ -3,6 +3,7 @@ const routes = {
   login: '/login',
   register: '/register',
   profile: '/profile',
+  chat: '/chat',
   myNetwork: '/my-network',
   notFound: '*',
   landing: '/landing',

@@ -66,6 +66,12 @@ const router = createBrowserRouter([
               Component: (await import('./pages/MyNetwork')).default,
             }),
           },
+          {
+            path: config.routes.chat,
+            lazy: async () => ({
+              Component: (await import('./pages/Chat')).default,
+            }),
+          },
         ],
       },
     ],
