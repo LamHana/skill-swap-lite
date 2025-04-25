@@ -1,115 +1,30 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks';
-import { useForm } from 'react-hook-form';
-import { ProfileFormData, profileSchema } from './profile.schema';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import { ChevronLeft } from 'lucide-react';
 import ControlledInput from '@/components/common/controlled-input';
 import ControlledTextarea from '@/components/common/controlled-textarea';
 import ControlledMultiSelector from '@/components/common/controlled-multi-selector';
-import { useEffect, useRef, useState } from 'react';
-import { Skill } from '@/types/skill.type';
-import { Option } from '@/components/common/multi-select';
-import { allskills, fakeUser } from './data';
+import useEditProfile from '@/hooks/useEditProfile';
 
 const EditProfile = () => {
-  const { user } = useAuth();
-  const learningSkills = fakeUser.learn.map((id: string) => allskills.filter((skill: Skill) => skill.id === id)).flat();
-  const teachingSkills = fakeUser.teach.map((id: string) => allskills.filter((skill: Skill) => skill.id === id)).flat();
+  const {
+    form,
+    avatar,
+    learn,
+    teach,
+    learnAvailable,
+    teachAvailable,
+    handleDeletePicture,
+    handleFileChange,
+    handleLearnSkillsChange,
+    handleSelectPicture,
+    handleTeachSkillsChange,
+    onSubmit,
+    fileInputRef,
+  } = useEditProfile();
 
-  const formatedOptions = (options: Skill[]) => {
-    return options.map((skill) => ({
-      label: skill.name,
-      value: skill.id.toString(),
-    }));
-  };
-
-  const subtractedArray = (main: Option[], sub: Option[]) => {
-    let p1 = 0;
-    let p2 = 0;
-    let newArr = main;
-
-    while (p2 < sub.length) {
-      if (main[p1].value !== sub[p2].value) {
-        p1++;
-      }
-      newArr = newArr.filter((option: Option) => !(option.value === sub[p2].value));
-      p2++, (p1 = 0);
-    }
-
-    return newArr;
-  };
-
-  const options: Option[] = formatedOptions(allskills);
-
-  const [avatar, setAvatar] = useState<string | null | undefined>(user?.photoURL);
-  const [learn, setLearn] = useState<Option[]>(formatedOptions(learningSkills));
-  const [teach, setTeach] = useState<Option[]>(formatedOptions(teachingSkills));
-  const [learnAvailable, setLearnAvailable] = useState<Option[]>(subtractedArray(options, teach));
-  const [teachAvailable, setTeachAvailable] = useState<Option[]>(subtractedArray(options, learn));
-
-  useEffect(() => {
-    setLearnAvailable(subtractedArray(options, teach));
-    setTeachAvailable(subtractedArray(options, learn));
-  }, [learn, teach]);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleSelectPicture = () => {
-    // Trigger the hidden file input when Select Picture is clicked
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Create a URL for the selected image
-      const imageUrl = URL.createObjectURL(file);
-      setAvatar(imageUrl);
-    }
-  };
-
-  const handleDeletePicture = () => {
-    // Reset to default avatar
-    setAvatar('/placeholder.svg?height=200&width=200');
-    // Clear the file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleLearnSkillsChange = (options: Option[]) => {
-    form.setValue(
-      'learn',
-      options.map((o) => o.value),
-    );
-    setLearn(options);
-  };
-
-  const handleTeachSkillsChange = (options: Option[]) => {
-    form.setValue(
-      'teach',
-      options.map((o) => o.value),
-    );
-    setTeach(options);
-  };
-
-  const form = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: user?.displayName ?? '',
-      bio: '',
-      learn: learn.map((option: Option) => option.value),
-      teach: teach.map((option: Option) => option.value),
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof profileSchema>) {
-    console.log(values);
-  }
+  console.log({teachAvailable})
 
   return (
     <div className='mt-5 mb-10 md:mt-8 md:mb-16 md:px-20 xl:mt-10 xl:mb-20 m-auto xl:px-40 w-full'>
