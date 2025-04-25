@@ -18,7 +18,7 @@ const ControlledInput = ({ form, name, label, placeholder, description, required
       render={({ field }) => (
         <FormItem>
           <FormLabel>
-            {label} {required && (<span className='text-primary'>*</span>)}
+            {label} {required && <span className='text-primary'>*</span>}
           </FormLabel>
           <FormControl>
             <Input placeholder={placeholder} {...field} />

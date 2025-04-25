@@ -3,8 +3,8 @@ export interface User {
   fullName: string;
   email: string;
   bio: string;
-  learn: number[];
-  teach: number[];
+  learn: string[];
+  teach: string[];
   connections: number[];
   requestConnections: number[];
   sentConnections: number[];
