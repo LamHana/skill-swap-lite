@@ -5,6 +5,7 @@ const routes = {
   profile: '/profile',
   chat: '/chat',
   myNetwork: '/my-network',
+  editProfile: '/edit-profile',
   notFound: '*',
   landing: '/landing',
 };

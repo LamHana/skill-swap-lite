@@ -74,6 +74,20 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: config.routes.editProfile,
+        lazy: async () => ({
+          Component: (await import('./layout/MainLayout')).default,
+        }),
+        children: [
+          {
+            index: true,
+            lazy: async () => ({
+              Component: (await import('./pages/EditProfile')).default,
+            }),
+          },
+        ],
+      },
     ],
   },
 
