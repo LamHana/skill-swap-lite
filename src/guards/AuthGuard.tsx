@@ -10,7 +10,7 @@ const AuthGuard: FC<PropsWithChildren> = ({ children }) => {
   const { isInitialized, isAuthenticated } = useAuth();
 
   if (!isInitialized) return <div>Loading...</div>;
-  if (!isAuthenticated) return <Navigate to={config.routes.login} replace />;
+  if (!isAuthenticated) return <Navigate to={config.routes.landing} replace />;
   return <>{children}</>;
 };
 
