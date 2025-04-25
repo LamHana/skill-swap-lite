@@ -18,6 +18,12 @@ const router = createBrowserRouter([
         }),
         children: [
           {
+            path: config.routes.landing,
+            lazy: async () => ({
+              Component: (await import('./pages/Landing')).default,
+            }),
+          },
+          {
             path: config.routes.login,
             lazy: async () => ({
               Component: (await import('./pages/Login')).default,
@@ -51,7 +57,7 @@ const router = createBrowserRouter([
           {
             index: true,
             lazy: async () => ({
-              Component: (await import('./pages/Landing')).default,
+              Component: (await import('./pages/Home')).default,
             }),
           },
           {

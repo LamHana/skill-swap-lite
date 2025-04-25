@@ -5,6 +5,7 @@ const routes = {
   profile: '/profile',
   myNetwork: '/my-network',
   notFound: '*',
+  landing: '/landing',
 };
 
 export default routes;
