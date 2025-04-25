@@ -10,9 +10,19 @@ export interface PreviewCardProps {
   learn: string[];
   photoUrl?: string;
   button: ReactNode;
+  className?: string;
 }
 
-export default function PreviewCard({ id, name, percent, teach, learn, photoUrl, button }: PreviewCardProps) {
+export default function PreviewCard({
+  id,
+  name,
+  percent,
+  teach,
+  learn,
+  photoUrl,
+  button,
+  className = '',
+}: PreviewCardProps) {
   const getDisplayData = (): { teachDisplay: string[]; learnDisplay: string[] } => {
     const teachDisplay: string[] = teach.length <= 2 ? teach : [teach[0], teach[1], '+' + (teach.length - 2)];
     const learnDisplay: string[] = learn.length <= 2 ? learn : [learn[0], learn[1], '+' + (learn.length - 2)];
@@ -22,7 +32,7 @@ export default function PreviewCard({ id, name, percent, teach, learn, photoUrl,
   const { teachDisplay, learnDisplay } = getDisplayData();
 
   return (
-    <Card className='w-full md:max-w-[400px] md:max-h-[315px] relative mx-auto overflow-hidden' key={id}>
+    <Card className={`w-full md:max-w-[400px] md:max-h-[315px] relative mx-auto overflow-hidden ${className}`} key={id}>
       <div className='absolute top-0 right-0 bg-primary text-white font-bold py-2 px-4 rounded-tr-lg rounded-bl-lg'>
         {percent}%
       </div>
