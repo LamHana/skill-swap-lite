@@ -14,8 +14,6 @@ const Invitations = ({ users }: InvitationsProps) => {
   const { user: currentUser } = useAuth();
   if (!currentUser) return;
 
-  console.log(users);
-
   return (
     <div className='flex flex-col items-start mt-10'>
       <h2 className='text-2xl font-bold mb-4'>
