@@ -2,6 +2,7 @@ import { config } from '@/config/app';
 import { GetAllUsersResponse, User } from '@/types/user.type';
 import http from '@/utils/http';
 import { doc, getDoc } from 'firebase/firestore';
+import updateDocument from './firebase.service';
 
 export const GET_ALL_USERS = 'GET_ALL_USERS';
 export const GET_SINGLE_USER = 'GET_SINGLE_USER';
@@ -22,4 +23,8 @@ export const getUserByUID = async (uid: string | undefined) => {
     id: userDoc.id,
     ...userDoc.data(),
   } as User;
+};
+
+export const updateUser = async (uid: string, data: Partial<User>): Promise<void> => {
+  await updateDocument(config.collections.users, uid, data);
 };
