@@ -9,7 +9,7 @@ type DetailCardListProps = {
 const DetailCardList = ({ users }: DetailCardListProps) => {
   return (
     <div className='flex flex-col items-start mt-10'>
-      <h2 className='text-2xl font-bold mb-4'>
+      <h2 className='text-xl font-bold mb-4'>
         My Connections
         <span className='font-medium'>{` (${users.length})`}</span>
       </h2>
