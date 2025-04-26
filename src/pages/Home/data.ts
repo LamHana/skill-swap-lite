@@ -8,7 +8,7 @@ export const Categories = [
 
 export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
   {
-    id: 1,
+    id: 'AiFSwbFhBcN9QFY9kqBUJKKCzvi2',
     name: 'Mike Johnson',
     percent: 100,
     teach: ['Python', 'C++', 'Java', 'React', 'Node.js'],
@@ -16,7 +16,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 2,
+    id: 'GZQR3FpAnKc1fYbqOEoVrTxDIjc2',
     name: 'Mike Johnson',
     percent: 100,
     teach: ['Python', 'C++'],
@@ -24,7 +24,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 3,
+    id: 'Jlt9aaBtkfbuDsEMExjmlVggdiu1',
     name: 'Hailey',
     percent: 100,
     teach: ['Python', 'C++'],
@@ -32,7 +32,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 4,
+    id: 'YPiptWnV21Vc5ozUCQ6DXJeP5ZD2',
     name: 'Alice',
     percent: 100,
     teach: ['Python', 'C++'],
@@ -40,7 +40,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 5,
+    id: 'gGBwaAOpwBOYUR1TC4mpopI3clr1',
     name: 'Jane',
     percent: 100,
     teach: ['Python', 'C++'],
@@ -48,7 +48,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 6,
+    id: 'pttwdsbeDxUry4z6B7d4By5DoTJ3',
     name: 'John',
     percent: 100,
     teach: ['Python', 'C++', 'Java', 'React', 'Node.js'],
@@ -56,7 +56,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 7,
+    id: '6',
     name: 'Mike Johnson',
     percent: 100,
     teach: ['Python', 'C++'],
@@ -64,7 +64,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 8,
+    id: '7',
     name: 'Mike Johnson',
     percent: 100,
     teach: ['Python', 'C++'],
@@ -72,7 +72,7 @@ export const Profiles: Omit<PreviewCardProps, 'button'>[] = [
     photoUrl: '/placeholder.svg?height=100&width=100',
   },
   {
-    id: 9,
+    id: '8',
     name: 'Mike Johnson',
     percent: 100,
     teach: ['Python', 'C++'],

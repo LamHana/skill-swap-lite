@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { ReactNode } from 'react';
 
 export interface PreviewCardProps {
-  id: number;
+  id: string;
   name: string;
   percent: number;
   teach: string[];
