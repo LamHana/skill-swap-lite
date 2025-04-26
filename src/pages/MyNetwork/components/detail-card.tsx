@@ -3,11 +3,26 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useAuth } from '@/hooks';
+import { updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
+import { useMutation } from '@tanstack/react-query';
+import { arrayRemove } from 'firebase/firestore';
 import { MoreHorizontal } from 'lucide-react';
 
 const DetailCard = ({ user }: { user: User }) => {
   let matchPercentage = 100;
+  const { user: currentUser } = useAuth();
+  if (!currentUser) return;
+
+  const { mutate: disconnectedMutate, status: disconnectedStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(user.id, { connections: arrayRemove(currentUser.uid) }),
+        updateUser(currentUser.uid, { connections: arrayRemove(user.id) }),
+      ]);
+    },
+  });
 
   return (
     <Card className='w-full border-2 border-secondary-foreground rounded-xl p-4 relative overflow-hidden'>
@@ -95,7 +110,12 @@ const DetailCard = ({ user }: { user: User }) => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className='w-fit p-1' side='bottom' align='end' alignOffset={0} sideOffset={5}>
-                <Button variant='ghost' className='flex w-fit rounded-md text-sm md:text-base'>
+                <Button
+                  variant='ghost'
+                  className='flex w-fit rounded-md text-sm md:text-base'
+                  onClick={() => disconnectedMutate()}
+                  disabled={disconnectedStatus === 'pending'}
+                >
                   Remove connection
                 </Button>
               </PopoverContent>
