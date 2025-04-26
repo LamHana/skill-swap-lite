@@ -7,7 +7,7 @@ export interface User {
   bio: string;
   learn: string[];
   teach: string[];
-  connections: number[];
+  connections: string[] | FieldValue;
   requestConnections: string[] | FieldValue;
   sentConnections: string[] | FieldValue;
   photoURL: string;
