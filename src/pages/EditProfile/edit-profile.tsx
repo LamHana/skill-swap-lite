@@ -24,7 +24,7 @@ const EditProfile = () => {
     fileInputRef,
   } = useEditProfile();
 
-  console.log({teachAvailable})
+  console.log({ teachAvailable });
 
   return (
     <div className='mt-5 mb-10 md:mt-8 md:mb-16 md:px-20 xl:mt-10 xl:mb-20 m-auto xl:px-40 w-full'>

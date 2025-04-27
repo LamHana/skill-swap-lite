@@ -8,7 +8,7 @@ const MyNetwork = () => {
   const invitations = Profiles;
 
   return (
-    <div className='flex flex-col items-start gap-4 mb-8'>
+    <div className='flex flex-col items-start gap-4 mb-8 p-8 w-full'>
       <Invitations users={invitations} />
       <DetailCardList users={users} />
     </div>

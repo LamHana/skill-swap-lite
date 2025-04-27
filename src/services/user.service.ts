@@ -27,8 +27,6 @@ export const getUserByUID = async (uid: string | undefined) => {
 };
 
 export const updateUser = async (userId: string, body: Partial<User>) => {
-  console.log('userId', userId);
-  console.log('body', body);
   const userDocRef = updateDocument(config.collections.users, userId, body);
   return await userDocRef;
 };
