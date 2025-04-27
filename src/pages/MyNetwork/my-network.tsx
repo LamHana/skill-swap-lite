@@ -1,6 +1,4 @@
-import React from 'react';
 import { mockUsers } from './data';
-import DetailCard from './components/detail-card';
 import DetailCardList from './components/detail-card-list';
 import { Profiles } from '../Home/data';
 import Invitations from './components/invitations';

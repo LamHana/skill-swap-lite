@@ -3,6 +3,7 @@ import { AuthContextType, AuthState } from './auth.type';
 import { onAuthStateChanged } from 'firebase/auth';
 import { config } from '@/config/app';
 import { initialize, reducer } from './auth.reducer';
+import { getUserByUID } from '@/services/user.service';
 
 const initialState: AuthState = {
   isAuthenticated: false,
@@ -18,7 +19,7 @@ const AuthContext = createContext<AuthContextType>({
 const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(config.firebase.auth, (user) => {
+    const unsubscribe = onAuthStateChanged(config.firebase.auth, async (user) => {
       console.log('user', user);
       if (!user)
         return dispatch(
@@ -28,10 +29,14 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
           }),
         );
 
+      const userData = await getUserByUID(user.uid);
+
+      console.log('userData', userData);
+
       dispatch(
         initialize({
           isAuthenticated: !!user,
-          user: user,
+          user: userData,
         }),
       );
     });

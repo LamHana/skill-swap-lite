@@ -10,6 +10,8 @@ import { signUpWithEmail } from '@/services/auth.service';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useSkillValidation } from '@/hooks/useSkillValidation';
 
 const registerFormDefaultValues: RegisterFormData = {
   fullname: '',
@@ -21,12 +23,15 @@ const registerFormDefaultValues: RegisterFormData = {
 
 const Register = () => {
   const [skillOptions, setSkillOptions] = useState<Option[]>([]);
+  const { validateSkills, getFilteredOptions } = useSkillValidation();
 
   const form = useForm<RegisterFormData>({
     mode: 'onBlur',
     resolver: zodResolver(registerSchema),
     defaultValues: registerFormDefaultValues,
   });
+
+  const { learnSkills, teachSkills } = form.watch();
 
   const { data: skills } = useQuery({
     queryKey: [GET_SKILLS_QUERY_KEY],
@@ -63,25 +68,49 @@ const Register = () => {
     }
   }, [skills]);
 
-  const handleLearnSkillsChange = (options: Option[]) => {
-    form.setValue(
-      'learnSkills',
-      options.map((o) => o.value),
-    );
+  const mapValuesToOptions = (values: string[]) =>
+    values.map((v) => skillOptions.find((o) => o.value === v) || { label: v, value: v });
+
+  const getAvailableOptions = (field: 'learnSkills' | 'teachSkills') => {
+    const oppositeValues = field === 'learnSkills' ? teachSkills : learnSkills;
+    return getFilteredOptions(skillOptions, mapValuesToOptions(oppositeValues));
   };
 
-  const handleTeachSkillsChange = (options: Option[]) => {
+  const handleSkillsChange = (field: 'learnSkills' | 'teachSkills', options: Option[]) => {
+    const currentOppositeSkills =
+      field === 'learnSkills'
+        ? mapValuesToOptions(form.getValues('teachSkills'))
+        : mapValuesToOptions(form.getValues('learnSkills'));
+
+    const validation = validateSkills(
+      field === 'learnSkills' ? currentOppositeSkills : options,
+      field === 'learnSkills' ? options : currentOppositeSkills,
+    );
+
+    if (!validation.isValid) {
+      console.error(validation.message);
+      return;
+    }
+
+    const filteredOptions = options.filter(
+      (option) => !currentOppositeSkills.some((skill) => skill.value === option.value),
+    );
+
     form.setValue(
-      'teachSkills',
-      options.map((o) => o.value),
+      field,
+      filteredOptions.map((o) => o.value),
     );
   };
 
   return (
-    <div className='flex h-[calc(100vh-96px)] gap-16 items-center justify-center m-6'>
-      <div className='flex flex-col w-md justify-center p-8'>
+    <div className='flex h-[calc(100vh-96px)] flex-col md:flex-row gap-8 md:gap-16 items-center justify-center m-6'>
+      <div className='md:hidden w-full h-[200px] bg-[#C3311F] rounded-lg overflow-hidden mb-4'>
+        <img src={Thumbnail} alt='register' className='w-full h-full object-contain rounded-lg' />
+      </div>
+
+      <div className='flex flex-col w-full max-w-md justify-center p-4 md:p-8'>
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold'>Register</h1>
+          <h1 className='text-2xl md:text-3xl font-bold'>Register</h1>
           <p className='text-muted-foreground'>Teach What You Know, Learn What You Love</p>
         </div>
 
@@ -108,7 +137,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} type='email' placeholder='Nhập email' />
+                    <Input {...field} type='email' placeholder='Enter your email' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,8 +171,8 @@ const Register = () => {
                     <FormControl>
                       <MultipleSelector
                         value={currentValue}
-                        onChange={handleLearnSkillsChange}
-                        options={skillOptions}
+                        onChange={(options) => handleSkillsChange('learnSkills', options)}
+                        options={getAvailableOptions('learnSkills')}
                         placeholder='Select skills you want to learn...'
                         emptyIndicator={
                           <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
@@ -171,8 +200,8 @@ const Register = () => {
                     <FormControl>
                       <MultipleSelector
                         value={currentValue}
-                        onChange={handleTeachSkillsChange}
-                        options={skillOptions}
+                        onChange={(options) => handleSkillsChange('teachSkills', options)}
+                        options={getAvailableOptions('teachSkills')}
                         placeholder='Select skills you want to teach...'
                         emptyIndicator={
                           <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
@@ -192,8 +221,17 @@ const Register = () => {
             </LoadingButton>
           </form>
         </Form>
+        <div className='mt-4'>
+          <p className='text-muted-foreground'>
+            Already have an account?{' '}
+            <Link to='/login' className='text-primary'>
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
-      <div className='flex items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
+
+      <div className='hidden md:flex items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
         <img src={Thumbnail} alt='register' className='w-full h-[57%] object-contain rounded-lg' />
       </div>
     </div>

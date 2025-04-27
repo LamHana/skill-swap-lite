@@ -31,35 +31,50 @@ export const signInWithEmail = async (credentials: SignInCredentials): Promise<U
   return signInWithEmailAndPassword(config.firebase.auth, email, password);
 };
 
-export const signInWithGoogle = async (): Promise<UserCredential> => {
+export const signInWithGoogle = async () => {
   const result = await signInWithPopup(config.firebase.auth, config.firebase.googleProvider);
-
   const docSnap = await getDocument(config.collections.users, result.user.uid);
 
+  const initialUserData = {
+    id: result.user.uid,
+    email: result.user.email || '',
+    fullName: result.user.displayName || '',
+    photoURL: result.user.photoURL || '',
+    bio: '',
+    learn: [],
+    teach: [],
+    connections: [],
+    requestConnections: [],
+    sentConnections: [],
+  };
+
   if (!docSnap.exists()) {
-    await setDocument(config.collections.users, result.user.uid, {
-      email: result.user.email,
-      fullName: result.user.displayName,
-      learn: [],
-      teach: [],
-      connections: [],
-      requestConnections: [],
-      sentConnections: [],
-      photoURL: result.user.photoURL,
-    });
-  } else {
-    if (!docSnap.data().avatarUrl) {
-      await updateDocument(config.collections.users, result.user.uid, {
-        avatarUrl: result.user.photoURL,
-      });
-    } else if (!docSnap.data().fullName) {
-      await updateDocument(config.collections.users, result.user.uid, {
-        fullName: result.user.displayName,
-      });
-    }
+    await setDocument(config.collections.users, result.user.uid, initialUserData);
+    return {
+      user: initialUserData,
+      isNewUser: true,
+      userFirebase: result.user,
+    };
   }
 
-  return result;
+  const existingData = docSnap.data();
+  const updatedData = {
+    ...initialUserData,
+    ...existingData,
+    id: result.user.uid,
+    photoURL: existingData.photoURL || result.user.photoURL || '',
+    fullName: existingData.fullName || result.user.displayName || '',
+    email: existingData.email || result.user.email || '',
+  };
+
+  if (!existingData.photoURL || !existingData.fullName) {
+    await updateDocument(config.collections.users, result.user.uid, updatedData);
+  }
+
+  return {
+    user: updatedData,
+    isNewUser: false,
+  };
 };
 
 export const signUpWithEmail = async (body: RegisterFormData) => {

@@ -12,6 +12,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import { signIn } from '@/contexts/auth/auth.reducer';
 import Thumbnail from '@/assets/images/thumbnail.png';
 import { Link } from 'react-router-dom';
+import { getUserByUID } from '@/services/user.service';
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 const loginFormDefaultValues: LoginFormType = {
@@ -37,10 +38,10 @@ const Login = () => {
 
   const onSubmit = async (values: LoginFormType) => {
     loginMutate(values, {
-      onSuccess: (result) => {
+      onSuccess: async (result) => {
         form.reset();
-        console.log('success', result);
-        dispatch(signIn({ user: result.user }));
+        const user = await getUserByUID(result.user.uid);
+        dispatch(signIn({ user }));
       },
       onError: (error) => {
         console.log('error', error);
@@ -52,7 +53,11 @@ const Login = () => {
     loginWithGoogle(undefined, {
       onSuccess: (result) => {
         form.reset();
-        console.log('success', result);
+        dispatch(
+          signIn({
+            user: result.user,
+          }),
+        );
       },
       onError: (error) => {
         console.log('error', error);
@@ -61,10 +66,14 @@ const Login = () => {
   };
 
   return (
-    <div className='flex h-[calc(100vh-96px)] gap-16 items-center justify-center m-6 '>
-      <div className='flex flex-col max-w-md justify-center p-8'>
+    <div className='flex h-[calc(100vh-96px)] flex-col md:flex-row gap-8 md:gap-16 items-center justify-center m-6'>
+      <div className='md:hidden w-full h-[200px] bg-[#C3311F] rounded-lg overflow-hidden mb-4'>
+        <img src={Thumbnail} alt='login' className='w-full h-full object-contain rounded-lg' />
+      </div>
+
+      <div className='flex flex-col w-full max-w-md justify-center p-4 md:p-8'>
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold'>Sign In</h1>
+          <h1 className='text-2xl md:text-3xl font-bold'>Sign In</h1>
           <p className='text-muted-foreground'>Teach What You Know, Learn What You Love</p>
         </div>
 
@@ -118,12 +127,16 @@ const Login = () => {
         </Form>
         <div className='mt-4'>
           <p className='text-muted-foreground'>
-            Don't have an account? <Link to='/register'>Register</Link>
+            Don't have an account?{' '}
+            <Link to='/register' className='text-primary'>
+              Register
+            </Link>
           </p>
         </div>
       </div>
-      <div className='flex  items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
-        <img src={Thumbnail} alt='login' className='w-full h-[57%] object-contain rounded-lg ' />
+
+      <div className='hidden md:flex items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
+        <img src={Thumbnail} alt='login' className='w-full h-[57%] object-contain rounded-lg' />
       </div>
     </div>
   );

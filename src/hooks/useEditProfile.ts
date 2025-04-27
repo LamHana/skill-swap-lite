@@ -37,9 +37,9 @@ const useEditProfile = () => {
   const { user } = useAuth();
 
   const { data: cur } = useQuery({
-    queryKey: [GET_SINGLE_USER, user?.uid],
-    queryFn: () => getUserByUID(user?.uid),
-    enabled: !!user?.uid,
+    queryKey: [GET_SINGLE_USER, user?.id],
+    queryFn: () => getUserByUID(user?.id),
+    enabled: !!user?.id,
   });
 
   const { data: skills } = useQuery({
@@ -120,10 +120,12 @@ const useEditProfile = () => {
 
   useEffect(() => {
     if (currentUser && skillOptions.length !== 0) {
-      const learningSkills =
-        currentUser.learn.map((id: string) => skillOptions.filter((skill: Option) => skill.value === id)).flat();
-      const teachingSkills =
-        currentUser.teach.map((id: string) => skillOptions.filter((skill: Option) => skill.value === id)).flat();
+      const learningSkills = currentUser.learn
+        .map((id: string) => skillOptions.filter((skill: Option) => skill.value === id))
+        .flat();
+      const teachingSkills = currentUser.teach
+        .map((id: string) => skillOptions.filter((skill: Option) => skill.value === id))
+        .flat();
       setLearn(learningSkills);
       setTeach(teachingSkills);
       setAvatar(currentUser.photoURL);
