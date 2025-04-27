@@ -1,5 +1,4 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import React from 'react';
 import PreviewCard, { PreviewCardProps } from '@/components/common/preview-card';
 import { Button } from '@/components/ui/button';
 
@@ -9,8 +8,8 @@ type InvitationsProps = {
 
 const Invitations = ({ users }: InvitationsProps) => {
   return (
-    <div className='flex flex-col items-start mt-10'>
-      <h2 className='text-2xl font-bold mb-4'>
+    <div className='flex flex-col items-start mt-10 w-full'>
+      <h2 className='text-xl font-bold mb-4'>
         Invitations
         <span className='font-medium'>{` (${users.length})`}</span>
       </h2>
