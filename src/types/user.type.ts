@@ -5,9 +5,9 @@ export interface User {
   bio: string;
   learn: string[];
   teach: string[];
-  connections: number[];
-  requestConnections: number[];
-  sentConnections: number[];
+  connections: string[];
+  requestConnections: string[];
+  sentConnections: string[];
   photoURL: string;
 }
 

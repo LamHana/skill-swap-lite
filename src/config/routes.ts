@@ -8,6 +8,7 @@ const routes = {
   editProfile: '/edit-profile',
   notFound: '*',
   landing: '/landing',
+  user: '/:id',
 };
 
 export default routes;
