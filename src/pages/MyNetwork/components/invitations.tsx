@@ -15,8 +15,8 @@ const Invitations = ({ users }: InvitationsProps) => {
   if (!currentUser) return;
 
   return (
-    <div className='flex flex-col items-start mt-10'>
-      <h2 className='text-2xl font-bold mb-4'>
+    <div className='flex flex-col items-start mt-10 w-full'>
+      <h2 className='text-xl font-bold mb-4'>
         Invitations
         <span className='font-medium'>{` (${users.length})`}</span>
       </h2>
