@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { updateUser } from '@/services/user.service';
 import { updateProfileSchema } from './update-profile-modal.schema';
 import { useSkillValidation } from '@/hooks/useSkillValidation';
-
+import { toast } from 'sonner';
 type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
 
 const defaultValues: UpdateProfileFormData = {
@@ -63,7 +63,7 @@ export const UpdateProfileModal = ({ open, onOpenChange, userId }: UpdateProfile
     );
 
     if (!validation.isValid) {
-      console.error(validation.message);
+      toast.error(validation.message);
       return;
     }
 
@@ -83,11 +83,17 @@ export const UpdateProfileModal = ({ open, onOpenChange, userId }: UpdateProfile
         learn: data.learnSkills,
         teach: data.teachSkills,
       }),
-    onSuccess: () => onOpenChange(false),
-    onError: (error) => console.error('Error updating profile:', error),
   });
 
-  const onSubmit = (data: UpdateProfileFormData) => updateUserSkills(data);
+  const onSubmit = (data: UpdateProfileFormData) => {
+    updateUserSkills(data, {
+      onSuccess: () => {
+        onOpenChange(false);
+        toast.success('Profile updated successfully');
+      },
+      onError: (error) => toast.error(error.message),
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

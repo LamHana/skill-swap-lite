@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signInWithEmail, signInWithGoogle } from '@/services/auth.service';
 import { useAuth } from '@/hooks';
@@ -13,6 +12,9 @@ import { signIn } from '@/contexts/auth/auth.reducer';
 import Thumbnail from '@/assets/images/thumbnail.png';
 import { Link } from 'react-router-dom';
 import { getUserByUID } from '@/services/user.service';
+import { toast } from 'sonner';
+import InputPassword from '@/components/common/input-password';
+import { LoadingButton } from '@/components/common/loading-button';
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 const loginFormDefaultValues: LoginFormType = {
@@ -42,9 +44,10 @@ const Login = () => {
         form.reset();
         const user = await getUserByUID(result.user.uid);
         dispatch(signIn({ user }));
+        toast.success('Login successfully');
       },
       onError: (error) => {
-        console.log('error', error);
+        toast.error(error.message);
       },
     });
   };
@@ -58,9 +61,10 @@ const Login = () => {
             user: result.user,
           }),
         );
+        toast.success('Login successfully');
       },
       onError: (error) => {
-        console.log('error', error);
+        toast.error(error.message);
       },
     });
   };
@@ -86,7 +90,7 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} type='email' placeholder='Enter your email' />
+                    <Input {...field} type='email' placeholder='Email' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,7 +104,7 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type='password' placeholder='Enter your password' />
+                    <InputPassword placeholder='••••••••' field={{ ...field }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,20 +112,20 @@ const Login = () => {
             />
 
             <div className='space-y-4'>
-              <Button type='submit' className='w-full'>
-                {isLoginPending ? 'Logging in...' : 'Login'}
-              </Button>
+              <LoadingButton type='submit' className='w-full' loading={isLoginPending}>
+                Login
+              </LoadingButton>
 
-              <Button type='button' variant='outline' className='w-full' onClick={handleGoogleLogin}>
-                {isGoogleLoginPending ? (
-                  'Signing in with Google...'
-                ) : (
-                  <>
-                    <FaGoogle className='mr-2' />
-                    Sign in with Google
-                  </>
-                )}
-              </Button>
+              <LoadingButton
+                type='button'
+                variant='outline'
+                className='w-full'
+                onClick={handleGoogleLogin}
+                loading={isGoogleLoginPending}
+              >
+                <FaGoogle className='mr-2' />
+                Sign in with Google
+              </LoadingButton>
             </div>
           </form>
         </Form>

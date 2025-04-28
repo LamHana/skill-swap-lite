@@ -12,6 +12,8 @@ import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSkillValidation } from '@/hooks/useSkillValidation';
+import { toast } from 'sonner';
+import InputPassword from '@/components/common/input-password';
 
 const registerFormDefaultValues: RegisterFormData = {
   fullname: '',
@@ -43,19 +45,15 @@ const Register = () => {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    try {
-      registerMutate(data, {
-        onSuccess: () => {
-          form.reset();
-          console.log('success');
-        },
-        onError: (error) => {
-          console.error(error);
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    registerMutate(data, {
+      onSuccess: () => {
+        form.reset();
+        toast.success('Register successfully');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   };
 
   useEffect(() => {
@@ -88,7 +86,7 @@ const Register = () => {
     );
 
     if (!validation.isValid) {
-      console.error(validation.message);
+      toast.error(validation.message);
       return;
     }
 
@@ -123,7 +121,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Fullname</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder='Enter your fullname' />
+                    <Input {...field} placeholder='Fullname' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,7 +135,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} type='email' placeholder='Enter your email' />
+                    <Input {...field} type='email' placeholder='Email' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,7 +149,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type='password' placeholder='Enter your password' />
+                    <InputPassword placeholder='••••••••' field={{ ...field }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -173,7 +171,7 @@ const Register = () => {
                         value={currentValue}
                         onChange={(options) => handleSkillsChange('learnSkills', options)}
                         options={getAvailableOptions('learnSkills')}
-                        placeholder='Select skills you want to learn...'
+                        placeholder='Skills you want to learn'
                         emptyIndicator={
                           <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
                             No results found
@@ -202,7 +200,7 @@ const Register = () => {
                         value={currentValue}
                         onChange={(options) => handleSkillsChange('teachSkills', options)}
                         options={getAvailableOptions('teachSkills')}
-                        placeholder='Select skills you want to teach...'
+                        placeholder='Skills you want to teach'
                         emptyIndicator={
                           <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
                             No results found

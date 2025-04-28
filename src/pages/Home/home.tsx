@@ -29,7 +29,6 @@ const Home = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
 
   useEffect(() => {
-    console.log(user);
     if (user && (!user.learn?.length || !user.teach?.length)) {
       setShowCompleteProfile(true);
     }
