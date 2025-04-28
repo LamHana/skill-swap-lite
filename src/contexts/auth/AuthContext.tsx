@@ -10,6 +10,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  userFirebase: null,
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +29,7 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
             isAuthenticated: false,
             isInitialized: true,
             user: null,
+            userFirebase: null,
           }),
         );
         return;
@@ -40,6 +42,7 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
           isAuthenticated: true,
           isInitialized: true,
           user: userData,
+          userFirebase: user,
         }),
       );
     });
