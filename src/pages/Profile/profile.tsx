@@ -2,64 +2,135 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skill } from '@/types/skill.type';
 import { Button } from '@/components/ui/button';
 import useGetSingleProfile from '@/hooks/useGetSingleProfile';
+import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const Profile = () => {
-  const { id, currentUser, connections, learn, teach, handleEditProfile } = useGetSingleProfile();
+  const { id, currentUser, learn, teach, handleEditProfile } = useGetSingleProfile();
   let actionButtonsGroup;
 
-  // if (id) {
-  //   if (currentUser?.connections.includes(id)) {
-  //     actionButtonsGroup = (
-  //       <div className='flex gap-4 xl:gap-6'>
-  //         <Button className='grow'>Message</Button>
-  //         <Button variant={'outline'} className='grow'>
-  //           Disconnect
-  //         </Button>
-  //       </div>
-  //     );
-  //   } else {
-  //     actionButtonsGroup = <Button>Connect</Button>;
-  //   }
-  // } else {
-  //   actionButtonsGroup = <Button onClick={handleEditProfile}>Edit profile</Button>;
-  // }
+  if (id) {
+    if (Array.isArray(currentUser?.connections) && currentUser?.connections.includes(id)) {
+      actionButtonsGroup = (
+        <div className='flex gap-4 xl:gap-6'>
+          <Button className='grow'>Message</Button>
+          <Button variant={'outline'} className='grow'>
+            Disconnect
+          </Button>
+        </div>
+      );
+    } else {
+      actionButtonsGroup = <Button>Connect</Button>;
+    }
+  } else {
+    actionButtonsGroup = <Button onClick={handleEditProfile}>Edit profile</Button>;
+  }
 
   return (
-    <div className='mt-5 mb-10 md:mt-8 md:mb-16 md:px-20 xl:mt-16 xl:mb-20 m-auto xl:px-40 w-full'>
-      <div className='flex flex-col mb-8 gap-4 md:flex-row md:mb-10 md:justify-between md:items-start xl:mb-12'>
-        <Avatar className='h-32 w-32 md:h-36 md:w-36 xl:h-48 xl:w-48'>
-          <AvatarImage src={currentUser?.photoURL || ''} alt='shadcn' />
-          <AvatarFallback className='bg-primary text-primary-foreground font-bold text-6xl'>
-            {currentUser?.fullName.charAt(0)}
-          </AvatarFallback>
-        </Avatar>
-        <div className='flex flex-col gap-4 xl:gap-6 md:w-2/3'>
-          <h1 className='text-3xl font-bold'>{currentUser?.fullName}</h1>
-          {currentUser?.bio && <p>{currentUser.bio}</p>}
-          <p className='font-bold text-primary'>
-            {connections} {connections && connections > 1 ? 'connections' : 'connection'}
-          </p>
-          {actionButtonsGroup}
+    <div className='container mx-auto mt-12 mb-20'>
+      <div className='flex flex-col md:flex-row gap-6 items-start'>
+        {/* Profile Header */}
+        <div className='w-full md:w-1/3 flex flex-col items-center'>
+          <div className='relative mb-4 w-40 h-40'>
+            <Avatar className='w-40 h-40'>
+              <AvatarImage src={currentUser?.photoURL || ''} alt='shadcn' />
+              <AvatarFallback className='bg-primary text-primary-foreground font-bold text-6xl'>
+                {currentUser?.fullName.toString().trim().charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          <h1 className='text-2xl font-bold text-center'>{currentUser?.fullName.toString().trim()}</h1>
+
+          <div className='w-full mt-6'>
+            <Card>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm md:text-base font-medium flex items-center gap-2'>
+                  <UsersIcon className='h-4 w-4' />
+                  Connections
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className='space-y-2'>
+                  {Array.isArray(currentUser?.connections) && currentUser?.connections.map((connection, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="text-xs">
+                          {connection
+                            .split(" ")
+                            .map((name) => name[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{connection}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
-      <div className='flex mb-8 gap-4 md:gap-8 md:mb-10 xl:gap-12 xl:mb-12'>
-        <p className='font-bold text-primary'>Teaching</p>
-        <div className='flex gap-2 md:gap-4 xl:gap-6 flex-wrap'>
-          {teach.map((skill: Skill) => (
-            <span key={skill.id} className={'rounded-full px-3 py-1 border border-gray-300'}>
-              {skill.name}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className='flex gap-4 md:gap-8 xl:gap-12'>
-        <p className='font-bold text-primary'>Learning</p>
-        <div className='flex gap-2 md:gap-4 xl:gap-6 flex-wrap'>
-          {learn.map((skill: Skill) => (
-            <span key={skill.id} className={'rounded-full px-3 py-1 border border-gray-300'}>
-              {skill.name}
-            </span>
-          ))}
+
+        {/* Profile Content */}
+        <div className='w-full md:w-2/3 space-y-6'>
+          {/* Bio Section */}
+          <Card>
+            <CardHeader className='pb-2'>
+              <CardTitle className='flex items-center gap-2 md:text-lg'>
+                <UserIcon className='h-5 w-5' />
+                About
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className='text-muted-foreground'>{currentUser?.bio.toString().trim()}</p>
+            </CardContent>
+          </Card>
+
+          {/* Skills Section */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            {/* Learning */}
+            <Card>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm md:text-base font-medium flex items-center gap-2'>
+                  <BookOpenIcon className='h-4 w-4' />
+                  Learning
+                </CardTitle>
+                <CardDescription>Skills I want to learn</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='flex flex-wrap gap-2'>
+                  {learn.map((item: Skill) => (
+                    <Badge key={item.id} variant='secondary' className='md:text-sm'>
+                      {item.name}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Teaching */}
+            <Card>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm md:text-base font-medium flex items-center gap-2'>
+                  <GraduationCapIcon className='h-4 w-4' />
+                  Teaching
+                </CardTitle>
+                <CardDescription>Skills I can teach</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='flex flex-wrap gap-2'>
+                  {teach.map((item: Skill) => (
+                    <Badge key={item.id} variant='outline' className='md:text-sm'>
+                      {item.name}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Edit Profile Button */}
+          <div className='flex justify-end'>{actionButtonsGroup}</div>
         </div>
       </div>
     </div>

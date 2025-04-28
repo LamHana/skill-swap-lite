@@ -2,11 +2,11 @@ import { FieldValue } from 'firebase/firestore';
 
 export interface User {
   id: string;
-  fullName: string;
+  fullName: string | FieldValue;
   email: string;
-  bio: string;
-  learn: string[];
-  teach: string[];
+  bio: string | FieldValue;
+  learn: string[] | FieldValue;
+  teach: string[] | FieldValue;
   connections: string[] | FieldValue;
   requestConnections: string[] | FieldValue;
   sentConnections: string[] | FieldValue;

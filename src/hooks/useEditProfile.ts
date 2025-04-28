@@ -125,7 +125,7 @@ const useEditProfile = () => {
   }, [skills]);
 
   useEffect(() => {
-    if (currentUser && skillOptions.length !== 0) {
+    if (currentUser && Array.isArray(currentUser.learn) && Array.isArray(currentUser.teach) && skillOptions.length !== 0) {
       const learningSkills = currentUser.learn
         .map((id: string) => skillOptions.filter((skill: Option) => skill.value === id))
         .flat();
@@ -136,8 +136,8 @@ const useEditProfile = () => {
       setTeach(teachingSkills);
       setAvatar(currentUser.photoURL);
       form.reset({
-        name: currentUser.fullName,
-        bio: currentUser.bio,
+        name: currentUser.fullName.toString().trim(),
+        bio: currentUser.bio.toString().trim(),
         learn: learningSkills.map((option: Option) => option.value),
         teach: teachingSkills.map((option: Option) => option.value),
       });

@@ -47,7 +47,7 @@ const useGetSingleProfile = () => {
   }, [skills]);
 
   useEffect(() => {
-    if (currentUser && skillsList.length !== 0) {
+    if (currentUser && Array.isArray(currentUser.learn) && Array.isArray(currentUser.teach) && skillsList.length !== 0) {
       const learningSkills = currentUser.learn
         .map((id: string) => skillsList.filter((skill: Skill) => skill.id === id))
         .flat();
@@ -59,11 +59,9 @@ const useGetSingleProfile = () => {
     }
   }, [currentUser, skillsList]);
 
-  const connections: number | undefined = currentUser?.connections.length;
   return {
     id,
     currentUser,
-    connections,
     learn,
     teach,
     handleEditProfile
