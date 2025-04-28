@@ -1,7 +1,7 @@
 import { config } from '@/config/app';
 import { GetAllUsersResponse, User } from '@/types/user.type';
 import http from '@/utils/http';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, documentId, getDoc, getDocs, query, where } from 'firebase/firestore';
 import updateDocument from './firebase.service';
 
 export const GET_ALL_USERS = 'GET_ALL_USERS';
@@ -27,4 +27,17 @@ export const getUserByUID = async (uid: string | undefined) => {
 
 export const updateUser = async (uid: string, data: Partial<User>): Promise<void> => {
   await updateDocument(config.collections.users, uid, data);
+};
+
+export const getUsersByUIDs = async (uids: string[] | undefined): Promise<User[]> => {
+  if (uids?.length === 0) return [];
+
+  const usersRef = collection(config.firebase.db, config.collections.users);
+  const q = query(usersRef, where(documentId(), 'in', uids));
+  const querySnapshot = await getDocs(q);
+
+  return querySnapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...(docSnap.data() as Omit<User, 'id'>),
+  }));
 };

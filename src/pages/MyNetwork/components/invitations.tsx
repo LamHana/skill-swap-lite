@@ -25,7 +25,7 @@ const Invitations = ({ users }: InvitationsProps) => {
         opts={{
           align: 'center',
         }}
-        className='w-full max-w-[1216px] mx-auto'
+        className='w-full mx-auto'
       >
         <CarouselContent>
           {users.map((user, index) => {
