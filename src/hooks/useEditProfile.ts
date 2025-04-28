@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
 import { GET_SINGLE_USER, getUserByUID } from '@/services/user.service';
 import { User } from '@/types/user.type';
+import { useNavigate } from 'react-router-dom';
 
 const formatedOptions = (options: Skill[]) => {
   return options.map((skill) => ({
@@ -35,6 +36,7 @@ const subtractedOptions = (main: Option[], sub: Option[]) => {
 
 const useEditProfile = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const { data: cur } = useQuery({
     queryKey: [GET_SINGLE_USER, user?.id],
@@ -74,6 +76,10 @@ const useEditProfile = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleBackButtonClick = () => {
+    navigate(-1);
   };
 
   const form = useForm<ProfileFormData>({
@@ -119,7 +125,12 @@ const useEditProfile = () => {
   }, [skills]);
 
   useEffect(() => {
-    if (currentUser && skillOptions.length !== 0) {
+    if (
+      currentUser &&
+      Array.isArray(currentUser.learn) &&
+      Array.isArray(currentUser.teach) &&
+      skillOptions.length !== 0
+    ) {
       const learningSkills = currentUser.learn
         .map((id: string) => skillOptions.filter((skill: Option) => skill.value === id))
         .flat();
@@ -130,8 +141,8 @@ const useEditProfile = () => {
       setTeach(teachingSkills);
       setAvatar(currentUser.photoURL);
       form.reset({
-        name: currentUser.fullName,
-        bio: currentUser.bio,
+        name: currentUser.fullName.toString().trim(),
+        bio: currentUser.bio.toString().trim(),
         learn: learningSkills.map((option: Option) => option.value),
         teach: teachingSkills.map((option: Option) => option.value),
       });
@@ -166,6 +177,7 @@ const useEditProfile = () => {
     fileInputRef,
     skillOptions,
     currentUser,
+    handleBackButtonClick,
   };
 };
 

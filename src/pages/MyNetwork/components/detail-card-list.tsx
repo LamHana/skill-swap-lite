@@ -1,5 +1,4 @@
 import { User } from '@/types/user.type';
-import React from 'react';
 import DetailCard from './detail-card';
 
 type DetailCardListProps = {

@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { mainMenu } from '@/config/menu';
 import { cn } from '@/lib/utils';
 import {
@@ -17,10 +17,16 @@ import { ModeToggle } from '@/components/common/mode-toggle';
 import { useAuth } from '@/hooks';
 import Logo from './logo';
 import useSignOut from '@/hooks/useSignOut';
+import { config } from '@/config/app';
 const Header = ({ isAuthLayout = false }: { isAuthLayout?: boolean }) => {
   const location = useLocation();
   const { user } = useAuth();
   const { onSignOut } = useSignOut();
+  const navigate = useNavigate();
+
+  const onClickProfile = () => {
+    navigate(config.routes.profile);
+  };
 
   return (
     <header className='bg-background sticky top-0 z-50 border-b'>
@@ -116,6 +122,7 @@ const Header = ({ isAuthLayout = false }: { isAuthLayout?: boolean }) => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onClickProfile}>Profile</DropdownMenuItem>
                   <DropdownMenuItem onClick={onSignOut}>Log out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
