@@ -109,7 +109,7 @@ const Header = ({ isAuthLayout = false }: { isAuthLayout?: boolean }) => {
                     <Avatar className='h-8 w-8'>
                       <AvatarImage src={user?.photoURL || ''} alt='shadcn' />
                       <AvatarFallback className='bg-primary text-primary-foreground'>
-                        {user?.displayName?.charAt(0)}
+                        {user?.fullName?.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -117,7 +117,7 @@ const Header = ({ isAuthLayout = false }: { isAuthLayout?: boolean }) => {
                 <DropdownMenuContent className='w-56' align='end' forceMount>
                   <DropdownMenuLabel className='font-normal'>
                     <div className='flex flex-col space-y-1'>
-                      <p className='text-sm font-medium leading-none'>{user?.displayName}</p>
+                      <p className='text-sm font-medium leading-none'>{user?.fullName}</p>
                       <p className='text-xs leading-none text-muted-foreground'>{user?.email}</p>
                     </div>
                   </DropdownMenuLabel>

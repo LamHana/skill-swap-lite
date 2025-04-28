@@ -6,6 +6,7 @@ import updateDocument from './firebase.service';
 
 export const GET_ALL_USERS = 'GET_ALL_USERS';
 export const GET_SINGLE_USER = 'GET_SINGLE_USER';
+export const GET_ME_QUERY_KEY = 'GET_ME_QUERY_KEY';
 
 export const getUsers = () => http.get<GetAllUsersResponse>('/users');
 
@@ -25,8 +26,9 @@ export const getUserByUID = async (uid: string | undefined) => {
   } as User;
 };
 
-export const updateUser = async (uid: string, data: Partial<User>): Promise<void> => {
-  await updateDocument(config.collections.users, uid, data);
+export const updateUser = async (userId: string, body: Partial<User>) => {
+  const userDocRef = updateDocument(config.collections.users, userId, body);
+  return await userDocRef;
 };
 
 export const getUsersByUIDs = async (uids: string[] | undefined): Promise<User[]> => {

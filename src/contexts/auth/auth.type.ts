@@ -1,11 +1,11 @@
+import { User } from '@/types/user.type';
 import { AuthAction } from '@/utils/enum';
-import { User as FirebaseUser } from 'firebase/auth';
 import { Dispatch } from 'react';
 
 export interface AuthState {
   isAuthenticated?: boolean;
   isInitialized?: boolean;
-  user?: FirebaseUser | null;
+  user?: User | null;
 }
 
 export interface PayloadAction<T> {

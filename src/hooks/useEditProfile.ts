@@ -39,9 +39,9 @@ const useEditProfile = () => {
   const navigate = useNavigate();
 
   const { data: cur } = useQuery({
-    queryKey: [GET_SINGLE_USER, user?.uid],
-    queryFn: () => getUserByUID(user?.uid),
-    enabled: !!user?.uid,
+    queryKey: [GET_SINGLE_USER, user?.id],
+    queryFn: () => getUserByUID(user?.id),
+    enabled: !!user?.id,
   });
 
   const { data: skills } = useQuery({
@@ -125,7 +125,12 @@ const useEditProfile = () => {
   }, [skills]);
 
   useEffect(() => {
-    if (currentUser && Array.isArray(currentUser.learn) && Array.isArray(currentUser.teach) && skillOptions.length !== 0) {
+    if (
+      currentUser &&
+      Array.isArray(currentUser.learn) &&
+      Array.isArray(currentUser.teach) &&
+      skillOptions.length !== 0
+    ) {
       const learningSkills = currentUser.learn
         .map((id: string) => skillOptions.filter((skill: Option) => skill.value === id))
         .flat();

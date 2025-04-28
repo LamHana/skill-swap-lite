@@ -15,6 +15,9 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import { useAuth } from '@/hooks';
+import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
+import { useEffect, useState } from 'react';
 
 const searchFormDefaultValues = {
   keyword: '',
@@ -22,6 +25,15 @@ const searchFormDefaultValues = {
 };
 
 const Home = () => {
+  const { user } = useAuth();
+  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+
+  useEffect(() => {
+    if (user && (!user.learn?.length || !user.teach?.length)) {
+      setShowCompleteProfile(true);
+    }
+  }, []);
+
   const form = useForm({ defaultValues: searchFormDefaultValues });
 
   const onSubmit = (e: any) => {
@@ -83,6 +95,16 @@ const Home = () => {
         <p className='text-3xl font-bold'>Top Related</p>
         <PreviewCardList results={Profiles} />
       </div>
+
+      {user && showCompleteProfile && (
+        <UpdateProfileModal
+          open={showCompleteProfile}
+          onOpenChange={(isOpen) => {
+            setShowCompleteProfile(isOpen);
+          }}
+          userId={user.id}
+        />
+      )}
     </>
   );
 };

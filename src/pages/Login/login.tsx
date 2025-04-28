@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signInWithEmail, signInWithGoogle } from '@/services/auth.service';
 import { useAuth } from '@/hooks';
@@ -12,6 +11,10 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import { signIn } from '@/contexts/auth/auth.reducer';
 import Thumbnail from '@/assets/images/thumbnail.png';
 import { Link } from 'react-router-dom';
+import { getUserByUID } from '@/services/user.service';
+import { toast } from 'sonner';
+import InputPassword from '@/components/common/input-password';
+import { LoadingButton } from '@/components/common/loading-button';
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 const loginFormDefaultValues: LoginFormType = {
@@ -37,13 +40,14 @@ const Login = () => {
 
   const onSubmit = async (values: LoginFormType) => {
     loginMutate(values, {
-      onSuccess: (result) => {
+      onSuccess: async (result) => {
         form.reset();
-        console.log('success', result);
-        dispatch(signIn({ user: result.user }));
+        const user = await getUserByUID(result.user.uid);
+        dispatch(signIn({ user }));
+        toast.success('Login successfully');
       },
       onError: (error) => {
-        console.log('error', error);
+        toast.error(error.message);
       },
     });
   };
@@ -52,19 +56,28 @@ const Login = () => {
     loginWithGoogle(undefined, {
       onSuccess: (result) => {
         form.reset();
-        console.log('success', result);
+        dispatch(
+          signIn({
+            user: result.user,
+          }),
+        );
+        toast.success('Login successfully');
       },
       onError: (error) => {
-        console.log('error', error);
+        toast.error(error.message);
       },
     });
   };
 
   return (
-    <div className='flex h-[calc(100vh-96px)] gap-16 items-center justify-center m-6 '>
-      <div className='flex flex-col max-w-md justify-center p-8'>
+    <div className='flex h-[calc(100vh-96px)] flex-col md:flex-row gap-8 md:gap-16 items-center justify-center m-6'>
+      <div className='md:hidden w-full h-[200px] bg-[#C3311F] rounded-lg overflow-hidden mb-4'>
+        <img src={Thumbnail} alt='login' className='w-full h-full object-contain rounded-lg' />
+      </div>
+
+      <div className='flex flex-col w-full max-w-md justify-center p-4 md:p-8'>
         <div className='mb-8'>
-          <h1 className='text-3xl font-bold'>Sign In</h1>
+          <h1 className='text-2xl md:text-3xl font-bold'>Sign In</h1>
           <p className='text-muted-foreground'>Teach What You Know, Learn What You Love</p>
         </div>
 
@@ -77,7 +90,7 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} type='email' placeholder='Enter your email' />
+                    <Input {...field} type='email' placeholder='Email' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -91,7 +104,7 @@ const Login = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type='password' placeholder='Enter your password' />
+                    <InputPassword placeholder='••••••••' field={{ ...field }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,31 +112,35 @@ const Login = () => {
             />
 
             <div className='space-y-4'>
-              <Button type='submit' className='w-full'>
-                {isLoginPending ? 'Logging in...' : 'Login'}
-              </Button>
+              <LoadingButton type='submit' className='w-full' loading={isLoginPending}>
+                Login
+              </LoadingButton>
 
-              <Button type='button' variant='outline' className='w-full' onClick={handleGoogleLogin}>
-                {isGoogleLoginPending ? (
-                  'Signing in with Google...'
-                ) : (
-                  <>
-                    <FaGoogle className='mr-2' />
-                    Sign in with Google
-                  </>
-                )}
-              </Button>
+              <LoadingButton
+                type='button'
+                variant='outline'
+                className='w-full'
+                onClick={handleGoogleLogin}
+                loading={isGoogleLoginPending}
+              >
+                <FaGoogle className='mr-2' />
+                Sign in with Google
+              </LoadingButton>
             </div>
           </form>
         </Form>
         <div className='mt-4'>
           <p className='text-muted-foreground'>
-            Don't have an account? <Link to='/register'>Register</Link>
+            Don't have an account?{' '}
+            <Link to='/register' className='text-primary'>
+              Register
+            </Link>
           </p>
         </div>
       </div>
-      <div className='flex  items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
-        <img src={Thumbnail} alt='login' className='w-full h-[57%] object-contain rounded-lg ' />
+
+      <div className='hidden md:flex items-center justify-end flex-col h-full bg-[#C3311F] rounded-lg overflow-hidden'>
+        <img src={Thumbnail} alt='login' className='w-full h-[57%] object-contain rounded-lg' />
       </div>
     </div>
   );

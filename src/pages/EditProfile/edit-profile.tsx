@@ -97,7 +97,11 @@ const EditProfile = () => {
             required={true}
           />
           <div className='float-end flex gap-3 xl:gap-6'>
-            <Button onClick={handleBackButtonClick} variant={'outline'} className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
+            <Button
+              onClick={handleBackButtonClick}
+              variant={'outline'}
+              className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'
+            >
               Cancel
             </Button>
             <Button type='submit' className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>

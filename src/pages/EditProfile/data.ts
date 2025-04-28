@@ -18,14 +18,14 @@ export const allskills: Skill[] = [
 ];
 
 export const fakeUser: User = {
-    id: '1',
-    email: 'example@gmail.com',
-    fullName: 'Joe',
-    bio: 'Hello',
-    connections: [],
-    learn: ['typescript', 'mongodb'],
-    teach: ['angular'],
-    requestConnections: [],
-    sentConnections: [],
-    photoURL: '',
-  };
+  id: '1',
+  email: 'example@gmail.com',
+  fullName: 'Joe',
+  bio: 'Hello',
+  connections: [],
+  learn: ['typescript', 'mongodb'],
+  teach: ['angular'],
+  requestConnections: [],
+  sentConnections: [],
+  photoURL: '',
+};

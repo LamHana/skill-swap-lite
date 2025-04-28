@@ -3,14 +3,16 @@ import { Navigate } from 'react-router-dom';
 
 import { config } from '@/config/app';
 import { useAuth } from '@/hooks';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 // AuthGuard is component that will be used to protect routes
 // that should only be accessed by authenticated users.
 const AuthGuard: FC<PropsWithChildren> = ({ children }) => {
-  const { isInitialized, isAuthenticated } = useAuth();
+  const { isInitialized, isAuthenticated, user } = useAuth();
 
-  if (!isInitialized) return <div>Loading...</div>;
+  if (!isInitialized) return <LoadingSpinner size='lg' />;
   if (!isAuthenticated) return <Navigate to={config.routes.landing} replace />;
+  if (!user) return <Navigate to={config.routes.landing} replace />;
   return <>{children}</>;
 };
 
