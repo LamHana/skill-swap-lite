@@ -18,14 +18,16 @@ import { UserRoundX } from 'lucide-react';
 import '../index.css';
 import { useState } from 'react';
 import { useAuth } from '@/hooks';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { arrayRemove } from 'firebase/firestore';
 import { updateUser } from '@/services/user.service';
 
 const DetailCard = ({ user }: { user: User }) => {
-  const [open, setOpen] = useState(false);
   let matchPercentage = 100;
+  const [open, setOpen] = useState(false);
   const { user: currentUser } = useAuth();
+  const queryClient = useQueryClient();
+
   if (!currentUser) return;
 
   const { mutate: disconnectedMutate, status: disconnectedStatus } = useMutation({
@@ -34,6 +36,10 @@ const DetailCard = ({ user }: { user: User }) => {
         updateUser(user.id, { connections: arrayRemove(currentUser.uid) }),
         updateUser(currentUser.uid, { connections: arrayRemove(user.id) }),
       ]);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['connections', currentUser.uid] });
+      setOpen(false);
     },
   });
 
