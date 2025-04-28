@@ -1,3 +1,5 @@
+import { FieldValue } from 'firebase/firestore';
+
 export interface User {
   id: string;
   fullName: string;
@@ -5,9 +7,9 @@ export interface User {
   bio: string;
   learn: string[];
   teach: string[];
-  connections: string[];
-  requestConnections: string[];
-  sentConnections: string[];
+  connections: string[] | FieldValue;
+  requestConnections: string[] | FieldValue;
+  sentConnections: string[] | FieldValue;
   photoURL: string;
 }
 

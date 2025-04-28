@@ -7,22 +7,22 @@ const Profile = () => {
   const { id, currentUser, connections, learn, teach, handleEditProfile } = useGetSingleProfile();
   let actionButtonsGroup;
 
-  if (id) {
-    if (currentUser?.connections.includes(id)) {
-      actionButtonsGroup = (
-        <div className='flex gap-4 xl:gap-6'>
-          <Button className='grow'>Message</Button>
-          <Button variant={'outline'} className='grow'>
-            Disconnect
-          </Button>
-        </div>
-      );
-    } else {
-      actionButtonsGroup = <Button>Connect</Button>;
-    }
-  } else {
-    actionButtonsGroup = <Button onClick={handleEditProfile}>Edit profile</Button>;
-  }
+  // if (id) {
+  //   if (currentUser?.connections.includes(id)) {
+  //     actionButtonsGroup = (
+  //       <div className='flex gap-4 xl:gap-6'>
+  //         <Button className='grow'>Message</Button>
+  //         <Button variant={'outline'} className='grow'>
+  //           Disconnect
+  //         </Button>
+  //       </div>
+  //     );
+  //   } else {
+  //     actionButtonsGroup = <Button>Connect</Button>;
+  //   }
+  // } else {
+  //   actionButtonsGroup = <Button onClick={handleEditProfile}>Edit profile</Button>;
+  // }
 
   return (
     <div className='mt-5 mb-10 md:mt-8 md:mb-16 md:px-20 xl:mt-16 xl:mb-20 m-auto xl:px-40 w-full'>
