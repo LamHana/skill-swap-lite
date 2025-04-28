@@ -10,6 +10,7 @@ import useEditProfile from '@/hooks/useEditProfile';
 const EditProfile = () => {
   const {
     form,
+    currentUser,
     avatar,
     learn,
     teach,
@@ -22,19 +23,20 @@ const EditProfile = () => {
     handleTeachSkillsChange,
     onSubmit,
     fileInputRef,
+    handleBackButtonClick,
   } = useEditProfile();
-
-  console.log({teachAvailable})
 
   return (
     <div className='mt-5 mb-10 md:mt-8 md:mb-16 md:px-20 xl:mt-10 xl:mb-20 m-auto xl:px-40 w-full'>
-      <Button variant={'ghost'} className='mb-6 md:mb-8 xl:mb-10'>
+      <Button variant={'ghost'} className='mb-6 md:mb-8 xl:mb-10' onClick={handleBackButtonClick}>
         <ChevronLeft /> Back
       </Button>
       <div className='flex flex-col gap-6 mb-6 md:flex-row md:mb-8 items-center md:justify-between xl:mb-10'>
         <Avatar className='h-40 w-40 xl:h-52 xl:w-52'>
           <AvatarImage src={avatar || ''} alt='shadcn' />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback className='bg-primary text-primary-foreground font-bold text-6xl'>
+            {currentUser?.fullName.charAt(0)}
+          </AvatarFallback>
         </Avatar>
         <div className='h-min flex gap-3 xl:gap-6 content-center'>
           <Button className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6' onClick={handleSelectPicture}>
@@ -95,7 +97,7 @@ const EditProfile = () => {
             required={true}
           />
           <div className='float-end flex gap-3 xl:gap-6'>
-            <Button variant={'outline'} className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
+            <Button onClick={handleBackButtonClick} variant={'outline'} className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
               Cancel
             </Button>
             <Button type='submit' className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>

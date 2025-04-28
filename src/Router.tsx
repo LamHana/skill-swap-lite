@@ -72,18 +72,22 @@ const router = createBrowserRouter([
               Component: (await import('./pages/Chat')).default,
             }),
           },
-        ],
-      },
-      {
-        path: config.routes.editProfile,
-        lazy: async () => ({
-          Component: (await import('./layout/MainLayout')).default,
-        }),
-        children: [
           {
-            index: true,
+            path: config.routes.editProfile,
             lazy: async () => ({
               Component: (await import('./pages/EditProfile')).default,
+            }),
+          },
+          {
+            path: config.routes.profile,
+            lazy: async () => ({
+              Component: (await import('./pages/Profile')).default,
+            }),
+          },
+          {
+            path: config.routes.user,
+            lazy: async () => ({
+              Component: (await import('./pages/Profile')).default,
             }),
           },
         ],
