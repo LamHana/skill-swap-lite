@@ -6,12 +6,10 @@ import useConnections from '@/hooks/useConnections';
 const MyNetwork = () => {
   const invitations = Profiles;
 
-  const { data: users = [], isLoading, isError } = useConnections();
-
   return (
     <div className='flex flex-col items-start gap-4 mb-8 p-8 w-full'>
       <Invitations users={invitations} />
-      <DetailCardList users={users} />
+      <DetailCardList />
     </div>
   );
 };

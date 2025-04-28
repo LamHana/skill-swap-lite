@@ -19,7 +19,7 @@ import '../index.css';
 import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { arrayRemove } from 'firebase/firestore';
+import { arrayRemove, FieldValue } from 'firebase/firestore';
 import { updateUser } from '@/services/user.service';
 
 const DetailCard = ({ user }: { user: User }) => {
@@ -33,13 +33,17 @@ const DetailCard = ({ user }: { user: User }) => {
   const { mutate: disconnectedMutate, status: disconnectedStatus } = useMutation({
     mutationFn: () => {
       return Promise.all([
-        updateUser(user.id, { connections: arrayRemove(currentUser.uid) }),
-        updateUser(currentUser.uid, { connections: arrayRemove(user.id) }),
+        updateUser(user.id, { connections: arrayRemove(currentUser.id) }),
+        updateUser(currentUser.id, { connections: arrayRemove(user.id) }),
       ]);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['connections', currentUser.uid] });
+      queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      queryClient.refetchQueries({ queryKey: ['connections', user.id] });
       setOpen(false);
+    },
+    onError: (error) => {
+      console.error('Disconnect failed:', error);
     },
   });
 
@@ -51,6 +55,16 @@ const DetailCard = ({ user }: { user: User }) => {
     });
   };
 
+  // Helper function to safely handle potentially non-string values
+  const asString = (value: string | FieldValue): string => {
+    return typeof value === 'string' ? value : '';
+  };
+
+  // Helper function to safely handle potentially non-array values
+  const asStringArray = (value: string[] | FieldValue): string[] => {
+    return Array.isArray(value) ? value : [];
+  };
+
   return (
     <>
       <Card className='w-full rounded-xl p-4 relative overflow-hidden'>
@@ -60,11 +74,11 @@ const DetailCard = ({ user }: { user: User }) => {
 
         <div className='flex flex-col md:flex-row gap-4'>
           <Avatar className='h-[80px] w-[80px] md:h-[80px] md:w-[80px] rounded-md border'>
-            <AvatarImage src={user.photoURL || '/placeholder.svg'} alt={user.fullName} />
+            <AvatarImage src={user.photoURL || '/placeholder.svg'} alt={asString(user.fullName)} />
             <AvatarFallback className='rounded-md text-xs'>
               {user.photoURL
                 ? '100 x 100'
-                : user.fullName
+                : asString(user.fullName)
                     .split(' ')
                     .map((n) => n[0])
                     .join('')}
@@ -74,28 +88,32 @@ const DetailCard = ({ user }: { user: User }) => {
           <div className='flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4'>
             <div className='flex-1'>
               <CardHeader className='p-0 pb-2'>
-                <h2 className='text-base md:text-lg font-bold'>{user.fullName}</h2>
+                <h2 className='text-base md:text-lg font-bold'>{asString(user.fullName)}</h2>
               </CardHeader>
 
               <CardContent className='p-0 space-y-4'>
-                <p className='text-xs md:text-base'>{user.bio}</p>
+                <p className='text-xs md:text-base'>{asString(user.bio)}</p>
 
                 <div className='flex flex-col md:flex-row gap-6 items-start md:items-center'>
                   <div className='flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center'>
                     <p className='font-bold text-xs md:text-base'>Teaching</p>
                     <div className='flex flex-row gap-2 items-center'>
-                      {user.teach.slice(0, 2).map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant='outline'
-                          className='rounded-full px-4 py-1 text-xs md:text-sm border-secondary-foreground'
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
+                      {asStringArray(user.teach)
+                        .slice(0, 2)
+                        .map((skill) => (
+                          <Badge
+                            key={skill}
+                            variant='outline'
+                            className='rounded-full px-4 py-1 text-xs md:text-sm border-secondary-foreground'
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
 
-                      {user.teach.length > 2 && (
-                        <p className='text-xs md:text-sm font-semibold text-zinc-500'>+{user.teach.length - 2}</p>
+                      {asStringArray(user.teach).length > 2 && (
+                        <p className='text-xs md:text-sm font-semibold text-zinc-500'>
+                          +{asStringArray(user.teach).length - 2}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -103,18 +121,22 @@ const DetailCard = ({ user }: { user: User }) => {
                   <div className='flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center'>
                     <p className='font-bold text-xs md:text-base'>Learning</p>
                     <div className='flex flex-row gap-2 items-center'>
-                      {user.learn.slice(0, 2).map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant='outline'
-                          className='rounded-full px-4 py-1 text-xs md:text-sm border-secondary-foreground'
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
+                      {asStringArray(user.learn)
+                        .slice(0, 2)
+                        .map((skill) => (
+                          <Badge
+                            key={skill}
+                            variant='outline'
+                            className='rounded-full px-4 py-1 text-xs md:text-sm border-secondary-foreground'
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
 
-                      {user.learn.length > 2 && (
-                        <p className='text-xs md:text-sm font-semibold text-zinc-500'>+{user.learn.length - 2}</p>
+                      {asStringArray(user.learn).length > 2 && (
+                        <p className='text-xs md:text-sm font-semibold text-zinc-500'>
+                          +{asStringArray(user.learn).length - 2}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -156,7 +178,8 @@ const DetailCard = ({ user }: { user: User }) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Remove connection</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove {user.fullName} as a connection? Don't worry, they won't be notified.
+              Are you sure you want to remove {asString(user.fullName)} as a connection? Don't worry, they won't be
+              notified.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
