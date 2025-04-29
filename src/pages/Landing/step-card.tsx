@@ -1,6 +1,6 @@
 import { StepCardType } from './constants';
 
-type StepCardProps = StepCardType;
+interface StepCardProps extends StepCardType {}
 
 const StepCard: React.FC<StepCardProps> = ({ title, subtitle, Icon }) => {
   return (

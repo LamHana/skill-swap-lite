@@ -1,8 +1,8 @@
 import { HeroCardInfoType } from './constants';
 
-type HeroCardProps = {
+interface HeroCardProps {
   info: HeroCardInfoType;
-};
+}
 
 const HeroCard: React.FC<HeroCardProps> = ({ info }) => {
   return (
