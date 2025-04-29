@@ -37,6 +37,7 @@ export default function Chat() {
   const [messagesByContact, setMessagesByContact] = useState<Record<string, Message[]>>({});
   const [inputValue, setInputValue] = useState('');
   const messageEndRef = useRef<HTMLDivElement>(null!);
+  const inputRef = useRef<HTMLInputElement>(null!);
 
   // ---------- 1) Ensure chat rooms exist & then subscribe realtime ----------
   useEffect(() => {
@@ -176,6 +177,13 @@ export default function Chat() {
     }
   };
 
+  // mỗi khi selectedContact thay đổi → focus
+  useEffect(() => {
+    if (selectedContact) {
+      inputRef.current?.focus();
+    }
+  }, [selectedContact]);
+
   // ---------- 5) Render cả Mobile & Desktop ----------
   return (
     <div className='flex flex-col h-[calc(100vh-64px)] w-full p-4 gap-4'>
@@ -190,6 +198,7 @@ export default function Chat() {
         onSend={handleSendMessage}
         onKeyDown={handleKeyDown}
         endRef={messageEndRef}
+        inputRef={inputRef}
       />
       <DesktopChatView
         selectedContact={selectedContact}
@@ -201,6 +210,7 @@ export default function Chat() {
         onSend={handleSendMessage}
         onKeyDown={handleKeyDown}
         endRef={messageEndRef}
+        inputRef={inputRef}
       />
     </div>
   );
