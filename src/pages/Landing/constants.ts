@@ -1,4 +1,19 @@
-import { ArrowLeftRight, LucideIcon, Search, UserRoundPlus } from 'lucide-react';
+import {
+  ArrowLeftRight,
+  Brush,
+  Code,
+  CookingPot,
+  GraduationCap,
+  HeartPulse,
+  Languages,
+  Lollipop,
+  LucideIcon,
+  MessageCirclePlus,
+  Music,
+  Search,
+  UserRoundPlus,
+  Volleyball,
+} from 'lucide-react';
 
 export type HeroCardInfoType = {
   id: number;
@@ -24,6 +39,12 @@ export type StepCardType = {
 };
 
 export type ContributorsType = { name: string; github: string };
+
+export type MarqueeLogosType = {
+  id: number;
+  Icon: LucideIcon;
+  name: string;
+};
 
 export const HERO_CARD_INFO: HeroCardInfoType[] = [
   {
@@ -124,4 +145,20 @@ export const CONTRIBUTORS: ContributorsType[] = [
     name: 'Anh Nguyen',
     github: 'https://github.com/alicee-19',
   },
+];
+
+export const MARQUEE_LOGOS_TOP: MarqueeLogosType[] = [
+  { id: 1, Icon: CookingPot, name: 'Cooking' },
+  { id: 2, Icon: Volleyball, name: 'Sports' },
+  { id: 3, Icon: Languages, name: 'Languages' },
+  { id: 4, Icon: Brush, name: 'Art/Creativity' },
+  { id: 5, Icon: Music, name: 'Music' },
+];
+
+export const MARQUEE_LOGOS_BOTTOM: MarqueeLogosType[] = [
+  { id: 1, Icon: HeartPulse, name: 'Care/Sitting' },
+  { id: 2, Icon: Lollipop, name: 'Beauty/Health' },
+  { id: 3, Icon: Code, name: 'Code' },
+  { id: 4, Icon: GraduationCap, name: 'Education' },
+  { id: 5, Icon: MessageCirclePlus, name: 'Others' },
 ];
