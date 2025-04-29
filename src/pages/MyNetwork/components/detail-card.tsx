@@ -39,7 +39,6 @@ const DetailCard = ({ user }: { user: User }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
-      queryClient.refetchQueries({ queryKey: ['connections', user.id] });
       setOpen(false);
     },
     onError: (error) => {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import useAuth from './useAuth';
-import { getUsersByUIDs } from '@/services/user.service';
+import { getUserByUID, getUsersByUIDs } from '@/services/user.service';
 import { User } from '@/types/user.type';
 import { getSkills } from '@/services/skill.service';
 import { Skill } from '@/types/skill.type';
@@ -15,18 +15,18 @@ const useConnections = () => {
         throw new Error('User not logged in');
       }
 
-      // // get the current user data
-      // const userData = await getUserByUID(user.id);
+      // get the current user data
+      const userData = await getUserByUID(user.id);
 
-      // if (!userData) {
-      //   throw new Error('User data not found');
-      // }
+      if (!userData) {
+        throw new Error('User data not found');
+      }
 
-      // const connectionIds = (userData.connections ?? []) as string[];
+      const connectionIds = (userData.connections ?? []) as string[];
 
-      // if (connectionIds.length === 0) {
-      //   return [];
-      // }
+      if (connectionIds.length === 0) {
+        return [];
+      }
 
       // get all skills to create a mapping
       const skills = await getSkills();
@@ -39,7 +39,7 @@ const useConnections = () => {
       );
 
       // get the connected users data
-      const connectedUsers = await getUsersByUIDs(user.connections as string[]);
+      const connectedUsers = await getUsersByUIDs(connectionIds as string[]);
 
       // map skills to their names
       return connectedUsers.map((connectedUser) => {
@@ -61,6 +61,9 @@ const useConnections = () => {
       });
     },
     enabled: !!user?.id,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 };
 
