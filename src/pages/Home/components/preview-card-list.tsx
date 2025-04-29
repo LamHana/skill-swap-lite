@@ -31,8 +31,8 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
   const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
     mutationFn: ({ receiverUid }: { receiverUid: string }) => {
       return Promise.all([
-        updateUser(receiverUid, { requestConnections: arrayRemove(currentUser.uid) }),
-        updateUser(currentUser.uid, { sentConnections: arrayRemove(receiverUid) }),
+        updateUser(receiverUid, { requestConnections: arrayRemove(currentUser.id) }),
+        updateUser(currentUser.id, { sentConnections: arrayRemove(receiverUid) }),
       ]);
     },
   });
@@ -58,8 +58,8 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
           const { mutate: connectMutate, status: connectStatus } = useMutation({
             mutationFn: () => {
               return Promise.all([
-                updateUser(result.id, { requestConnections: arrayUnion(currentUser.uid) }),
-                updateUser(currentUser.uid, { sentConnections: arrayUnion(result.id) }),
+                updateUser(result.id, { requestConnections: arrayUnion(currentUser.id) }),
+                updateUser(currentUser.id, { sentConnections: arrayUnion(result.id) }),
               ]);
             },
           });
