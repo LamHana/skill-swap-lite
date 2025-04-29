@@ -20,6 +20,16 @@ import {
 import firebase from '@/config/firebase';
 const db = firebase.db;
 
+function formatTimestamp(ts: Timestamp): string {
+  const date = ts.toDate();
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12 || 12;
+  const mins = minutes < 10 ? `0${minutes}` : minutes;
+  return `${hours}:${mins}${ampm}`;
+}
+
 export default function Chat() {
   const { user } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -77,24 +87,34 @@ export default function Chat() {
 
         setMessagesByContact(msgsMap);
 
-        // load info contacts
-        const loaded: Contact[] = await Promise.all(
+        // 1.d) Sau khi có msgsMap và ids…
+        const contactsWithTs: Array<{ contact: Contact; millis: number }> = await Promise.all(
           Array.from(ids).map(async (contactId) => {
             const uSnap = await getDoc(doc(db, 'users', contactId));
             const udata = uSnap.exists() ? uSnap.data()! : {};
-            const msgs = msgsMap[contactId] || [];
-            const last = msgs[msgs.length - 1];
-            return {
+            const rawMsgs = msgsMap[contactId] || [];
+            const lastMsg = rawMsgs[rawMsgs.length - 1];
+
+            // Tính timestamp dưới dạng milliseconds để sort
+            const millis = lastMsg ? (lastMsg.timestamp as Timestamp).toDate().getTime() : 0;
+
+            const contact: Contact = {
               id: contactId,
               name: udata.fullName || 'Unknown',
               avatar: udata.photoURL || '',
-              lastMessage: last?.content || '',
-              timestamp: last ? new Date((last.timestamp as any).seconds * 1000).toLocaleTimeString() : '',
+              lastMessage: lastMsg?.content || '',
+              timestamp: lastMsg ? formatTimestamp(lastMsg.timestamp as Timestamp) : '',
               date: '',
             };
+            return { contact, millis };
           }),
         );
-        setContacts(loaded);
+
+        // 1.e) Sort giảm dần theo millis
+        contactsWithTs.sort((a, b) => b.millis - a.millis);
+
+        // 1.f) Cập nhật state chỉ với contact đã sort
+        setContacts(contactsWithTs.map((x) => x.contact));
       });
 
       return () => unsub();
@@ -116,15 +136,6 @@ export default function Chat() {
     }
   }, [messagesByContact, selectedContact]);
 
-  const formatTime = () => {
-    const now = new Date();
-    let h = now.getHours();
-    const m = now.getMinutes();
-    const suffix = h >= 12 ? 'pm' : 'am';
-    h = h % 12 || 12;
-    return `${h}:${m < 10 ? '0' + m : m}${suffix}`;
-  };
-
   // ---------- 4) Gửi tin nhắn vào đúng chat room ----------
   const handleSendMessage = async () => {
     if (!inputValue.trim() || !selectedContact || !user?.id) return;
@@ -141,8 +152,23 @@ export default function Chat() {
       }),
     });
 
+    // cập nhật contact list ngay
+    setContacts((prev) => {
+      // lọc bỏ contact cũ
+      const rest = prev.filter((c) => c.id !== selectedContact.id);
+      // build lại contact vừa chat với lastMessage/timestamp mới
+      const updated: Contact = {
+        ...selectedContact,
+        lastMessage: inputValue,
+        timestamp: formatTimestamp(Timestamp.now()),
+      };
+      // đưa lên đầu
+      return [updated, ...rest];
+    });
+
     setInputValue('');
   };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();

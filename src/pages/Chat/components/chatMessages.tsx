@@ -1,6 +1,18 @@
+// chatMessages.tsx
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import type { Contact, Message } from './types';
+import { Timestamp } from 'firebase/firestore';
+
+function formatTimestamp(ts: Timestamp) {
+  const date = ts.toDate();
+  let h = date.getHours();
+  const m = date.getMinutes();
+  const ampm = h >= 12 ? 'pm' : 'am';
+  h = h % 12 || 12;
+  const mins = m < 10 ? `0${m}` : m;
+  return `${h}:${mins}${ampm}`;
+}
 
 export function ChatMessages({
   messages,
@@ -12,11 +24,17 @@ export function ChatMessages({
   endRef: React.RefObject<HTMLDivElement>;
 }) {
   return (
-    <div className='flex-1 overflow-auto p-4 flex flex-col gap-1'>
+    <div className='flex-1 overflow-auto p-4 flex flex-col'>
       {messages.map((message) => (
-        <div key={message.id} className={cn('flex', message.sender === 'user' ? 'justify-end' : 'justify-start')}>
+        <div
+          key={message.id}
+          className={cn(
+            'flex items-end mb-2', // cách các message
+            message.sender === 'user' ? 'justify-end' : 'justify-start',
+          )}
+        >
           {message.sender === 'contact' && (
-            <Avatar className='h-8 w-8 mr-2 flex-shrink-0 self-end'>
+            <Avatar className='h-8 w-8 mr-2 flex-shrink-0'>
               <AvatarImage src={contact.avatar} />
               <AvatarFallback className='bg-muted'>
                 {contact.name
@@ -26,13 +44,17 @@ export function ChatMessages({
               </AvatarFallback>
             </Avatar>
           )}
+
           <div
             className={cn(
-              'max-w-[70%] rounded-lg px-4 py-2 text-sm',
-              message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted',
+              'flex flex-col gap-1 max-w-[70%] rounded-xl p-3',
+              message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground',
             )}
           >
-            {message.content}
+            <p className='break-words'>{message.content}</p>
+            <span className={cn('text-[0.65rem] opacity-75', message.sender === 'user' ? 'self-end' : 'self-start')}>
+              {formatTimestamp(message.timestamp)}
+            </span>
           </div>
         </div>
       ))}
