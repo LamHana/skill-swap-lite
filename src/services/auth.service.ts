@@ -7,6 +7,7 @@ import {
   UserCredential,
   updateProfile,
   User,
+  sendEmailVerification,
 } from 'firebase/auth';
 import updateDocument, { getDocument, setDocument } from './firebase.service';
 import { RegisterFormData } from '@/pages/Register/register.schema';
@@ -80,10 +81,12 @@ export const signInWithGoogle = async () => {
 export const signUpWithEmail = async (body: RegisterFormData) => {
   const result = await createUserWithEmailAndPassword(config.firebase.auth, body.email, body.password);
 
+  await sendEmailVerification(result.user);
+  console.log('result', result.user);
+
   await updateProfile(result.user, {
     displayName: body.fullname,
   });
-
   await setDocument(config.collections.users, result.user.uid, {
     fullName: body.fullname,
     email: body.email,

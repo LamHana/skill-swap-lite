@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 import { useSkillValidation } from '@/hooks/useSkillValidation';
 import { toast } from 'sonner';
 import InputPassword from '@/components/common/input-password';
+import { useAuth } from '@/hooks';
+import { signIn } from '@/contexts/auth/auth.reducer';
 
 const registerFormDefaultValues: RegisterFormData = {
   fullname: '',
@@ -24,6 +26,7 @@ const registerFormDefaultValues: RegisterFormData = {
 };
 
 const Register = () => {
+  const { dispatch } = useAuth();
   const [skillOptions, setSkillOptions] = useState<Option[]>([]);
   const { validateSkills, getFilteredOptions } = useSkillValidation();
 
@@ -46,9 +49,10 @@ const Register = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     registerMutate(data, {
-      onSuccess: () => {
+      onSuccess: (result) => {
         form.reset();
         toast.success('Register successfully');
+        dispatch(signIn({ userFirebase: result.user }));
       },
       onError: (error) => {
         toast.error(error.message);

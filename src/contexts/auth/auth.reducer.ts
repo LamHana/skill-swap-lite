@@ -4,13 +4,14 @@ import { AuthState, PayloadAction, ReducerHandler } from './auth.type';
 // Reducer
 const reducerHandlers: ReducerHandler = {
   INITIALIZE: (state: AuthState, action: PayloadAction<AuthState>): AuthState => {
-    const { isAuthenticated, user } = action.payload;
+    const { isAuthenticated, user, userFirebase } = action.payload;
 
     return {
       ...state,
       isAuthenticated,
       isInitialized: true,
       user,
+      userFirebase,
     };
   },
 

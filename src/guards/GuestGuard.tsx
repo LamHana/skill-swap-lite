@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import { config } from '@/config/app';
 import { useAuth } from '@/hooks';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 // GuestGuard is a component that will be used to protect routes
 // that should only be accessed by unauthenticated users.
 const GuestGuard: FC<PropsWithChildren> = ({ children }) => {

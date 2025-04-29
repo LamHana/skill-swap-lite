@@ -4,12 +4,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { config } from '@/config/app';
 import { initialize, reducer } from './auth.reducer';
 import { getUserByUID } from '@/services/user.service';
-import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
+import { setDocument } from '@/services/firebase.service';
 
 const initialState: AuthState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  userFirebase: null,
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,18 +30,35 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
             isAuthenticated: false,
             isInitialized: true,
             user: null,
+            userFirebase: null,
           }),
         );
         return;
       }
 
-      const userData = await getUserByUID(user.uid);
+      let userData = await getUserByUID(user.uid);
+      if (!userData) {
+        userData = {
+          id: user.uid,
+          email: user.email || '',
+          fullName: user.displayName || '',
+          photoURL: user.photoURL || '',
+          bio: '',
+          learn: [],
+          teach: [],
+          connections: [],
+          requestConnections: [],
+          sentConnections: [],
+        };
+        await setDocument('users', user.uid, userData);
+      }
 
       dispatch(
         initialize({
           isAuthenticated: true,
           isInitialized: true,
           user: userData,
+          userFirebase: user,
         }),
       );
     });
