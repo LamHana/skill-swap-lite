@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import type { Contact, Message } from './types';
 import { Timestamp } from 'firebase/firestore';
+import './style.css';
 
 function formatTimestamp(ts: Timestamp) {
   const date = ts.toDate();
@@ -24,7 +25,7 @@ export function ChatMessages({
   endRef: React.RefObject<HTMLDivElement>;
 }) {
   return (
-    <div className='flex-1 overflow-auto p-4 flex flex-col'>
+    <div className='chat-scrollbar flex-1 overflow-auto p-4 flex flex-col'>
       {messages.map((message) => (
         <div
           key={message.id}

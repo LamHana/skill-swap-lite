@@ -14,7 +14,7 @@ export function MessageInput({
   onKeyDown: (e: React.KeyboardEvent) => void;
 }) {
   return (
-    <div className='border-t border-border rounded-lg p-3 flex items-center gap-2 mt-auto sticky bottom-0 bg-white'>
+    <div className='border-t border-border rounded-lg p-3 flex items-center gap-2 mt-auto sticky bottom-0'>
       <Input
         placeholder='Type something here...'
         value={value}
