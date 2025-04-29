@@ -16,6 +16,7 @@ type MobileChatViewProps = {
   onSend: () => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   endRef: React.RefObject<HTMLDivElement>;
+  inputRef: React.RefObject<HTMLInputElement>;
 };
 
 export function MobileChatView({
@@ -29,6 +30,7 @@ export function MobileChatView({
   onSend,
   onKeyDown,
   endRef,
+  inputRef,
 }: MobileChatViewProps) {
   return (
     <>
@@ -47,7 +49,13 @@ export function MobileChatView({
         <div className='w-full h-full flex flex-col rounded-lg border-2 border-primary md:hidden overflow-hidden'>
           <ChatHeader contact={selectedContact} onBack={onBack} />
           <ChatMessages messages={messages} contact={selectedContact} endRef={endRef} />
-          <MessageInput value={inputValue} onChange={onInputChange} onSend={onSend} onKeyDown={onKeyDown} />
+          <MessageInput
+            ref={inputRef}
+            value={inputValue}
+            onChange={onInputChange}
+            onSend={onSend}
+            onKeyDown={onKeyDown}
+          />
         </div>
       )}
     </>

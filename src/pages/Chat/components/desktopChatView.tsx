@@ -14,6 +14,7 @@ interface DesktopChatViewProps {
   onSend: () => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   endRef: React.RefObject<HTMLDivElement>;
+  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 export function DesktopChatView({
@@ -26,6 +27,7 @@ export function DesktopChatView({
   onSend,
   onKeyDown,
   endRef,
+  inputRef,
 }: DesktopChatViewProps) {
   return (
     <div className='hidden md:flex flex-row h-full w-full gap-4'>
@@ -36,7 +38,13 @@ export function DesktopChatView({
           <>
             <ChatHeader contact={selectedContact} />
             <ChatMessages messages={messages} contact={selectedContact} endRef={endRef} />
-            <MessageInput value={inputValue} onChange={onInputChange} onSend={onSend} onKeyDown={onKeyDown} />
+            <MessageInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={onInputChange}
+              onSend={onSend}
+              onKeyDown={onKeyDown}
+            />
           </>
         )}
       </div>
