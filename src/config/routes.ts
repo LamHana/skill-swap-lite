@@ -9,6 +9,7 @@ const routes = {
   notFound: '*',
   landing: '/landing',
   user: '/:id',
+  notVerifyEmail: '/not-verify-email',
 };
 
 export default routes;

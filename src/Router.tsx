@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { config } from './config/app';
 import AuthGuard from './guards/AuthGuard';
 import GuestGuard from './guards/GuestGuard';
+import { VerifiedEmailGuard } from './guards';
 
 const router = createBrowserRouter([
   // Guest routes
@@ -43,9 +44,11 @@ const router = createBrowserRouter([
   // Auth routes
   {
     element: (
-      <AuthGuard>
-        <Outlet />
-      </AuthGuard>
+      <VerifiedEmailGuard>
+        <AuthGuard>
+          <Outlet />
+        </AuthGuard>
+      </VerifiedEmailGuard>
     ),
     children: [
       {
@@ -94,7 +97,12 @@ const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: config.routes.notVerifyEmail,
+    lazy: async () => ({
+      Component: (await import('./pages/NotVerifyEmail')).default,
+    }),
+  },
   // Not found route
   {
     path: config.routes.notFound,
