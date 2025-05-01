@@ -35,7 +35,8 @@ const CustomButtonConnect: React.FC<CustomButtonConnectProps> = ({
     },
   });
 
-  const handleConnect = () => {
+  const handleConnect = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     if (!listPendingUsers[userId]) {
       setListPendingUsers({ ...listPendingUsers, [userId]: true });
       connectMutate();

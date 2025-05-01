@@ -15,12 +15,12 @@ const useGetSingleProfile = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
-  const uid = id ? id : user?.uid;
+  const uid = id ? id : user?.id;
 
   const { data: cur } = useQuery({
     queryKey: [GET_SINGLE_USER, uid],
     queryFn: () => getUserByUID(uid),
-    enabled: !!user?.uid,
+    enabled: !!user?.id,
   });
 
   const { data: skills } = useQuery({
