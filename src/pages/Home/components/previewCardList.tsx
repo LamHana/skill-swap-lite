@@ -9,13 +9,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks';
 import { updateUser } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
 
-import { arrayRemove, arrayUnion } from 'firebase/firestore';
+import { arrayRemove } from 'firebase/firestore';
 import { useState } from 'react';
+
+import CustomButtonConnect from './custom-button-connect';
 
 import { useMutation } from '@tanstack/react-query';
 
@@ -25,11 +26,11 @@ interface PreviewCardListProps {
 
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
   const { user: currentUser } = useAuth();
-  
+
   const [clickUser, setClickUser] = useState<string | null>(null);
   const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>({});
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  
+
   if (!currentUser) return;
   const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
     mutationFn: ({ receiverUid }: { receiverUid: string }) => {
@@ -57,48 +58,28 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
   return (
     <div className='container mx-auto py-8'>
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8'>
-        {results.map((result) => {
-          const { mutate: connectMutate, status: connectStatus } = useMutation({
-            mutationFn: () => {
-              return Promise.all([
-                updateUser(result.id, { requestConnections: arrayUnion(currentUser.id) }),
-                updateUser(currentUser.id, { sentConnections: arrayUnion(result.id) }),
-              ]);
-            },
-          });
-
-          const handleConnect = () => {
-            if (!listPendingUsers[result.id]) {
-              setListPendingUsers({ ...listPendingUsers, [result.id]: true });
-              connectMutate();
-            } else {
-              setIsOpenModal(true);
-              setClickUser(result.id);
+        {results.map((result) => (
+          <PreviewCard
+            key={result.id}
+            id={result.id}
+            name={result.fullName.toString()}
+            percent={result.percent}
+            teach={Array.isArray(result.teach) ? result.teach : []}
+            learn={Array.isArray(result.teach) ? result.teach : []}
+            photoUrl={result.photoURL}
+            button={
+              <CustomButtonConnect
+                className='w-[100%]'
+                listPendingUsers={listPendingUsers}
+                setListPendingUsers={setListPendingUsers}
+                setIsOpenModal={setIsOpenModal}
+                setClickUser={setClickUser}
+                userId={result.id}
+              />
             }
-          };
-
-          return (
-            <PreviewCard
-              key={result.id}
-              id={result.id}
-              name={result.fullName.toString()}
-              percent={result.percent}
-              teach={Array.isArray(result.teach) ? result.teach : []}
-              learn={Array.isArray(result.teach) ? result.teach : []}
-              photoUrl={result.photoURL}
-              button={
-                <Button
-                  className='w-[100%]'
-                  disabled={listPendingUsers[result.id] && connectStatus === 'pending'}
-                  onClick={() => handleConnect()}
-                >
-                  {listPendingUsers[result.id] ? 'Pending' : 'Connect'}
-                </Button>
-              }
-              className='mx-0'
-            />
-          );
-        })}
+            className='mx-0'
+          />
+        ))}
       </div>
       <AlertDialog open={isOpenModal}>
         <AlertDialogContent>
