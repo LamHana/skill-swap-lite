@@ -19,8 +19,9 @@ import '../index.css';
 import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { arrayRemove, FieldValue } from 'firebase/firestore';
+import { arrayRemove } from 'firebase/firestore';
 import { updateUser } from '@/services/user.service';
+import { asString, asStringArray } from '@/utils/userHelpers';
 
 const DetailCard = ({ user }: { user: User }) => {
   let matchPercentage = 100;
@@ -52,16 +53,6 @@ const DetailCard = ({ user }: { user: User }) => {
         setOpen(false);
       },
     });
-  };
-
-  // Helper function to safely handle potentially non-string values
-  const asString = (value: string | FieldValue): string => {
-    return typeof value === 'string' ? value : '';
-  };
-
-  // Helper function to safely handle potentially non-array values
-  const asStringArray = (value: string[] | FieldValue): string[] => {
-    return Array.isArray(value) ? value : [];
   };
 
   return (

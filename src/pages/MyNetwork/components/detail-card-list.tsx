@@ -12,9 +12,15 @@ const DetailCardList = () => {
         <span className='font-medium'>{users ? ` (${users?.length})` : ` (${0})`}</span>
       </h2>
 
-      <div className='flex flex-col gap-y-6 my-2 w-full'>
-        {users?.map((user: User) => <DetailCard user={user} key={user.id} />)}
-      </div>
+      {users && users.length > 0 ? (
+        <div className='flex flex-col gap-y-6 my-2 w-full'>
+          {users?.map((user: User) => <DetailCard user={user} key={user.id} />)}
+        </div>
+      ) : (
+        <div className='w-full flex items-center justify-center py-10'>
+          <p className='text-2xl text-gray-500'>There are no connections.</p>
+        </div>
+      )}
     </div>
   );
 };
