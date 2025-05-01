@@ -4,9 +4,10 @@ import { config } from '@/config/app';
 import { useAuth } from '@/hooks';
 import useSignOut from '@/hooks/useSignOut';
 import handleFirebaseError from '@/utils/handlerFirebaseError';
+
 import { sendEmailVerification } from 'firebase/auth';
 import { Mail } from 'lucide-react';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect,useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { toast } from 'sonner';
 

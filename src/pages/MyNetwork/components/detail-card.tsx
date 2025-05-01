@@ -13,18 +13,21 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { User } from '@/types/user.type';
-import { UserRoundX } from 'lucide-react';
-import '../index.css';
-import { useState } from 'react';
 import { useAuth } from '@/hooks';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { arrayRemove } from 'firebase/firestore';
 import { updateUser } from '@/services/user.service';
+import { User } from '@/types/user.type';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
+import { arrayRemove } from 'firebase/firestore';
+import { UserRoundX } from 'lucide-react';
+import { useState } from 'react';
+
+import '../index.css';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 const DetailCard = ({ user }: { user: User }) => {
-  let matchPercentage = 100;
+  const matchPercentage = 100;
   const [open, setOpen] = useState(false);
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();

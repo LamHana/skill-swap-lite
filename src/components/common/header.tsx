@@ -1,6 +1,7 @@
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { mainMenu } from '@/config/menu';
-import { cn } from '@/lib/utils';
+import { AppSidebar } from '@/components/common/app-sidebar';
+import { ModeToggle } from '@/components/common/mode-toggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,15 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
-import { AppSidebar } from '@/components/common/app-sidebar';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ModeToggle } from '@/components/common/mode-toggle';
-import { useAuth } from '@/hooks';
-import Logo from './logo';
-import useSignOut from '@/hooks/useSignOut';
 import { config } from '@/config/app';
+import { mainMenu } from '@/config/menu';
+import { useAuth } from '@/hooks';
+import useSignOut from '@/hooks/useSignOut';
+import { cn } from '@/lib/utils';
+
+import { ChevronDown } from 'lucide-react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+
+import Logo from './logo';
 const Header = ({ isAuthLayout = false }: { isAuthLayout?: boolean }) => {
   const location = useLocation();
   const { user } = useAuth();

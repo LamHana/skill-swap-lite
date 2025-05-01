@@ -1,21 +1,24 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, RegisterFormData } from './register.schema';
-import { Input } from '@/components/ui/input';
-import MultipleSelector, { Option } from '@/components/common/multi-select';
-import { LoadingButton } from '@/components/common/loading-button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Thumbnail from '@/assets/images/thumbnail.png';
-import { signUpWithEmail } from '@/services/auth.service';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSkillValidation } from '@/hooks/useSkillValidation';
-import { toast } from 'sonner';
 import InputPassword from '@/components/common/input-password';
-import { useAuth } from '@/hooks';
+import { LoadingButton } from '@/components/common/loading-button';
+import MultipleSelector, { Option } from '@/components/common/multi-select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { signIn } from '@/contexts/auth/auth.reducer';
+import { useAuth } from '@/hooks';
+import { useSkillValidation } from '@/hooks/useSkillValidation';
+import { signUpWithEmail } from '@/services/auth.service';
+import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
+
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+
+import { RegisterFormData, registerSchema } from './register.schema';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const registerFormDefaultValues: RegisterFormData = {
   fullname: '',

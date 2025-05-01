@@ -1,4 +1,5 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
+
 import { config } from './config/app';
 import AuthGuard from './guards/AuthGuard';
 import GuestGuard from './guards/GuestGuard';

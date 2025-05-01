@@ -1,7 +1,9 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { CONTRIBUTORS } from './constants';
-import { Link } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+
+import { CONTRIBUTORS } from './constants';
 
 const Contributors: React.FC = () => {
   return (
@@ -17,7 +19,7 @@ const Contributors: React.FC = () => {
       </header>
       <div className='grid grid-cols-3 lg:grid-cols-6 gap-5 mt-12 mx-auto w-fit'>
         {CONTRIBUTORS.map((contributor) => {
-          let name = contributor.name
+          const name = contributor.name
             .split(' ')
             .map((word) => word[0]?.toUpperCase())
             .join('');

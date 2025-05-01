@@ -1,7 +1,5 @@
-import { ChevronRight, Menu } from 'lucide-react';
-import { mainMenu } from '@/config/menu';
-import { Link, NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Sidebar,
@@ -16,8 +14,11 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
 } from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { mainMenu } from '@/config/menu';
 import { cn } from '@/lib/utils';
+
+import { ChevronRight, Menu } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
 
 export function AppSidebar() {
   return (

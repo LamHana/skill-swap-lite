@@ -1,8 +1,8 @@
-import type { Contact, Message } from './types';
 import { ChatHeader } from './chatHeader';
 import { ChatMessages } from './chatMessages';
-import { MessageInput } from './messageInput';
 import { ContactList } from './contactList';
+import { MessageInput } from './messageInput';
+import type { Contact, Message } from './types';
 
 interface DesktopChatViewProps {
   selectedContact: Contact | null;

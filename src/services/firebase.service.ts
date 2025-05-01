@@ -1,16 +1,17 @@
 import { config } from '@/config/app';
 import { CollectionValue } from '@/config/collections';
+
 import { ref } from 'firebase/database';
 import { update } from 'firebase/database';
 import {
-  documentId,
-  QueryConstraint,
-  query,
-  getCountFromServer,
   doc,
+  documentId,
+  DocumentSnapshot,
+  getCountFromServer,
   getDoc,
   getDocs,
-  DocumentSnapshot,
+  query,
+  QueryConstraint,
   setDoc,
   updateDoc,
 } from 'firebase/firestore';

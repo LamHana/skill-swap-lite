@@ -1,8 +1,8 @@
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 import { PageHeader } from '@/components/common/page-header';
-import { Categories } from './data';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -12,14 +12,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
 import { useAuth } from '@/hooks';
-import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useGetUsers from '@/hooks/useGetUsers';
+import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
+
+import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+
 import PreviewCardList from './components/previewCardList';
+import { Categories } from './data';
 
 const searchFormDefaultValues = {
   keyword: '',
@@ -29,7 +32,7 @@ const searchFormDefaultValues = {
 const Home = () => {
   const { user } = useAuth();
 
-  const { users, isLoading, isError } = useGetUsers();
+  const { users, isLoading } = useGetUsers();
 
   const navigate = useNavigate();
   if (!user) {
@@ -39,7 +42,10 @@ const Home = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
 
   useEffect(() => {
-    if (user && (!user.learn?.length || !user.teach?.length)) {
+    if (
+      user &&
+      ((Array.isArray(user.learn) && !user.learn.length) || (Array.isArray(user.teach) && !user.teach.length))
+    ) {
       setShowCompleteProfile(true);
     }
   }, []);
@@ -103,7 +109,7 @@ const Home = () => {
 
       <div className='container mx-auto p-4 md:p-8'>
         <p className='text-3xl font-bold'>Top Related</p>
-        {isLoading && <p>Loading...</p>}
+        {isLoading && <LoadingSpinner className='mx-auto mt-10' />}
         {!isLoading && <PreviewCardList results={users} />}
       </div>
 

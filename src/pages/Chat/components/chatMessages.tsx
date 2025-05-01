@@ -1,8 +1,11 @@
 // chatMessages.tsx
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import type { Contact, Message } from './types';
+
 import { Timestamp } from 'firebase/firestore';
+
+import type { Contact, Message } from './types';
+
 import './style.css';
 
 function formatTimestamp(ts: Timestamp) {

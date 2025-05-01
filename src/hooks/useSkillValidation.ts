@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
 import { Option } from '@/components/common/multi-select';
+
+import { useCallback } from 'react';
 
 export const useSkillValidation = () => {
   const validateSkills = useCallback(

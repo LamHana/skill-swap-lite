@@ -1,20 +1,24 @@
-import { Input } from '@/components/ui/input';
-import { signInWithEmail, signInWithGoogle } from '@/services/auth.service';
-import { useAuth } from '@/hooks';
-import { useMutation } from '@tanstack/react-query';
-import { FaGoogle } from 'react-icons/fa';
-import loginSchema from './login.schema';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { signIn } from '@/contexts/auth/auth.reducer';
 import Thumbnail from '@/assets/images/thumbnail.png';
-import { Link } from 'react-router-dom';
-import { getUserByUID } from '@/services/user.service';
-import { toast } from 'sonner';
 import InputPassword from '@/components/common/input-password';
 import { LoadingButton } from '@/components/common/loading-button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { signIn } from '@/contexts/auth/auth.reducer';
+import { useAuth } from '@/hooks';
+import { signInWithEmail, signInWithGoogle } from '@/services/auth.service';
+import { getUserByUID } from '@/services/user.service';
+import handleFirebaseError from '@/utils/handlerFirebaseError';
+
+import { useForm } from 'react-hook-form';
+import { FaGoogle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+import loginSchema from './login.schema';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 export type LoginFormType = z.infer<typeof loginSchema>;
 
 const loginFormDefaultValues: LoginFormType = {
@@ -47,7 +51,7 @@ const Login = () => {
         toast.success('Login successfully');
       },
       onError: (error) => {
-        toast.error(error.message);
+        handleFirebaseError(error);
       },
     });
   };

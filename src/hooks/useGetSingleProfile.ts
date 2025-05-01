@@ -1,12 +1,15 @@
-import { useNavigate, useParams } from "react-router-dom";
-import useAuth from "./useAuth";
-import { useQuery } from "@tanstack/react-query";
-import { GET_SINGLE_USER, getUserByUID } from "@/services/user.service";
-import { GET_SKILLS_QUERY_KEY, getSkills } from "@/services/skill.service";
-import { useEffect, useState } from "react";
-import { User } from "@/types/user.type";
-import { Skill } from "@/types/skill.type";
 import { config } from "@/config/app";
+import { GET_SKILLS_QUERY_KEY, getSkills } from "@/services/skill.service";
+import { GET_SINGLE_USER, getUserByUID } from "@/services/user.service";
+import { Skill } from "@/types/skill.type";
+import { User } from "@/types/user.type";
+
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import useAuth from "./useAuth";
+
+import { useQuery } from "@tanstack/react-query";
 
 const useGetSingleProfile = () => {
   const { user } = useAuth();

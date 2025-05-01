@@ -1,9 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import useAuth from './useAuth';
-import { User } from '@/types/user.type';
-import { getUserByUID, getUsersByUIDs } from '@/services/user.service';
 import { getSkills } from '@/services/skill.service';
+import { getUserByUID, getUsersByUIDs } from '@/services/user.service';
 import { Skill } from '@/types/skill.type';
+import { User } from '@/types/user.type';
+
+import useAuth from './useAuth';
+
+import { useQuery } from '@tanstack/react-query';
 
 const useInvitations = () => {
   const { user } = useAuth();

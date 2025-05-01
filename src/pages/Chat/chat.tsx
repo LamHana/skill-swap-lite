@@ -1,23 +1,25 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import type { Contact, Message } from './components/types';
-import { MobileChatView } from './components/mobileChatView';
-import { DesktopChatView } from './components/desktopChatView';
+import firebase from '@/config/firebase';
 import { useAuth } from '@/hooks';
+
 import {
+  arrayUnion,
   collection,
   doc,
-  setDoc,
   getDoc,
   onSnapshot,
   query,
-  where,
-  updateDoc,
-  arrayUnion,
+  setDoc,
   Timestamp,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
-import firebase from '@/config/firebase';
+import { useEffect, useRef, useState } from 'react';
+
+import { DesktopChatView } from './components/desktopChatView';
+import { MobileChatView } from './components/mobileChatView';
+import type { Contact, Message } from './components/types';
 const db = firebase.db;
 
 function formatTimestamp(ts: Timestamp): string {

@@ -1,16 +1,18 @@
 import { config } from '@/config/app';
+import { RegisterFormData } from '@/pages/Register/register.schema';
+
 import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
-  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
-  UserCredential,
   updateProfile,
   User,
-  sendEmailVerification,
+  UserCredential,
 } from 'firebase/auth';
+
 import updateDocument, { getDocument, setDocument } from './firebase.service';
-import { RegisterFormData } from '@/pages/Register/register.schema';
 
 export const AUTH_KEYS = {
   currentUser: 'auth.currentUser',
@@ -82,7 +84,6 @@ export const signUpWithEmail = async (body: RegisterFormData) => {
   const result = await createUserWithEmailAndPassword(config.firebase.auth, body.email, body.password);
 
   await sendEmailVerification(result.user);
-  console.log('result', result.user);
 
   await updateProfile(result.user, {
     displayName: body.fullname,

@@ -1,5 +1,5 @@
-import StepCard from './step-card';
 import { STEPS } from './constants';
+import StepCard from './step-card';
 
 const Steps: React.FC = () => {
   return (

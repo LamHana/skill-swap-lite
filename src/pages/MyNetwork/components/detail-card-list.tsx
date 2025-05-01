@@ -1,9 +1,10 @@
-import { User } from '@/types/user.type';
-import DetailCard from './detail-card';
 import useConnections from '@/hooks/useConnections';
+import { User } from '@/types/user.type';
+
+import DetailCard from './detail-card';
 
 const DetailCardList = () => {
-  const { data: users, isLoading, isError } = useConnections();
+  const { data: users } = useConnections();
 
   return (
     <div className='flex flex-col items-start mt-10 w-full'>

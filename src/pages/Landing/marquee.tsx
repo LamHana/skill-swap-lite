@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { LucideIcon } from 'lucide-react';
+import { ReactNode } from 'react';
+
 import { MARQUEE_LOGOS_BOTTOM, MARQUEE_LOGOS_TOP } from './constants';
 
 interface TranslateWrapperProps {

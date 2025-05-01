@@ -1,5 +1,6 @@
 import { config } from '@/config/app';
 import { Skill } from '@/types/skill.type';
+
 import { getDocs } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 

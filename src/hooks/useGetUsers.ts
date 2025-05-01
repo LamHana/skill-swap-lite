@@ -1,11 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import useAuth from './useAuth';
-import { useQuery } from '@tanstack/react-query';
+import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
 import { GET_ALL_USERS, getUsers } from '@/services/user.service';
+import { Skill } from '@/types/skill.type';
 import { User, UserWithPercent } from '@/types/user.type';
 import { matchingIndicator } from '@/utils/matchingIndicator';
-import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { Skill } from '@/types/skill.type';
+
+import React, { useRef } from 'react';
+
+import useAuth from './useAuth';
+
+import { useQuery } from '@tanstack/react-query';
 
 // cache for matching indicator to avoid recalculating
 const useGetUsers = () => {

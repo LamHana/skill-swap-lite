@@ -1,4 +1,5 @@
 import { AuthAction } from '@/utils/enum';
+
 import { AuthState, PayloadAction, ReducerHandler } from './auth.type';
 
 // Reducer
