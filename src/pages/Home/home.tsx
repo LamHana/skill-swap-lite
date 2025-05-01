@@ -1,6 +1,5 @@
 import { PageHeader } from '@/components/common/page-header';
-import PreviewCardList from './components/preview-card-list';
-import { Categories, Profiles } from './data';
+import { Categories } from './data';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -18,6 +17,9 @@ import { Search } from 'lucide-react';
 import { useAuth } from '@/hooks';
 import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useGetUsers from '@/hooks/useGetUsers';
+import PreviewCardList from './components/previewCardList';
 
 const searchFormDefaultValues = {
   keyword: '',
@@ -26,6 +28,14 @@ const searchFormDefaultValues = {
 
 const Home = () => {
   const { user } = useAuth();
+
+  const { users, isLoading, isError } = useGetUsers();
+
+  const navigate = useNavigate();
+  if (!user) {
+    navigate('/login');
+  }
+
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
 
   useEffect(() => {
@@ -93,7 +103,8 @@ const Home = () => {
 
       <div className='container mx-auto p-4 md:p-8'>
         <p className='text-3xl font-bold'>Top Related</p>
-        <PreviewCardList results={Profiles} />
+        {isLoading && <p>Loading...</p>}
+        {!isLoading && <PreviewCardList results={users} />}
       </div>
 
       {user && showCompleteProfile && (
