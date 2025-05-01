@@ -1,7 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+import { Search } from 'lucide-react';
+
 import type { Contact } from './types';
 
 export function ContactList({

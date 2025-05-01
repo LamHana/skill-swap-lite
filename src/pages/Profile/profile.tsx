@@ -1,10 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skill } from '@/types/skill.type';
-import { Button } from '@/components/ui/button';
-import useGetSingleProfile from '@/hooks/useGetSingleProfile';
-import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import useGetSingleProfile from '@/hooks/useGetSingleProfile';
+import { Skill } from '@/types/skill.type';
+
+import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
 
 const Profile = () => {
   const { id, currentUser, learn, teach, handleEditProfile } = useGetSingleProfile();

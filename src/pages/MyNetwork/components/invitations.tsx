@@ -1,21 +1,25 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import PreviewCard, { PreviewCardProps } from '@/components/common/preview-card';
+import PreviewCard from '@/components/common/preview-card';
 import { Button } from '@/components/ui/button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateUser } from '@/services/user.service';
-import { arrayRemove, arrayUnion } from 'firebase/firestore';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useAuth } from '@/hooks';
-import { asString, asStringArray } from '@/utils/userHelpers';
 import useInvitations from '@/hooks/useInvitations';
+import { updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
+import { asString, asStringArray } from '@/utils/userHelpers';
+
+import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { useState } from 'react';
+import { toast } from 'sonner';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const Invitations = () => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
-  if (!currentUser) return;
-  const { data: users, isLoading, isError } = useInvitations();
+  const { data: users } = useInvitations();
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
+
+  if (!currentUser) return;
 
   const denialMutation = useMutation({
     mutationFn: (user: User) => {
@@ -27,6 +31,7 @@ const Invitations = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invitations', currentUser.id] });
       queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      toast.success('Invitation denied successfully!');
     },
     onError: (error) => {
       console.error('Error:', error);
@@ -46,9 +51,11 @@ const Invitations = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invitations', currentUser.id] });
       queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      toast.success('Invitation accepted successfully!');
     },
     onError: (error) => {
       console.error('Error:', error);
+      toast.error('Error accepting invitation!');
     },
     onSettled: () => setPendingUserId(null),
   });

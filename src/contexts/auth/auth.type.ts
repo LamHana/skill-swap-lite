@@ -1,5 +1,6 @@
 import { User } from '@/types/user.type';
 import { AuthAction } from '@/utils/enum';
+
 import { User as UserFirebase } from 'firebase/auth';
 import { Dispatch } from 'react';
 

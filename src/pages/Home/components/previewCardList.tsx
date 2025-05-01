@@ -13,9 +13,11 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks';
 import { updateUser } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
-import { useMutation } from '@tanstack/react-query';
+
 import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { useState } from 'react';
+
+import { useMutation } from '@tanstack/react-query';
 
 interface PreviewCardListProps {
   results: UserWithPercent[];
@@ -23,12 +25,12 @@ interface PreviewCardListProps {
 
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
   const { user: currentUser } = useAuth();
-  if (!currentUser) return;
-
+  
   const [clickUser, setClickUser] = useState<string | null>(null);
   const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>({});
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-
+  
+  if (!currentUser) return;
   const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
     mutationFn: ({ receiverUid }: { receiverUid: string }) => {
       return Promise.all([

@@ -1,11 +1,12 @@
+import ControlledInput from '@/components/common/controlled-input';
+import ControlledMultiSelector from '@/components/common/controlled-multi-selector';
+import ControlledTextarea from '@/components/common/controlled-textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { ChevronLeft } from 'lucide-react';
-import ControlledInput from '@/components/common/controlled-input';
-import ControlledTextarea from '@/components/common/controlled-textarea';
-import ControlledMultiSelector from '@/components/common/controlled-multi-selector';
 import useEditProfile from '@/hooks/useEditProfile';
+
+import { ChevronLeft } from 'lucide-react';
 
 const EditProfile = () => {
   const {

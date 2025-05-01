@@ -1,6 +1,8 @@
 import { config } from '@/config/app';
 import { User } from '@/types/user.type';
+
 import { collection, doc, documentId, getDoc, getDocs, query, where } from 'firebase/firestore';
+
 import updateDocument from './firebase.service';
 
 export const GET_ALL_USERS = 'GET_ALL_USERS';

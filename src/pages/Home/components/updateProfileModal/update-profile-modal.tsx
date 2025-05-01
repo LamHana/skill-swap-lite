@@ -1,17 +1,20 @@
+import { LoadingButton } from '@/components/common/loading-button';
+import MultipleSelector, { Option } from '@/components/common/multi-select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import MultipleSelector, { Option } from '@/components/common/multi-select';
-import { LoadingButton } from '@/components/common/loading-button';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { useEffect, useState } from 'react';
-import { updateUser } from '@/services/user.service';
-import { updateProfileSchema } from './update-profile-modal.schema';
 import { useSkillValidation } from '@/hooks/useSkillValidation';
+import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
+import { updateUser } from '@/services/user.service';
+
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { updateProfileSchema } from './update-profile-modal.schema';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery } from '@tanstack/react-query';
 type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
 
 const defaultValues: UpdateProfileFormData = {

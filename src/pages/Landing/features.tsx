@@ -1,5 +1,6 @@
-import { FEATURES } from './constants';
 import { motion } from 'framer-motion';
+
+import { FEATURES } from './constants';
 
 const Features: React.FC = () => {
   return (

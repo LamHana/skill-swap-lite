@@ -1,5 +1,5 @@
-import firebase from './firebase';
 import { collections } from './collections';
+import firebase from './firebase';
 import routes from './routes';
 
 export const config = {

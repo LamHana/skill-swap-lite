@@ -1,11 +1,13 @@
-import { createContext, FC, PropsWithChildren, useEffect, useReducer } from 'react';
-import { AuthContextType, AuthState } from './auth.type';
-import { onAuthStateChanged } from 'firebase/auth';
-import { config } from '@/config/app';
-import { initialize, reducer } from './auth.reducer';
-import { getUserByUID } from '@/services/user.service';
 import { LoadingSpinner } from '@/components/common/loading-spinner';
+import { config } from '@/config/app';
 import { setDocument } from '@/services/firebase.service';
+import { getUserByUID } from '@/services/user.service';
+
+import { onAuthStateChanged } from 'firebase/auth';
+import { createContext, FC, PropsWithChildren, useEffect, useReducer } from 'react';
+
+import { initialize, reducer } from './auth.reducer';
+import { AuthContextType, AuthState } from './auth.type';
 
 const initialState: AuthState = {
   isAuthenticated: false,

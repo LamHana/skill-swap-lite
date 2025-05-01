@@ -1,8 +1,9 @@
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import HeroCard from './hero-card';
+
 import { HERO_CARD_INFO, HeroCardInfoType } from './constants';
-import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
+import HeroCard from './hero-card';
 
 const Hero: React.FC = () => {
   const [cards, setCards] = useState<HeroCardInfoType[]>(HERO_CARD_INFO);

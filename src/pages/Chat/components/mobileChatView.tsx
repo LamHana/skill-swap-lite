@@ -1,8 +1,9 @@
 import { cn } from '@/lib/utils';
+
 import { ChatHeader } from './chatHeader';
 import { ChatMessages } from './chatMessages';
-import { MessageInput } from './messageInput';
 import { ContactList } from './contactList';
+import { MessageInput } from './messageInput';
 import type { Contact, Message } from './types';
 
 type MobileChatViewProps = {

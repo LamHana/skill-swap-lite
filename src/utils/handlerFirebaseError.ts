@@ -1,6 +1,6 @@
+import { AuthErrorCodes } from 'firebase/auth';
 import { toast } from 'sonner';
 
-import { AuthErrorCodes } from 'firebase/auth';
 import isFirebaseError from './isFirebaseError';
 
 export default function handleFirebaseError(error: unknown) {

@@ -1,6 +1,8 @@
-import { ArrowLeft, Info } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+
+import { ArrowLeft, Info } from 'lucide-react';
+
 import type { Contact } from './types';
 
 export function ChatHeader({ contact, onBack }: { contact: Contact; onBack?: () => void }) {
