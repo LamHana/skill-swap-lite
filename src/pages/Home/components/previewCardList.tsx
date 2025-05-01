@@ -1,4 +1,4 @@
-import PreviewCard, { PreviewCardProps } from '@/components/common/preview-card';
+import PreviewCard from '@/components/common/preview-card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,12 +12,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks';
 import { updateUser } from '@/services/user.service';
+import { UserWithPercent } from '@/types/user.type';
 import { useMutation } from '@tanstack/react-query';
 import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { useState } from 'react';
 
 interface PreviewCardListProps {
-  results: Omit<PreviewCardProps, 'button'>[];
+  results: UserWithPercent[];
 }
 
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
@@ -78,11 +79,11 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             <PreviewCard
               key={result.id}
               id={result.id}
-              name={result.name}
+              name={result.fullName.toString()}
               percent={result.percent}
-              teach={result.teach}
-              learn={result.learn}
-              photoUrl={result.photoUrl}
+              teach={Array.isArray(result.teach) ? result.teach : []}
+              learn={Array.isArray(result.teach) ? result.teach : []}
+              photoUrl={result.photoURL}
               button={
                 <Button
                   className='w-[100%]'

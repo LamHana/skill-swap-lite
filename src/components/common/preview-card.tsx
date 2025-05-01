@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReactNode } from 'react';
 
-export interface PreviewCardProps {
+interface PreviewCardProps {
   id: string;
   name: string;
   percent: number;
@@ -36,7 +36,7 @@ export default function PreviewCard({
       className={`w-full md:max-w-[280px] md:max-h-[240px] gap-3 relative mx-auto overflow-hidden ${className}`}
       key={id}
     >
-      <div className='absolute top-0 right-0 bg-primary text-white font-bold py-2 px-4 rounded-tr-lg rounded-bl-lg'>
+      <div className='absolute top-0 right-0 bg-primary text-white font-bold py-1 px-4 rounded-tr-lg rounded-bl-lg'>
         {percent}%
       </div>
       <CardHeader>
@@ -47,7 +47,7 @@ export default function PreviewCard({
               <AvatarFallback className='!rounded-lg'>{name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
           </div>
-          <CardTitle className='text-lg'>{name}</CardTitle>
+          <CardTitle className='text-lg'>{name.length > 20 ? name.slice(0, 20) + '...' : name}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className='flex flex-col gap-1'>
