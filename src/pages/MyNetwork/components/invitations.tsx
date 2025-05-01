@@ -8,13 +8,14 @@ import { useAuth } from '@/hooks';
 import { asString, asStringArray } from '@/utils/userHelpers';
 import useInvitations from '@/hooks/useInvitations';
 import { User } from '@/types/user.type';
+import { useState } from 'react';
 
 const Invitations = () => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
   if (!currentUser) return;
-
   const { data: users, isLoading, isError } = useInvitations();
+  const [pendingUserId, setPendingUserId] = useState<string | null>(null);
 
   const denialMutation = useMutation({
     mutationFn: (user: User) => {
@@ -30,6 +31,7 @@ const Invitations = () => {
     onError: (error) => {
       console.error('Error:', error);
     },
+    onSettled: () => setPendingUserId(null),
   });
 
   const acceptMutation = useMutation({
@@ -48,9 +50,10 @@ const Invitations = () => {
     onError: (error) => {
       console.error('Error:', error);
     },
+    onSettled: () => setPendingUserId(null),
   });
 
-  return (
+  return users && users.length > 0 ? (
     <div className='flex flex-col items-start mt-10 w-full'>
       <h2 className='text-xl font-bold mb-4'>
         Invitations
@@ -79,7 +82,7 @@ const Invitations = () => {
                         variant='ghost'
                         className='text-gray-700 font-medium flex-auto'
                         onClick={() => denialMutation.mutate(user)}
-                        disabled={denialMutation.status === 'pending'}
+                        disabled={pendingUserId === user.id && denialMutation.status === 'pending'}
                       >
                         Deny
                       </Button>
@@ -87,7 +90,7 @@ const Invitations = () => {
                         variant='default'
                         className='bg-primary text-white rounded-md px-4 py-2 flex-auto'
                         onClick={() => acceptMutation.mutate(user)}
-                        disabled={acceptMutation.status === 'pending'}
+                        disabled={pendingUserId === user.id && acceptMutation.status === 'pending'}
                       >
                         Accept
                       </Button>
@@ -103,7 +106,7 @@ const Invitations = () => {
         <CarouselNext />
       </Carousel>
     </div>
-  );
+  ) : null;
 };
 
 export default Invitations;
