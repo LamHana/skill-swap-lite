@@ -40,6 +40,7 @@ export default function Chat() {
 
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [initialHandled, setInitialHandled] = useState(false);
   const [messagesByContact, setMessagesByContact] = useState<Record<string, Message[]>>({});
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState('');
@@ -137,19 +138,22 @@ export default function Chat() {
 
   // ---------- 2) nếu có contactId từ location thì ưu tiên select trước ----------
   useEffect(() => {
-    if (initialContactId && contacts.length > 0) {
+    // chỉ chạy khi có contacts và chưa xử lý lần nào
+    if (contacts.length === 0 || initialHandled) return;
+
+    if (initialContactId) {
       const found = contacts.find((c) => c.id === initialContactId);
       if (found) {
         setSelectedContact(found);
-        return;
+      }
+    } else {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      if (!isMobile) {
+        setSelectedContact(contacts[0]);
       }
     }
-    // nếu không có contactId thì chọn contact đầu tiên trong danh sách
-    const isMobile = window.matchMedia('(max-width: 767px)').matches;
-    if (!isMobile && !initialContactId && !selectedContact && contacts.length > 0) {
-      setSelectedContact(contacts[0]);
-    }
-  }, [contacts, selectedContact, initialContactId]);
+    setInitialHandled(true);
+  }, [contacts, initialContactId, initialHandled]);
 
   // ---------- 3) Scroll xuống cuối khi có message mới ----------
   useEffect(() => {

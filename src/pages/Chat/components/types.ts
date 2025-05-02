@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore'
+import { Timestamp } from 'firebase/firestore';
 
 export interface Contact {
   id: string;
@@ -13,6 +13,6 @@ export interface Message {
   id: string;
   content: string;
   sender: 'user' | 'contact';
-  timestamp: Timestamp
+  timestamp: Timestamp;
   senderId: string;
 }

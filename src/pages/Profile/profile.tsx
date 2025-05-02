@@ -53,19 +53,20 @@ const Profile = () => {
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {Array.isArray(currentUser?.connections) && currentUser?.connections.map((connection, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarFallback className="text-xs">
-                          {connection
-                            .split(" ")
-                            .map((name) => name[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{connection}</span>
-                    </li>
-                  ))}
+                  {Array.isArray(currentUser?.connections) &&
+                    currentUser?.connections.map((connection, index) => (
+                      <li key={index} className='flex items-center gap-2'>
+                        <Avatar className='h-6 w-6'>
+                          <AvatarFallback className='text-xs'>
+                            {connection
+                              .split(' ')
+                              .map((name) => name[0])
+                              .join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className='text-sm'>{connection}</span>
+                      </li>
+                    ))}
                 </ul>
               </CardContent>
             </Card>

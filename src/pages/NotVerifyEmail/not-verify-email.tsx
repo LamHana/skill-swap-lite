@@ -7,7 +7,7 @@ import handleFirebaseError from '@/utils/handlerFirebaseError';
 
 import { sendEmailVerification } from 'firebase/auth';
 import { Mail } from 'lucide-react';
-import { useCallback, useEffect,useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
