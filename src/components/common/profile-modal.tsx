@@ -1,35 +1,47 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { config } from '@/config/app';
+import { useAuth } from '@/hooks';
 import useGetUsers from '@/hooks/useGetUsers';
 import { getSkills } from '@/services/skill.service';
-import { getUserByUID, getUsers } from '@/services/user.service';
+import { getUserByUID, updateUser } from '@/services/user.service';
 import { Skill } from '@/types/skill.type';
 import { User } from '@/types/user.type';
 import { mapConnectionInformation, mapSkillInformation } from '@/utils/mapUserInformation';
 
+import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { map } from 'zod';
+import { MdOutlineOpenInNew } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
+import WithdrawAlertDialog from './alert-dialog';
 import { LoadingButton } from './loading-button';
 
-import { useQuery } from '@tanstack/react-query';
-
+import { useMutation, useQuery } from '@tanstack/react-query';
 interface ProfileModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userId: string;
+  setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  listPendingUsers?: Record<string, boolean>;
 }
 
-const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
+const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPendingUsers }: ProfileModalProps) => {
   if (!userId) return;
   const [learn, setLearn] = useState<Skill[]>([]);
   const [teach, setTeach] = useState<Skill[]>([]);
   const [connections, setConnections] = useState<User[]>([]);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { users } = useGetUsers();
+  const { user: currentUser } = useAuth();
+
+  if (!currentUser) return;
 
   const { data: user } = useQuery({
     queryKey: ['user', userId],
@@ -40,6 +52,38 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
     queryKey: ['skills'],
     queryFn: () => getSkills(),
   });
+
+  const { mutate: connectMutate, status: connectStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(userId, { requestConnections: arrayUnion(currentUser.id) }),
+        updateUser(currentUser.id, { sentConnections: arrayUnion(userId) }),
+      ]);
+    },
+  });
+
+  const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(userId, { requestConnections: arrayRemove(currentUser.id) }),
+        updateUser(currentUser.id, { sentConnections: arrayRemove(userId) }),
+      ]);
+    },
+    onSuccess: () => {
+      if (setListPendingUsers) {
+        setListPendingUsers({ ...listPendingUsers, [userId]: false });
+      }
+      setIsOpenModal(false);
+    },
+  });
+
+  const handleConnect = () => {
+    if (!listPendingUsers || !setListPendingUsers) return;
+    if (!listPendingUsers[userId]) {
+      setListPendingUsers({ ...listPendingUsers, [userId]: true });
+      connectMutate();
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -54,7 +98,7 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto'>
-        <DialogHeader>
+        <DialogHeader className='flex flex-row justify-between'>
           <DialogTitle>Profile Preview</DialogTitle>
         </DialogHeader>
 
@@ -62,14 +106,19 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
           {/* Profile Header */}
           <div className='flex flex-col sm:flex-row items-center gap-4'>
             <Avatar className='w-20 h-20'>
-              <AvatarImage src={user?.photoURL || ''} alt='Profile' />
+              <AvatarImage src={user?.photoURL.toString() || ''} alt='Profile' />
               <AvatarFallback className='bg-primary text-primary-foreground font-bold text-3xl'>
                 {user?.fullName.toString().trim().charAt(0)}
               </AvatarFallback>
             </Avatar>
 
             <div className='flex flex-col items-center sm:items-start'>
-              <h2 className='text-xl font-bold'>{user?.fullName.toString().trim()}</h2>
+              <div className='flex items-center justify-between gap-2 w-full'>
+                <h2 className='text-xl font-bold'>{user?.fullName.toString().trim()}</h2>
+                <Button asChild variant={'ghost'} size='default' className='p-0'>
+                  <MdOutlineOpenInNew size={20} onClick={() => navigate(config.routes.user.replace(':id', userId))} />
+                </Button>
+              </div>
 
               {/* Bio Section - Moved up for better modal layout */}
               <div className='mt-2 text-sm text-muted-foreground'>{user?.bio.toString().trim()}</div>
@@ -91,7 +140,7 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
                     connections.map((connection, index) => (
                       <li key={index} className='flex items-center gap-2'>
                         <Avatar className='h-5 w-5'>
-                          <AvatarImage src={connection.photoURL} alt={connection.fullName.toString()} />
+                          <AvatarImage src={connection.photoURL.toString()} alt={connection.fullName.toString()} />
                           <AvatarFallback className='text-xs'>
                             {connection.fullName.toString().charAt(0).toUpperCase()}
                           </AvatarFallback>
@@ -146,10 +195,28 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
           </div>
 
           <DialogFooter>
-            <LoadingButton type='submit'>Connect</LoadingButton>
+            {listPendingUsers && listPendingUsers[userId] ? (
+              <LoadingButton
+                type='submit'
+                loading={listPendingUsers[userId] && connectStatus === 'pending'}
+                onClick={() => setIsOpenModal(true)}
+              >
+                Pending
+              </LoadingButton>
+            ) : (
+              <LoadingButton type='submit' onClick={handleConnect}>
+                Connect
+              </LoadingButton>
+            )}
           </DialogFooter>
         </div>
       </DialogContent>
+      <WithdrawAlertDialog
+        open={isOpenModal}
+        onCancle={() => setIsOpenModal(false)}
+        onConfirm={withdrawMutate}
+        confirmStatus={withdrawStatus}
+      />
     </Dialog>
   );
 };

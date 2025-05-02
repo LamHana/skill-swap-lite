@@ -2,11 +2,16 @@ import useConnections from '@/hooks/useConnections';
 import { User } from '@/types/user.type';
 
 import DetailCard from './detail-card';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 const DetailCardList = () => {
-  const { data: users } = useConnections();
+  const { data: users, isLoading } = useConnections();
 
-  return (
+  return isLoading ? (
+    <div className='w-full flex items-center justify-center py-20'>
+      <LoadingSpinner size='md' />
+    </div>
+  ) : (
     <div className='flex flex-col items-start mt-10 w-full'>
       <h2 className='text-xl font-bold mb-4'>
         My Connections

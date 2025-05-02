@@ -1,14 +1,5 @@
+import WithdrawAlertDialog from '@/components/common/alert-dialog';
 import PreviewCard from '@/components/common/preview-card';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { useAuth } from '@/hooks';
 import { updateUser } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
@@ -26,12 +17,22 @@ interface PreviewCardListProps {
 
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
   const { user: currentUser } = useAuth();
+  if (!currentUser) return;
 
   const [clickUser, setClickUser] = useState<string | null>(null);
-  const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>({});
+  const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>(
+    Array.isArray(currentUser.sentConnections)
+      ? currentUser.sentConnections.reduce(
+          (acc, id) => {
+            acc[id] = true;
+            return acc;
+          },
+          {} as Record<string, boolean>,
+        )
+      : {},
+  );
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
-  if (!currentUser) return;
   const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
     mutationFn: ({ receiverUid }: { receiverUid: string }) => {
       return Promise.all([
@@ -65,8 +66,10 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             name={result.fullName.toString()}
             percent={result.percent}
             teach={Array.isArray(result.teach) ? result.teach : []}
-            learn={Array.isArray(result.teach) ? result.teach : []}
-            photoUrl={result.photoURL}
+            learn={Array.isArray(result.learn) ? result.learn : []}
+            photoUrl={result.photoURL.toString()}
+            setListPendingUsers={setListPendingUsers}
+            listPendingUsers={listPendingUsers}
             button={
               <CustomButtonConnect
                 className='w-[100%]'
@@ -81,20 +84,12 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
           />
         ))}
       </div>
-      <AlertDialog open={isOpenModal}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Withdraw invitation</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to withdraw the invitation?</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsOpenModal(false)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleWithdraw} disabled={withdrawStatus === 'pending'}>
-              Withdraw
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <WithdrawAlertDialog
+        open={isOpenModal}
+        onCancle={() => setIsOpenModal(false)}
+        onConfirm={handleWithdraw}
+        confirmStatus={withdrawStatus}
+      />
     </div>
   );
 };

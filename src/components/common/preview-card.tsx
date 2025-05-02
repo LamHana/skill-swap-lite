@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 import { ReactNode, useState } from 'react';
 
@@ -14,6 +15,8 @@ interface PreviewCardProps {
   photoUrl?: string;
   button: ReactNode;
   className?: string;
+  setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  listPendingUsers?: Record<string, boolean>;
 }
 
 export default function PreviewCard({
@@ -25,6 +28,8 @@ export default function PreviewCard({
   photoUrl,
   button,
   className = '',
+  setListPendingUsers,
+  listPendingUsers,
 }: PreviewCardProps) {
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -65,35 +70,73 @@ export default function PreviewCard({
         </CardHeader>
         <CardContent className='flex flex-col gap-1'>
           <div className='flex items-center gap-1 '>
-            <span className='font-bold text-sm'>Teaching</span>
+            <span className='font-medium text-xs'>Teaching</span>
             <div className='flex gap-1'>
-              {teachDisplay.map((item, index) => (
-                <span
-                  key={index}
-                  className={index !== 2 ? 'rounded-full px-3 py-1 border border-gray-300 text-xs' : 'py-1 text-xs'}
-                >
-                  {item}
-                </span>
-              ))}
+              {teachDisplay.map((item, index) =>
+                index !== 2 ? (
+                  <TooltipProvider key={index}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          key={index}
+                          className='rounded-full px-2 py-1 border border-gray-300 text-xs content-center text-center'
+                        >
+                          {item.length > 10 ? item.slice(0, 10) + '...' : item}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{item}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <span key={index} className='my-auto text-xs'>
+                    {item}
+                  </span>
+                ),
+              )}
             </div>
           </div>
           <div className='flex items-center gap-1 mt-2'>
-            <span className='font-bold text-sm'>Learning</span>
+            <span className='font-medium text-xs'>Learning</span>
             <div className='flex gap-1'>
-              {learnDisplay.map((item, index) => (
-                <span
-                  key={index}
-                  className={index !== 2 ? 'rounded-full px-3 py-1 border border-gray-300 text-xs' : 'py-1 text-xs'}
-                >
-                  {item}
-                </span>
-              ))}
+              {learnDisplay.map((item, index) =>
+                index !== 2 ? (
+                  <TooltipProvider key={index}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          key={index}
+                          className='rounded-full px-2 py-1 border border-gray-300 text-xs content-center text-center'
+                        >
+                          {item.length > 10 ? item.slice(0, 10) + '...' : item}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{item}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <span key={index} className='my-auto text-xs'>
+                    {item}
+                  </span>
+                ),
+              )}
             </div>
           </div>
         </CardContent>
         <CardFooter>{button}</CardFooter>
       </Card>
-      {showProfileModal && <ProfileModal open={showProfileModal} onOpenChange={handleCloseProfileModal} userId={id} />}
+      {showProfileModal && (
+        <ProfileModal
+          open={showProfileModal}
+          onOpenChange={handleCloseProfileModal}
+          userId={id}
+          listPendingUsers={listPendingUsers}
+          setListPendingUsers={setListPendingUsers}
+        />
+      )}
     </>
   );
 }

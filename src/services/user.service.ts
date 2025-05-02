@@ -55,3 +55,14 @@ export const getUsersByUIDs = async (uids: string[] | undefined): Promise<User[]
     ...(docSnap.data() as Omit<User, 'id'>),
   }));
 };
+
+export const getUserBySkills = async (skills: string[]) => {
+  const usersRef = collection(config.firebase.db, config.collections.users);
+  const q = query(usersRef, where('teach', 'array-contains-any', skills));
+  const querySnapshot = await getDocs(q);
+
+  return querySnapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...(docSnap.data() as Omit<User, 'id'>),
+  }));
+};

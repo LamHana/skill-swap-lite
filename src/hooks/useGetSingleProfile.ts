@@ -16,7 +16,7 @@ const useGetSingleProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const uid = id ? id : user?.id;
-
+  console.log('uid', id);
   const { data: cur } = useQuery({
     queryKey: [GET_SINGLE_USER, uid],
     queryFn: async () => {
