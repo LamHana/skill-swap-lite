@@ -1,3 +1,4 @@
+import CustomButtonConnect from '@/components/common/custom-button-connect';
 import PreviewCard from '@/components/common/preview-card';
 import {
   AlertDialog,
@@ -16,8 +17,6 @@ import { UserWithPercent } from '@/types/user.type';
 import { arrayRemove } from 'firebase/firestore';
 import { useState } from 'react';
 
-import CustomButtonConnect from './custom-button-connect';
-
 import { useMutation } from '@tanstack/react-query';
 
 interface PreviewCardListProps {
@@ -27,11 +26,22 @@ interface PreviewCardListProps {
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
   const { user: currentUser } = useAuth();
 
+  if (!currentUser) return;
+
   const [clickUser, setClickUser] = useState<string | null>(null);
-  const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>({});
+  const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>(
+    Array.isArray(currentUser.sentConnections)
+      ? currentUser.sentConnections.reduce(
+          (acc, id) => {
+            acc[id] = true;
+            return acc;
+          },
+          {} as Record<string, boolean>,
+        )
+      : {},
+  );
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
-  if (!currentUser) return;
   const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
     mutationFn: ({ receiverUid }: { receiverUid: string }) => {
       return Promise.all([
