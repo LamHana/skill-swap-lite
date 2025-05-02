@@ -24,4 +24,5 @@ export interface ReducerHandler {
   INITIALIZE(state: AuthState, action: PayloadAction<AuthState>): AuthState;
   SIGN_IN(state: AuthState, action: PayloadAction<AuthState>): AuthState;
   SIGN_OUT(state: AuthState): AuthState;
+  PATCH_USER(state: AuthState, action: PayloadAction<AuthState>): AuthState;
 }

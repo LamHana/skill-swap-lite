@@ -50,7 +50,6 @@ const useGetSingleProfile = () => {
   const { data: skills } = useQuery({
     queryKey: [GET_SKILLS_QUERY_KEY],
     queryFn: () => getSkills(),
-   
   });
 
   const [currentUser, setCurrentUser] = useState<User>();

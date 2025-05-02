@@ -33,6 +33,15 @@ const reducerHandlers: ReducerHandler = {
       user: null,
     };
   },
+
+  PATCH_USER: (state: AuthState, action: PayloadAction<AuthState>): AuthState => {
+    const { user } = action.payload;
+
+    return {
+      ...state,
+      user,
+    };
+  },
 };
 
 export function reducer(state: AuthState, action: PayloadAction<AuthState>) {
@@ -59,5 +68,12 @@ export function signOut(): PayloadAction<AuthState> {
   return {
     type: AuthAction.SIGN_OUT,
     payload: {},
+  };
+}
+
+export function patchUser(payload: AuthState): PayloadAction<AuthState> {
+  return {
+    type: AuthAction.PATCH_USER,
+    payload,
   };
 }
