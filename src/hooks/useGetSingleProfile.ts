@@ -4,12 +4,12 @@ import { GET_SINGLE_USER, getUserByUID, getUsersByUIDs } from "@/services/user.s
 import { Skill } from "@/types/skill.type";
 import { User } from "@/types/user.type";
 
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import useAuth from "./useAuth";
+import useAuth from './useAuth';
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 const useGetSingleProfile = () => {
   const { user } = useAuth();
@@ -76,7 +76,12 @@ const useGetSingleProfile = () => {
   }, [skills]);
 
   useEffect(() => {
-    if (currentUser && Array.isArray(currentUser.learn) && Array.isArray(currentUser.teach) && skillsList.length !== 0) {
+    if (
+      currentUser &&
+      Array.isArray(currentUser.learn) &&
+      Array.isArray(currentUser.teach) &&
+      skillsList.length !== 0
+    ) {
       const learningSkills = currentUser.learn
         .map((id: string) => skillsList.filter((skill: Skill) => skill.id === id))
         .flat();

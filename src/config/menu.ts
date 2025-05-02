@@ -1,4 +1,4 @@
-import { Home, LucideIcon, MessageCircle,UserRound } from 'lucide-react';
+import { Home, LucideIcon, MessageCircle, UserRound } from 'lucide-react';
 
 type MenuItemType = {
   title: string;

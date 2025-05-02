@@ -16,6 +16,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { DesktopChatView } from './components/desktopChatView';
 import { MobileChatView } from './components/mobileChatView';
@@ -34,9 +35,14 @@ function formatTimestamp(ts: Timestamp): string {
 
 export default function Chat() {
   const { user } = useAuth();
+  const location = useLocation();
+  const initialContactId = (location.state as any)?.contactId as string | undefined;
+
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [initialHandled, setInitialHandled] = useState(false);
   const [messagesByContact, setMessagesByContact] = useState<Record<string, Message[]>>({});
+  const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState('');
   const messageEndRef = useRef<HTMLDivElement>(null!);
   const inputRef = useRef<HTMLInputElement>(null!);
@@ -44,6 +50,8 @@ export default function Chat() {
   // ---------- 1) Ensure chat rooms exist & then subscribe realtime ----------
   useEffect(() => {
     if (!user?.id) return;
+    setLoading(true);
+
     (async () => {
       // 1.a) Lấy danh sách connections
       const userSnap = await getDoc(doc(db, 'users', user.id));
@@ -75,7 +83,8 @@ export default function Chat() {
           const data = docSnap.data();
           const parts = data.participants as string[];
           const otherId = parts.find((id) => id !== user.id);
-          if (!otherId) return;
+          // nếu otherId không nằm trong connections thì bỏ qua
+          if (!otherId || !connections.includes(otherId)) return;
 
           const raw = (data.messages as any[]) || [];
           msgsMap[otherId] = raw.map((m) => ({
@@ -90,7 +99,7 @@ export default function Chat() {
 
         setMessagesByContact(msgsMap);
 
-        // 1.d) Sau khi có msgsMap và ids…
+        // 1.d) Sau khi có msgsMap và ids
         const contactsWithTs: Array<{ contact: Contact; millis: number }> = await Promise.all(
           Array.from(ids).map(async (contactId) => {
             const uSnap = await getDoc(doc(db, 'users', contactId));
@@ -117,20 +126,34 @@ export default function Chat() {
         contactsWithTs.sort((a, b) => b.millis - a.millis);
 
         // 1.f) Cập nhật state chỉ với contact đã sort
-        setContacts(contactsWithTs.map((x) => x.contact));
+        const sorted = contactsWithTs.map((x) => x.contact);
+        setContacts(sorted);
+
+        setLoading(false);
       });
 
       return () => unsub();
     })().catch(console.error);
   }, [user]);
 
-  // ---------- 2) Trên desktop auto chọn contact đầu tiên ----------
+  // ---------- 2) nếu có contactId từ location thì ưu tiên select trước ----------
   useEffect(() => {
-    const isMobile = window.matchMedia('(max-width: 767px)').matches;
-    if (!isMobile && !selectedContact && contacts.length > 0) {
-      setSelectedContact(contacts[0]);
+    // chỉ chạy khi có contacts và chưa xử lý lần nào
+    if (contacts.length === 0 || initialHandled) return;
+
+    if (initialContactId) {
+      const found = contacts.find((c) => c.id === initialContactId);
+      if (found) {
+        setSelectedContact(found);
+      }
+    } else {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      if (!isMobile) {
+        setSelectedContact(contacts[0]);
+      }
     }
-  }, [contacts, selectedContact]);
+    setInitialHandled(true);
+  }, [contacts, initialContactId, initialHandled]);
 
   // ---------- 3) Scroll xuống cuối khi có message mới ----------
   useEffect(() => {
@@ -187,6 +210,14 @@ export default function Chat() {
   }, [selectedContact]);
 
   // ---------- 5) Render cả Mobile & Desktop ----------
+  if (loading) {
+    return (
+      <div className='flex items-center justify-center h-[calc(100vh-64px)] w-full'>
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-gray-400' />
+        <span className='ml-2 text-gray-600'>Đang tải cuộc trò chuyện…</span>
+      </div>
+    );
+  }
   return (
     <div className='flex flex-col h-[calc(100vh-64px)] w-full p-4 gap-4'>
       <MobileChatView
