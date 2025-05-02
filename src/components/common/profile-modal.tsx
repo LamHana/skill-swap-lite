@@ -1,35 +1,43 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useAuth } from '@/hooks';
 import useGetUsers from '@/hooks/useGetUsers';
 import { getSkills } from '@/services/skill.service';
-import { getUserByUID, getUsers } from '@/services/user.service';
+import { getUserByUID, updateUser } from '@/services/user.service';
 import { Skill } from '@/types/skill.type';
 import { User } from '@/types/user.type';
 import { mapConnectionInformation, mapSkillInformation } from '@/utils/mapUserInformation';
 
+import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { map } from 'zod';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
+import WithdrawAlertDialog from './alert-dialog';
 import { LoadingButton } from './loading-button';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface ProfileModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userId: string;
+  setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  listPendingUsers?: Record<string, boolean>;
 }
 
-const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
+const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPendingUsers }: ProfileModalProps) => {
   if (!userId) return;
   const [learn, setLearn] = useState<Skill[]>([]);
   const [teach, setTeach] = useState<Skill[]>([]);
   const [connections, setConnections] = useState<User[]>([]);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const { users } = useGetUsers();
+  const { user: currentUser } = useAuth();
+
+  if (!currentUser) return;
 
   const { data: user } = useQuery({
     queryKey: ['user', userId],
@@ -40,6 +48,38 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
     queryKey: ['skills'],
     queryFn: () => getSkills(),
   });
+
+  const { mutate: connectMutate, status: connectStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(userId, { requestConnections: arrayUnion(currentUser.id) }),
+        updateUser(currentUser.id, { sentConnections: arrayUnion(userId) }),
+      ]);
+    },
+  });
+
+  const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(userId, { requestConnections: arrayRemove(currentUser.id) }),
+        updateUser(currentUser.id, { sentConnections: arrayRemove(userId) }),
+      ]);
+    },
+    onSuccess: () => {
+      if (setListPendingUsers) {
+        setListPendingUsers({ ...listPendingUsers, [userId]: false });
+      }
+      setIsOpenModal(false);
+    },
+  });
+
+  const handleConnect = () => {
+    if (!listPendingUsers || !setListPendingUsers) return;
+    if (!listPendingUsers[userId]) {
+      setListPendingUsers({ ...listPendingUsers, [userId]: true });
+      connectMutate();
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -146,10 +186,28 @@ const ProfileModal = ({ open, onOpenChange, userId }: ProfileModalProps) => {
           </div>
 
           <DialogFooter>
-            <LoadingButton type='submit'>Connect</LoadingButton>
+            {listPendingUsers && listPendingUsers[userId] ? (
+              <LoadingButton
+                type='submit'
+                loading={listPendingUsers[userId] && connectStatus === 'pending'}
+                onClick={() => setIsOpenModal(true)}
+              >
+                Pending
+              </LoadingButton>
+            ) : (
+              <LoadingButton type='submit' onClick={handleConnect}>
+                Connect
+              </LoadingButton>
+            )}
           </DialogFooter>
         </div>
       </DialogContent>
+      <WithdrawAlertDialog
+        open={isOpenModal}
+        onCancle={() => setIsOpenModal(false)}
+        onConfirm={withdrawMutate}
+        confirmStatus={withdrawStatus}
+      />
     </Dialog>
   );
 };
