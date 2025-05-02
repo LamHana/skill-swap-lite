@@ -21,12 +21,14 @@ import { asString, asStringArray } from '@/utils/userHelpers';
 import { arrayRemove } from 'firebase/firestore';
 import { UserRoundX } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import '../index.css';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const DetailCard = ({ user }: { user: User }) => {
+  const navigate = useNavigate();
   const matchPercentage = 100;
   const [open, setOpen] = useState(false);
   const { user: currentUser } = useAuth();
@@ -141,6 +143,7 @@ const DetailCard = ({ user }: { user: User }) => {
               <Button
                 variant='outline'
                 className='rounded-md px-6 md:px-10 text-sm md:text-base border-primary text-primary'
+                onClick={() => navigate('/chat', { state: { contactId: user.id } })}
               >
                 Message
               </Button>
