@@ -66,7 +66,7 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             percent={result.percent}
             teach={Array.isArray(result.teach) ? result.teach : []}
             learn={Array.isArray(result.learn) ? result.learn : []}
-            photoUrl={result.photoURL}
+            photoUrl={result.photoURL.toString()}
             button={
               <CustomButtonConnect
                 className='w-[100%]'

@@ -72,7 +72,6 @@ const Home = () => {
   return (
     <>
       <PageHeader />
-      {isLoading && <p>Loading...</p>}
       {!isLoading && <SearchForm categories={categories || []} setSearchIDs={setSearchIDs} />}
 
       <div className='container mx-auto p-4 md:p-8'>
