@@ -8,7 +8,7 @@ import { Skill } from '@/types/skill.type';
 import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
 
 const Profile = () => {
-  const { id, currentUser, learn, teach, handleEditProfile } = useGetSingleProfile();
+  const { id, currentUser, learn, teach, handleEditProfile, userConnections } = useGetSingleProfile();
   let actionButtonsGroup;
 
   if (id) {
@@ -35,7 +35,7 @@ const Profile = () => {
         <div className='w-full md:w-1/3 flex flex-col items-center'>
           <div className='relative mb-4 w-40 h-40'>
             <Avatar className='w-40 h-40'>
-              <AvatarImage src={currentUser?.photoURL || ''} alt='shadcn' />
+              <AvatarImage src={currentUser?.photoURL.toString().trim() || ''} alt='shadcn' />
               <AvatarFallback className='bg-primary text-primary-foreground font-bold text-6xl'>
                 {currentUser?.fullName.toString().trim().charAt(0)}
               </AvatarFallback>
@@ -53,17 +53,18 @@ const Profile = () => {
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {Array.isArray(currentUser?.connections) && currentUser?.connections.map((connection, index) => (
+                  {userConnections && userConnections.length !== 0 && userConnections.map((connection, index) => (
                     <li key={index} className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
+                      <AvatarImage src={connection.photoURL.toString().trim() || ''} alt='shadcn' />
                         <AvatarFallback className="text-xs">
-                          {connection
+                          {connection.fullName.toString()
                             .split(" ")
                             .map((name) => name[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-sm">{connection}</span>
+                      <span className="text-sm">{connection.fullName.toString()}</span>
                     </li>
                   ))}
                 </ul>
