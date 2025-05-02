@@ -1,8 +1,8 @@
-import { config } from "@/config/app";
-import { GET_SKILLS_QUERY_KEY, getSkills } from "@/services/skill.service";
-import { GET_SINGLE_USER, getUserByUID, getUsersByUIDs } from "@/services/user.service";
-import { Skill } from "@/types/skill.type";
-import { User } from "@/types/user.type";
+import { config } from '@/config/app';
+import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
+import { GET_SINGLE_USER, getUserByUID, getUsersByUIDs } from '@/services/user.service';
+import { Skill } from '@/types/skill.type';
+import { User } from '@/types/user.type';
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -42,7 +42,7 @@ const useGetSingleProfile = () => {
       return {
         userData,
         connectedUsers,
-      }
+      };
     },
     enabled: !!user?.id,
   });
@@ -66,7 +66,7 @@ const useGetSingleProfile = () => {
     if (cur) {
       setCurrentUser(cur.userData);
       setUserConnections(cur.connectedUsers);
-    } 
+    }
   }, [cur]);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const useGetSingleProfile = () => {
     learn,
     teach,
     handleEditProfile,
-    userConnections
+    userConnections,
   };
 };
 

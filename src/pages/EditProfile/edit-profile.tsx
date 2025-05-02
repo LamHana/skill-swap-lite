@@ -1,15 +1,16 @@
 import ControlledInput from '@/components/common/controlled-input';
 import ControlledMultiSelector from '@/components/common/controlled-multi-selector';
 import ControlledTextarea from '@/components/common/controlled-textarea';
+import { LoadingButton } from '@/components/common/loading-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import useEditProfile from '@/hooks/useEditProfile';
-import SideBar from './components/side-bar';
 import { config } from '@/config/app';
+import useEditProfile from '@/hooks/useEditProfile';
 
 import { ChevronLeft } from 'lucide-react';
-import { LoadingButton } from '@/components/common/loading-button';
+
+import SideBar from './components/side-bar';
 
 const EditProfile = () => {
   const {
@@ -28,7 +29,7 @@ const EditProfile = () => {
     onSubmit,
     fileInputRef,
     handleBackButtonClick,
-    isPending
+    isPending,
   } = useEditProfile();
 
   const sidebarNavItems = [
@@ -126,9 +127,13 @@ const EditProfile = () => {
                 placeholder='Select skills you want to teach...'
                 required={true}
               />
-              <LoadingButton loading={isPending} type='submit' className='float-end px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
-                  Submit
-                </LoadingButton>
+              <LoadingButton
+                loading={isPending}
+                type='submit'
+                className='float-end px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'
+              >
+                Submit
+              </LoadingButton>
             </form>
           </Form>
         </div>
