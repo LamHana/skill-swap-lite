@@ -26,10 +26,10 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { matchingIndicator } from '@/utils/matchingIndicator';
 
 const DetailCard = ({ user }: { user: User }) => {
   const navigate = useNavigate();
-  const matchPercentage = 100;
   const [open, setOpen] = useState(false);
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
@@ -64,12 +64,12 @@ const DetailCard = ({ user }: { user: User }) => {
     <>
       <Card className='w-full rounded-xl p-4 relative overflow-hidden'>
         <div className='absolute top-0 right-0 bg-primary text-white font-bold py-2 px-4 rounded-tr-xl rounded-bl-xl -translate-y-1 translate-x-1'>
-          {matchPercentage}%
+          {matchingIndicator(currentUser, user)}%
         </div>
 
         <div className='flex flex-col md:flex-row gap-4'>
           <Avatar className='h-[80px] w-[80px] md:h-[80px] md:w-[80px] rounded-md border'>
-            <AvatarImage src={user.photoURL || '/placeholder.svg'} alt={asString(user.fullName)} />
+            <AvatarImage src={asString(user.photoURL) || '/placeholder.svg'} alt={asString(user.fullName)} />
             <AvatarFallback className='rounded-md text-xs'>
               {user.photoURL
                 ? '100 x 100'
@@ -83,15 +83,15 @@ const DetailCard = ({ user }: { user: User }) => {
           <div className='flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4'>
             <div className='flex-1'>
               <CardHeader className='p-0 pb-2'>
-                <h2 className='text-base md:text-lg font-bold'>{asString(user.fullName)}</h2>
+                <h2 className='text-base md:text-lg font-medium'>{asString(user.fullName)}</h2>
               </CardHeader>
 
               <CardContent className='p-0 space-y-4'>
-                <p className='text-xs md:text-base'>{asString(user.bio)}</p>
+                <p className='text-xs md:text-sm'>{asString(user.bio)}</p>
 
                 <div className='flex flex-col md:flex-row gap-6 items-start md:items-center'>
                   <div className='flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center'>
-                    <p className='font-bold text-xs md:text-base'>Teaching</p>
+                    <p className='font-bold text-xs md:text-sm'>Teaching</p>
                     <div className='flex flex-row gap-2 items-center'>
                       {asStringArray(user.teach)
                         .slice(0, 2)
@@ -99,14 +99,14 @@ const DetailCard = ({ user }: { user: User }) => {
                           <Badge
                             key={skill}
                             variant='outline'
-                            className='rounded-full px-4 py-1 text-xs md:text-sm border-secondary-foreground'
+                            className='rounded-full px-4 py-1 text-xs md:text-xs border-secondary-foreground'
                           >
                             {skill}
                           </Badge>
                         ))}
 
                       {asStringArray(user.teach).length > 2 && (
-                        <p className='text-xs md:text-sm font-semibold text-zinc-500'>
+                        <p className='text-xs md:text-xs font-semibold text-zinc-500'>
                           +{asStringArray(user.teach).length - 2}
                         </p>
                       )}
@@ -114,7 +114,7 @@ const DetailCard = ({ user }: { user: User }) => {
                   </div>
 
                   <div className='flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center'>
-                    <p className='font-bold text-xs md:text-base'>Learning</p>
+                    <p className='font-bold text-xs md:text-sm'>Learning</p>
                     <div className='flex flex-row gap-2 items-center'>
                       {asStringArray(user.learn)
                         .slice(0, 2)
@@ -122,14 +122,14 @@ const DetailCard = ({ user }: { user: User }) => {
                           <Badge
                             key={skill}
                             variant='outline'
-                            className='rounded-full px-4 py-1 text-xs md:text-sm border-secondary-foreground'
+                            className='rounded-full px-4 py-1 text-xs md:text-xs border-secondary-foreground'
                           >
                             {skill}
                           </Badge>
                         ))}
 
                       {asStringArray(user.learn).length > 2 && (
-                        <p className='text-xs md:text-sm font-semibold text-zinc-500'>
+                        <p className='text-xs md:text-xs font-semibold text-zinc-500'>
                           +{asStringArray(user.learn).length - 2}
                         </p>
                       )}
