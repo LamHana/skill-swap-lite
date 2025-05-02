@@ -16,6 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useAuth } from '@/hooks';
 import { updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
+import { matchingIndicator } from '@/utils/matchingIndicator';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
 import { arrayRemove } from 'firebase/firestore';
@@ -26,7 +27,6 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { matchingIndicator } from '@/utils/matchingIndicator';
 
 const DetailCard = ({ user }: { user: User }) => {
   const navigate = useNavigate();

@@ -1,3 +1,4 @@
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 import PreviewCard from '@/components/common/preview-card';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -12,7 +13,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 const Invitations = () => {
   const queryClient = useQueryClient();

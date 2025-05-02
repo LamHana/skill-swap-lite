@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { config } from '@/config/app';
 import SideBar from '@/pages/EditProfile/components/side-bar';
+
 import { ChevronLeft } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
