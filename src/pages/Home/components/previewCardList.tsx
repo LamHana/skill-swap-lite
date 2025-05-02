@@ -66,8 +66,8 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             name={result.fullName.toString()}
             percent={result.percent}
             teach={Array.isArray(result.teach) ? result.teach : []}
-            learn={Array.isArray(result.teach) ? result.teach : []}
-            photoUrl={result.photoURL}
+            learn={Array.isArray(result.learn) ? result.learn : []}
+            photoUrl={result.photoURL.toString()}
             setListPendingUsers={setListPendingUsers}
             listPendingUsers={listPendingUsers}
             button={

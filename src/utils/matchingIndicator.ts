@@ -32,5 +32,5 @@ export const matchingIndicator = (cur: User, user: User) => {
           return acc;
         }, 0) / user.learn.length;
 
-  return ((matchA + matchB) / 2) * 100;
+  return Math.round(((matchA + matchB) / 2) * 100);
 };

@@ -9,3 +9,8 @@ export type GetAllSkillsResponse = Skill[];
 export type GetSkillResponse = Skill;
 
 export type CreateSkillResponse = Skill;
+
+export interface CategoryWithSkills {
+  category: string;
+  skills: Omit<Skill, 'category'>[];
+}
