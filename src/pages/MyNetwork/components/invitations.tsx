@@ -12,11 +12,12 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 const Invitations = () => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
-  const { data: users } = useInvitations();
+  const { data: users, isLoading } = useInvitations();
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
 
   if (!currentUser) return;
@@ -60,7 +61,11 @@ const Invitations = () => {
     onSettled: () => setPendingUserId(null),
   });
 
-  return users && users.length > 0 ? (
+  return isLoading ? (
+    <div className='w-full flex items-center justify-center py-20'>
+      <LoadingSpinner size='md' />
+    </div>
+  ) : users && users.length > 0 ? (
     <div className='flex flex-col items-start mt-10 w-full'>
       <h2 className='text-xl font-bold mb-4'>
         Invitations
