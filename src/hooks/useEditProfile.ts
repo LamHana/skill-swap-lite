@@ -1,8 +1,10 @@
 import { Option } from '@/components/common/multi-select';
 import { ProfileFormData, profileSchema } from '@/pages/EditProfile/profile.schema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { GET_SINGLE_USER, getUserByUID } from '@/services/user.service';
-import { Skill } from '@/types/skill.type';
+import { GET_SINGLE_USER, getUserByUID, updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
 
 import { useEffect, useRef, useState } from 'react';
@@ -50,6 +52,14 @@ const useEditProfile = () => {
   const { data: skills } = useQuery({
     queryKey: [GET_SKILLS_QUERY_KEY],
     queryFn: () => getSkills(),
+  });
+
+  const { mutate: updateUserSkills, isPending } = useMutation({
+    mutationFn: (data: ProfileFormData) =>
+      updateUser(user?.id, {
+        learn: data.learnSkills,
+        teach: data.teachSkills,
+      }),
   });
 
   const [currentUser, setCurrentUser] = useState<User>();
