@@ -132,7 +132,7 @@ const useEditProfile = () => {
       },
       onError: (error) => toast.error(error.message),
     });
-    navigate(config.routes.profile)
+    navigate(config.routes.profile);
   };
 
   useEffect(() => {

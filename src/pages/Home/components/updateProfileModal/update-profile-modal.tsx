@@ -2,9 +2,11 @@ import { LoadingButton } from '@/components/common/loading-button';
 import MultipleSelector, { Option } from '@/components/common/multi-select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { patchUser } from '@/contexts/auth/auth.reducer';
+import { useAuth } from '@/hooks';
 import { useSkillValidation } from '@/hooks/useSkillValidation';
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { updateUser } from '@/services/user.service';
+import { getUserByUID, updateUser } from '@/services/user.service';
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -30,6 +32,7 @@ interface UpdateProfileModalProps {
 
 export const UpdateProfileModal = ({ open, onOpenChange, userId }: UpdateProfileModalProps) => {
   const [skillOptions, setSkillOptions] = useState<Option[]>([]);
+  const { dispatch } = useAuth();
   const { validateSkills, getFilteredOptions } = useSkillValidation();
 
   const form = useForm<UpdateProfileFormData>({
@@ -90,9 +93,13 @@ export const UpdateProfileModal = ({ open, onOpenChange, userId }: UpdateProfile
 
   const onSubmit = (data: UpdateProfileFormData) => {
     updateUserSkills(data, {
-      onSuccess: () => {
+      onSuccess: async () => {
         onOpenChange(false);
         toast.success('Profile updated successfully');
+        form.reset();
+        const user = await getUserByUID(userId);
+
+        dispatch(patchUser({ user }));
       },
       onError: (error) => toast.error(error.message),
     });

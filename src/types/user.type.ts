@@ -10,7 +10,7 @@ export interface User {
   connections: string[] | FieldValue;
   requestConnections: string[] | FieldValue;
   sentConnections: string[] | FieldValue;
-  photoURL: string  | FieldValue;
+  photoURL: string | FieldValue;
 }
 
 export type GetAllUsersResponse = User[];

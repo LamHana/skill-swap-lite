@@ -29,7 +29,7 @@ const EditProfile = () => {
     onSubmit,
     fileInputRef,
     handleBackButtonClick,
-    isPending
+    isPending,
   } = useEditProfile();
 
   const sidebarNavItems = [
@@ -127,9 +127,13 @@ const EditProfile = () => {
                 placeholder='Select skills you want to teach...'
                 required={true}
               />
-              <LoadingButton loading={isPending} type='submit' className='float-end px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'>
-                  Submit
-                </LoadingButton>
+              <LoadingButton
+                loading={isPending}
+                type='submit'
+                className='float-end px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'
+              >
+                Submit
+              </LoadingButton>
             </form>
           </Form>
         </div>

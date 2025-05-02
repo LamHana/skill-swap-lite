@@ -53,20 +53,23 @@ const Profile = () => {
               </CardHeader>
               <CardContent>
                 <ul className='space-y-2'>
-                  {userConnections && userConnections.length !== 0 && userConnections.map((connection, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6">
-                      <AvatarImage src={connection.photoURL.toString().trim() || ''} alt='shadcn' />
-                        <AvatarFallback className="text-xs">
-                          {connection.fullName.toString()
-                            .split(" ")
-                            .map((name) => name[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{connection.fullName.toString()}</span>
-                    </li>
-                  ))}
+                  {userConnections &&
+                    userConnections.length !== 0 &&
+                    userConnections.map((connection, index) => (
+                      <li key={index} className='flex items-center gap-2'>
+                        <Avatar className='h-6 w-6'>
+                          <AvatarImage src={connection.photoURL.toString().trim() || ''} alt='shadcn' />
+                          <AvatarFallback className='text-xs'>
+                            {connection.fullName
+                              .toString()
+                              .split(' ')
+                              .map((name) => name[0])
+                              .join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className='text-sm'>{connection.fullName.toString()}</span>
+                      </li>
+                    ))}
                 </ul>
               </CardContent>
             </Card>
