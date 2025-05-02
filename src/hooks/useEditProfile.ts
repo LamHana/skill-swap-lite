@@ -1,18 +1,17 @@
 import { Option } from '@/components/common/multi-select';
 import { ProfileFormData, profileSchema } from '@/pages/EditProfile/profile.schema';
-import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { GET_SINGLE_USER, getUserByUID } from '@/services/user.service';
-import { Skill } from '@/types/skill.type';
-import { User } from '@/types/user.type';
-
-import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-
-import useAuth from './useAuth';
-
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
+import { GET_SINGLE_USER, getUserByUID, updateUser } from '@/services/user.service';
+import { User } from '@/types/user.type';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useAuth from './useAuth';
+import { Skill } from '@/types/skill.type';
+import { toast } from 'sonner';
+import { config } from '@/config/app';
 
 const formatedOptions = (options: Skill[]) => {
   return options.map((skill) => ({
@@ -90,6 +89,7 @@ const useEditProfile = () => {
     defaultValues: {
       name: '',
       bio: '',
+      photoUrl: '',
       learn: learn.map((option: Option) => option.value),
       teach: teach.map((option: Option) => option.value),
     },
@@ -111,9 +111,26 @@ const useEditProfile = () => {
     setTeach(options);
   };
 
-  function onSubmit(values: ProfileFormData) {
-    console.log(values);
-  }
+  const { mutate: updateUserSkills, isPending } = useMutation({
+    mutationFn: (data: ProfileFormData) =>
+      updateUser(currentUser?.id, {
+        fullName: data.name,
+        bio: data.bio,
+        photoURL: data.photoUrl,
+        learn: data.learn,
+        teach: data.teach,
+      }),
+  });
+
+  const onSubmit = (data: ProfileFormData) => {
+    updateUserSkills(data, {
+      onSuccess: () => {
+        toast.success('Profile updated successfully');
+      },
+      onError: (error) => toast.error(error.message),
+    });
+    navigate(config.routes.profile)
+  };
 
   useEffect(() => {
     if (cur) {
@@ -142,10 +159,11 @@ const useEditProfile = () => {
         .flat();
       setLearn(learningSkills);
       setTeach(teachingSkills);
-      setAvatar(currentUser.photoURL);
+      setAvatar(currentUser.photoURL.toString().trim());
       form.reset({
         name: currentUser.fullName.toString().trim(),
         bio: currentUser.bio.toString().trim(),
+        photoUrl: currentUser.photoURL.toString().trim(),
         learn: learningSkills.map((option: Option) => option.value),
         teach: teachingSkills.map((option: Option) => option.value),
       });
@@ -181,6 +199,7 @@ const useEditProfile = () => {
     skillOptions,
     currentUser,
     handleBackButtonClick,
+    isPending,
   };
 };
 

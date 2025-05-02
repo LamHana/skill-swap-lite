@@ -1,8 +1,8 @@
-import { config } from '@/config/app';
-import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { GET_SINGLE_USER, getUserByUID } from '@/services/user.service';
-import { Skill } from '@/types/skill.type';
-import { User } from '@/types/user.type';
+import { config } from "@/config/app";
+import { GET_SKILLS_QUERY_KEY, getSkills } from "@/services/skill.service";
+import { GET_SINGLE_USER, getUserByUID, getUsersByUIDs } from "@/services/user.service";
+import { Skill } from "@/types/skill.type";
+import { User } from "@/types/user.type";
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -19,7 +19,31 @@ const useGetSingleProfile = () => {
 
   const { data: cur } = useQuery({
     queryKey: [GET_SINGLE_USER, uid],
-    queryFn: () => getUserByUID(uid),
+    queryFn: async () => {
+      if (!uid) {
+        throw new Error('User not logged in');
+      }
+
+      const userData = await getUserByUID(uid);
+
+      if (!userData) {
+        throw new Error('User data not found');
+      }
+
+      const connectionIds = (userData.connections ?? []) as string[];
+
+      if (connectionIds.length === 0) {
+        return [];
+      }
+
+      // get the connected users data
+      const connectedUsers = await getUsersByUIDs(connectionIds as string[]);
+
+      return {
+        userData,
+        connectedUsers,
+      }
+    },
     enabled: !!user?.id,
   });
 
@@ -32,6 +56,7 @@ const useGetSingleProfile = () => {
   const [learn, setLearn] = useState<Skill[]>([]);
   const [teach, setTeach] = useState<Skill[]>([]);
   const [skillsList, setSkillsList] = useState<Skill[]>([]);
+  const [userConnections, setUserConnections] = useState<User[]>([]);
 
   const handleEditProfile = () => {
     navigate(config.routes.editProfile);
@@ -39,8 +64,9 @@ const useGetSingleProfile = () => {
 
   useEffect(() => {
     if (cur) {
-      setCurrentUser(cur);
-    }
+      setCurrentUser(cur.userData);
+      setUserConnections(cur.connectedUsers);
+    } 
   }, [cur]);
 
   useEffect(() => {
@@ -73,6 +99,7 @@ const useGetSingleProfile = () => {
     learn,
     teach,
     handleEditProfile,
+    userConnections
   };
 };
 
