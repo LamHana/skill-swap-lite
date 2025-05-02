@@ -62,11 +62,7 @@ const NotVerifyEmail = () => {
         <Link to='/' className={buttonVariants()}>
           Back to home
         </Link>
-        <LoadingButton
-          className={buttonVariants({ variant: 'outline' })}
-          onClick={handleSendEmailVerification}
-          loading={loading}
-        >
+        <LoadingButton variant={'outline'} onClick={handleSendEmailVerification} loading={loading}>
           Resend verification email
         </LoadingButton>
         <button className={buttonVariants({ variant: 'outline' })} onClick={onSignOut}>
