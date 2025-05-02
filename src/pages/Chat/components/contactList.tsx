@@ -3,8 +3,17 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 import { Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import type { Contact } from './types';
+
+// Utility to remove diacritics for accent-insensitive search
+function normalizeText(text: string) {
+  return text
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
+}
 
 export function ContactList({
   contacts,
@@ -15,16 +24,29 @@ export function ContactList({
   selectedId?: string;
   onSelect: (contact: Contact) => void;
 }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredContacts = useMemo(() => {
+    const normalizedTerm = normalizeText(searchTerm.trim());
+    if (!normalizedTerm) return contacts;
+    return contacts.filter((contact) => normalizeText(contact.name).includes(normalizedTerm));
+  }, [contacts, searchTerm]);
+
   return (
     <div className='w-full md:w-80 bg-background flex-shrink-0 rounded-lg md:border-2 md:border-primary'>
       <div className='p-4'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-          <Input placeholder='Search connection' className='pl-9 bg-muted/50' />
+          <Input
+            placeholder='Search connection'
+            className='pl-9 bg-muted/50'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
       <div className='overflow-auto flex-1'>
-        {contacts.map((contact) => (
+        {filteredContacts.map((contact) => (
           <div
             key={contact.id}
             className={cn(
