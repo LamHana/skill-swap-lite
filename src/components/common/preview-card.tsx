@@ -14,6 +14,8 @@ interface PreviewCardProps {
   photoUrl?: string;
   button: ReactNode;
   className?: string;
+  setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  listPendingUsers?: Record<string, boolean>;
 }
 
 export default function PreviewCard({
@@ -25,6 +27,8 @@ export default function PreviewCard({
   photoUrl,
   button,
   className = '',
+  setListPendingUsers,
+  listPendingUsers,
 }: PreviewCardProps) {
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -93,7 +97,15 @@ export default function PreviewCard({
         </CardContent>
         <CardFooter>{button}</CardFooter>
       </Card>
-      {showProfileModal && <ProfileModal open={showProfileModal} onOpenChange={handleCloseProfileModal} userId={id} />}
+      {showProfileModal && (
+        <ProfileModal
+          open={showProfileModal}
+          onOpenChange={handleCloseProfileModal}
+          userId={id}
+          listPendingUsers={listPendingUsers}
+          setListPendingUsers={setListPendingUsers}
+        />
+      )}
     </>
   );
 }
