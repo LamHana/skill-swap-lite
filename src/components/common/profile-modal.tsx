@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { config } from '@/config/app';
 import { useAuth } from '@/hooks';
 import useGetUsers from '@/hooks/useGetUsers';
 import { getSkills } from '@/services/skill.service';
@@ -10,16 +11,18 @@ import { mapConnectionInformation, mapSkillInformation } from '@/utils/mapUserIn
 import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { MdOutlineOpenInNew } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 import WithdrawAlertDialog from './alert-dialog';
 import { LoadingButton } from './loading-button';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-
 interface ProfileModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -34,6 +37,7 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
   const [teach, setTeach] = useState<Skill[]>([]);
   const [connections, setConnections] = useState<User[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { users } = useGetUsers();
   const { user: currentUser } = useAuth();
 
@@ -94,7 +98,7 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto'>
-        <DialogHeader>
+        <DialogHeader className='flex flex-row justify-between'>
           <DialogTitle>Profile Preview</DialogTitle>
         </DialogHeader>
 
@@ -102,14 +106,19 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
           {/* Profile Header */}
           <div className='flex flex-col sm:flex-row items-center gap-4'>
             <Avatar className='w-20 h-20'>
-              <AvatarImage src={user?.photoURL || ''} alt='Profile' />
+              <AvatarImage src={user?.photoURL.toString() || ''} alt='Profile' />
               <AvatarFallback className='bg-primary text-primary-foreground font-bold text-3xl'>
                 {user?.fullName.toString().trim().charAt(0)}
               </AvatarFallback>
             </Avatar>
 
             <div className='flex flex-col items-center sm:items-start'>
-              <h2 className='text-xl font-bold'>{user?.fullName.toString().trim()}</h2>
+              <div className='flex items-center justify-between gap-2 w-full'>
+                <h2 className='text-xl font-bold'>{user?.fullName.toString().trim()}</h2>
+                <Button asChild variant={'ghost'} size='default' className='p-0'>
+                  <MdOutlineOpenInNew size={20} onClick={() => navigate(config.routes.user.replace(':id', userId))} />
+                </Button>
+              </div>
 
               {/* Bio Section - Moved up for better modal layout */}
               <div className='mt-2 text-sm text-muted-foreground'>{user?.bio.toString().trim()}</div>
@@ -131,7 +140,7 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
                     connections.map((connection, index) => (
                       <li key={index} className='flex items-center gap-2'>
                         <Avatar className='h-5 w-5'>
-                          <AvatarImage src={connection.photoURL} alt={connection.fullName.toString()} />
+                          <AvatarImage src={connection.photoURL.toString()} alt={connection.fullName.toString()} />
                           <AvatarFallback className='text-xs'>
                             {connection.fullName.toString().charAt(0).toUpperCase()}
                           </AvatarFallback>
