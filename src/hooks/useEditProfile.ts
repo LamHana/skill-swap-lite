@@ -1,17 +1,20 @@
 import { Option } from '@/components/common/multi-select';
+import { config } from '@/config/app';
 import { ProfileFormData, profileSchema } from '@/pages/EditProfile/profile.schema';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
 import { GET_SINGLE_USER, getUserByUID, updateUser } from '@/services/user.service';
-import { User } from '@/types/user.type';
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useAuth from './useAuth';
 import { Skill } from '@/types/skill.type';
+import { User } from '@/types/user.type';
+
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { config } from '@/config/app';
+
+import useAuth from './useAuth';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const formatedOptions = (options: Skill[]) => {
   return options.map((skill) => ({

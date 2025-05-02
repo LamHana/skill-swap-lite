@@ -1,8 +1,8 @@
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 import useConnections from '@/hooks/useConnections';
 import { User } from '@/types/user.type';
 
 import DetailCard from './detail-card';
-import { LoadingSpinner } from '@/components/common/loading-spinner';
 
 const DetailCardList = () => {
   const { data: users, isLoading } = useConnections();
