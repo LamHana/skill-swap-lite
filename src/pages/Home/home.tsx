@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
 import SearchForm from './components/searchForm';
+import { TABS_DATA } from './constants';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -243,41 +244,20 @@ const Home = () => {
           ))}
         </TabsList>
 
-        <TabsContent value='related'>
-          <h2 className='text-2xl font-bold'>Top Related</h2>
-          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
-          {!isLoadingUsers &&
-            !isLoadingSearchedUsers &&
-            (userList && userList.length > 0 ? (
-              <PreviewCardList results={userList ?? users} />
-            ) : (
-              <p className='text-center mt-10'>No users found</p>
-            ))}
-        </TabsContent>
+        {TABS_DATA.map((data) => (
+          <TabsContent key={data.value} value={data.value}>
+            <h2 className='text-2xl font-bold'>{data.tabHeader}</h2>
 
-        <TabsContent value='teaching'>
-          <h2 className='text-2xl font-bold'>People Who Want to Learn What I Teach</h2>
-          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
-          {!isLoadingUsers &&
-            !isLoadingSearchedUsers &&
-            (userList && userList.length > 0 ? (
-              <PreviewCardList results={userList ?? users} />
-            ) : (
-              <p className='text-center mt-10'>No users found</p>
-            ))}
-        </TabsContent>
-
-        <TabsContent value='learning'>
-          <h2 className='text-2xl font-bold '>People Who Can Teach What I Want to Learn</h2>
-          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
-          {!isLoadingUsers &&
-            !isLoadingSearchedUsers &&
-            (userList && userList.length > 0 ? (
-              <PreviewCardList results={userList ?? users} />
-            ) : (
-              <p className='text-center mt-10'>No users found</p>
-            ))}
-        </TabsContent>
+            {(isLoadingUsers || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
+            {!isLoadingUsers &&
+              !isLoadingSearchedUsers &&
+              (users && users.length > 0 ? (
+                <PreviewCardList results={users} />
+              ) : (
+                <p className='text-center mt-10'>No users found</p>
+              ))}
+          </TabsContent>
+        ))}
       </Tabs>
 
       {user && showCompleteProfile && (

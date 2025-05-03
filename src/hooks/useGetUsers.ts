@@ -47,12 +47,19 @@ const useGetUsers = (mode: string = 'related') => {
 
   const matchedUsers: UserWithPercent[] =
     users?.map((user) => {
-      const teachSkills = Array.isArray(user.teach) ? mapSkillIdsToObjects(user.teach) : [];
-      const learnSkills = Array.isArray(user.learn) ? mapSkillIdsToObjects(user.learn) : [];
+      const { percent, learnMatchCount, teachMatchCount, reorderedLearn, reorderedTeach } = matchingIndicator(
+        currentUser ?? ({} as User),
+        user as User,
+      );
+
+      const teachSkills = mapSkillIdsToObjects(reorderedTeach);
+      const learnSkills = mapSkillIdsToObjects(reorderedLearn);
 
       return {
         ...user,
-        percent: currentUser ? matchingIndicator(currentUser, user as User) : 0,
+        percent: percent,
+        matchedLearn: learnMatchCount,
+        matchedTeach: teachMatchCount,
         learn: learnSkills,
         teach: teachSkills,
       };
