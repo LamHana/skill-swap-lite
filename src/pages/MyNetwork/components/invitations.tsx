@@ -9,18 +9,34 @@ import { User } from '@/types/user.type';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
 import { arrayRemove, arrayUnion } from 'firebase/firestore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useSkillMapping from '@/hooks/useSkillMapping';
+import { matchingIndicator } from '@/utils/matchingIndicator';
 
 const Invitations = () => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
   const { data: users, isLoading } = useInvitations();
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
+  const [userWithSkills, setUserWithSkills] = useState<User | null>(null);
+  const [isPercentagesLoaded, setIsPercentagesLoaded] = useState(false);
 
   if (!currentUser) return;
+
+  useEffect(() => {
+    const fetchUserWithSkills = async () => {
+      if (!currentUser) return;
+      const teachSkills = await useSkillMapping(asStringArray(currentUser.teach));
+      const learnSkills = await useSkillMapping(asStringArray(currentUser.learn));
+      setUserWithSkills({ ...currentUser, teach: teachSkills, learn: learnSkills });
+      setIsPercentagesLoaded(true);
+    };
+
+    fetchUserWithSkills();
+  }, [currentUser]);
 
   const denialMutation = useMutation({
     mutationFn: (user: User) => {
@@ -61,7 +77,7 @@ const Invitations = () => {
     onSettled: () => setPendingUserId(null),
   });
 
-  return isLoading ? (
+  return isLoading || !isPercentagesLoaded ? (
     <div className='w-full flex items-center justify-center py-20'>
       <LoadingSpinner size='md' />
     </div>
@@ -85,7 +101,7 @@ const Invitations = () => {
                 <PreviewCard
                   id={user.id}
                   name={asString(user.fullName)}
-                  percent={100}
+                  percent={userWithSkills ? matchingIndicator(userWithSkills, user) : 0}
                   teach={asStringArray(user.teach)}
                   learn={asStringArray(user.learn)}
                   button={
