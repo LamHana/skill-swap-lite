@@ -26,9 +26,8 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { matchingIndicator } from '@/utils/matchingIndicator';
 
-const DetailCard = ({ user }: { user: User }) => {
+const DetailCard = ({ user, percentage }: { user: User; percentage: number | null }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const { user: currentUser } = useAuth();
@@ -63,8 +62,8 @@ const DetailCard = ({ user }: { user: User }) => {
   return (
     <>
       <Card className='w-full rounded-xl p-4 relative overflow-hidden'>
-        <div className='absolute top-0 right-0 bg-primary text-white font-bold py-2 px-4 rounded-tr-xl rounded-bl-xl -translate-y-1 translate-x-1'>
-          {matchingIndicator(currentUser, user)}%
+        <div className='absolute top-0 right-0 bg-primary text-white text-xs font-medium py-2 px-4 rounded-tr-xl rounded-bl-xl -translate-y-1 translate-x-1'>
+          {percentage}%
         </div>
 
         <div className='flex flex-col md:flex-row gap-4'>
