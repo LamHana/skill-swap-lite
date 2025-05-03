@@ -21,13 +21,9 @@ const EditProfile = () => {
     teach,
     learnAvailable,
     teachAvailable,
-    handleDeletePicture,
-    handleFileChange,
     handleLearnSkillsChange,
-    handleSelectPicture,
     handleTeachSkillsChange,
     onSubmit,
-    fileInputRef,
     handleBackButtonClick,
     isPending,
   } = useEditProfile();
@@ -58,30 +54,10 @@ const EditProfile = () => {
           <div className='flex flex-col gap-6 mb-6 xl:flex-row md:mb-8 items-center md:justify-between xl:mb-10'>
             <Avatar className='h-40 w-40 xl:h-40 xl:w-40'>
               <AvatarImage src={avatar || ''} alt='shadcn' />
-              {/* <AvatarFallback className='bg-primary text-primary-foreground font-bold text-6xl'>
-                {currentUser && currentUser.fullName.toString().trim().charAt(0)}
-              </AvatarFallback> */}
+              <AvatarFallback className='bg-primary text-primary-foreground font-bold text-6xl'>
+                {typeof currentUser?.fullName === 'string' ? currentUser.fullName.charAt(0) : ''}
+              </AvatarFallback>
             </Avatar>
-            {/* <div className='h-min flex gap-3 xl:gap-6 content-center'>
-              <Button className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6' onClick={handleSelectPicture}>
-                Select Picture
-              </Button>
-              <Button
-                variant={'outline'}
-                className='px-5 py-3 md:px-8 md:py-5 xl:px-10 xl:py-6'
-                onClick={handleDeletePicture}
-              >
-                Delete Picture
-              </Button>
-              <input
-                type='file'
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept='image/*'
-                className='hidden'
-                aria-label='Upload profile picture'
-              />
-            </div> */}
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 md:space-y-8 xl:space-y-10'>

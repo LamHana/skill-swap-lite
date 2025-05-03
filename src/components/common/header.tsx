@@ -109,7 +109,7 @@ const Header = ({ isAuthLayout = false }: { isAuthLayout?: boolean }) => {
                 <DropdownMenuTrigger asChild>
                   <Button variant='default' className='relative h-8 w-8 rounded-full cursor-pointer ml-2'>
                     <Avatar className='h-8 w-8'>
-                      <AvatarImage src={user?.photoURL || ''} alt='shadcn' />
+                      <AvatarImage src={user?.photoURL.toString() || ''} alt='shadcn' />
                       <AvatarFallback className='bg-primary text-primary-foreground'>
                         {typeof user?.fullName === 'string' ? user.fullName.charAt(0) : ''}
                       </AvatarFallback>

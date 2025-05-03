@@ -47,6 +47,7 @@ const useEditProfile = () => {
     queryKey: [GET_SINGLE_USER, user?.id],
     queryFn: () => getUserByUID(user?.id),
     enabled: !!user?.id,
+    refetchOnWindowFocus: false,
   });
 
   const { data: skills } = useQuery({
