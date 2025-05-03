@@ -45,6 +45,7 @@ export default function Chat() {
   const [messagesByContact, setMessagesByContact] = useState<Record<string, Message[]>>({});
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null!);
   const inputRef = useRef<HTMLInputElement>(null!);
 
@@ -165,41 +166,45 @@ export default function Chat() {
 
   // ---------- 4) Gửi tin nhắn vào đúng chat room ----------
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || !selectedContact || !user?.id) return;
+    if (isSending) return;
+    const content = inputValue.trim();
+    if (!content || !selectedContact || !user?.id) return;
 
-    const chatId = [user.id, selectedContact.id].sort().join('_');
-    const chatRef = doc(db, 'chats', chatId);
-
-    await updateDoc(chatRef, {
-      messages: arrayUnion({
-        id: Date.now().toString(),
-        content: inputValue,
-        senderId: user.id,
-        timestamp: Timestamp.now(),
-      }),
-    });
-
-    // cập nhật contact list ngay
-    setContacts((prev) => {
-      // lọc bỏ contact cũ
-      const rest = prev.filter((c) => c.id !== selectedContact.id);
-      // build lại contact vừa chat với lastMessage/timestamp mới
-      const updated: Contact = {
-        ...selectedContact,
-        lastMessage: inputValue,
-        timestamp: formatTimestamp(Timestamp.now()),
-      };
-      // đưa lên đầu
-      return [updated, ...rest];
-    });
-
+    setIsSending(true);
     setInputValue('');
+
+    try {
+      const chatId = [user.id, selectedContact.id].sort().join('_');
+      const chatRef = doc(db, 'chats', chatId);
+      await updateDoc(chatRef, {
+        messages: arrayUnion({
+          id: Date.now().toString(),
+          content,
+          senderId: user.id,
+          timestamp: Timestamp.now(),
+        }),
+      });
+
+      setContacts((prev) => {
+        const rest = prev.filter((c) => c.id !== selectedContact.id);
+        const updated: Contact = {
+          ...selectedContact,
+          lastMessage: content,
+          timestamp: formatTimestamp(Timestamp.now()),
+        };
+        return [updated, ...rest];
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      if (!isSending) handleSendMessage();
     }
   };
 
