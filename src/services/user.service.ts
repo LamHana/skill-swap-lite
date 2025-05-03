@@ -3,21 +3,36 @@ import { User } from '@/types/user.type';
 
 import { collection, doc, documentId, getDoc, getDocs, query, where } from 'firebase/firestore';
 
-import updateDocument from './firebase.service';
+import updateDocument, { getDocuments } from './firebase.service';
 
 export const GET_ALL_USERS = 'GET_ALL_USERS';
+export const GET_CURRENT_USER = 'GET_CURRENT_USER';
 export const GET_SINGLE_USER = 'GET_SINGLE_USER';
 export const GET_ME_QUERY_KEY = 'GET_ME_QUERY_KEY';
 
-export const getUsers = async (curId: string) => {
-  const usersRef = collection(config.firebase.db, config.collections.users);
-  const q = query(usersRef, where(documentId(), '!=', curId));
-  const querySnapshot = await getDocs(q);
+export const getUsersByMode = async (excludedIds?: string[], currentUser?: User, mode?: string) => {
+  const { data: users } = await getDocuments(config.collections.users);
+  let filteredUsers = excludedIds ? users.filter((user) => !excludedIds.includes(user.id)) : users;
+  if (!currentUser || mode === 'related') return filteredUsers as User[];
+  if (mode === 'teaching') {
+    filteredUsers = filteredUsers.filter(
+      (user) =>
+        Array.isArray(user.learn) &&
+        Array.isArray(currentUser.teach) &&
+        user.learn.some((skill) => Array.isArray(currentUser.teach) && currentUser.teach.includes(skill)),
+    );
+  }
 
-  return querySnapshot.docs.map((docSnap) => ({
-    id: docSnap.id,
-    ...(docSnap.data() as Omit<User, 'id'>),
-  }));
+  if (mode === 'learning') {
+    filteredUsers = filteredUsers.filter(
+      (user) =>
+        Array.isArray(user.teach) &&
+        Array.isArray(currentUser.learn) &&
+        user.teach.some((skill) => Array.isArray(currentUser.learn) && currentUser.learn.includes(skill)),
+    );
+  }
+
+  return filteredUsers as User[];
 };
 
 export const getUserByUID = async (uid: string | undefined) => {

@@ -38,6 +38,29 @@ export async function getDocument(_collection: CollectionValue, _id?: string): P
 }
 
 /**
+ * Retrieves all documents from a collection (no constraints)
+ *
+ * @param _collection - The collection name to retrieve documents from
+ * @returns An object containing data array, document snapshots, and the last visible document (for pagination if needed)
+ */
+export const getDocuments = async (_collection: CollectionValue) => {
+  const data: DocumentData[] = [];
+  const colRef = collection(config.firebase.db, _collection);
+  const documentSnapshots = await getDocs(colRef);
+
+  documentSnapshots.forEach((doc) => {
+    data.push({
+      ...doc.data(),
+      id: doc.id,
+    });
+  });
+
+  const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+
+  return { data, documentSnapshots, lastVisible };
+};
+
+/**
  * Retrieves multiple documents from a collection based on query constraints
  *
  * @param _collection - The collection name to query

@@ -12,6 +12,7 @@ import useGetUsers from '@/hooks/useGetUsers';
 import useSkill from '@/hooks/useSkill';
 import { cn } from '@/lib/utils';
 import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
+import { GET_SKILL_CATEGORIES_QUERY_KEY, getCategoriesWithSkills } from '@/services/skill.service';
 import { getUserBySkills } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
 
@@ -19,52 +20,53 @@ import { BookOpenIcon, CheckIcon, ChevronDown, FilterIcon, GraduationCapIcon, Se
 import { useEffect, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
+import SearchForm from './components/searchForm';
+
+import { useQuery } from '@tanstack/react-query';
 
 const Home = () => {
+  const [currentTab, setCurrentTab] = useState('related');
   const [searchIDs, setSearchIDs] = useState<string[] | null>(null);
-
   const [userList, setUserList] = useState<UserWithPercent[] | null>(null);
   const [isLoadingSearchedUsers, setIsLoadingSearchedUsers] = useState(false);
-
   const [openCategoryFilter, setOpenCategoryFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
 
   const { user } = useAuth();
-  const { users, isLoading: isLoadingUsers, processUsers, sortUsersByMatching } = useGetUsers();
+  const { users, isLoading: isLoadingUsers } = useGetUsers(currentTab);
 
   const { skillCategories, currentLearning: myLearning, currentTeaching: myTeaching } = useSkill();
 
-  useEffect(() => {
-    setUserList(users);
-  }, [users]);
+  // useEffect(() => {
+  //   setUserList(users);
+  // }, [users]);
 
-  useEffect(() => {
-    console.log(searchIDs, 'searchIDs in Home');
-    if (!searchIDs) {
-      setUserList(users);
-    } else if (searchIDs.length > 0) {
-      setIsLoadingSearchedUsers(true);
-      getUserBySkills(searchIDs)
-        .then((searchedUsers) => {
-          setIsLoadingSearchedUsers(false);
-          if (searchedUsers.length > 0) {
-            setUserList(sortUsersByMatching(processUsers(searchedUsers)));
-          } else {
-            setUserList([]);
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching searched users:', error);
-        })
-        .finally(() => {
-          setIsLoadingSearchedUsers(false);
-        });
-    } else {
-      setUserList([]);
-    }
-  }, [searchIDs]);
-
-  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+  // useEffect(() => {
+  //   console.log(searchIDs, 'searchIDs in Home');
+  //   if (!searchIDs) {
+  //     setUserList(users);
+  //   } else if (searchIDs.length > 0) {
+  //     setIsLoadingSearchedUsers(true);
+  //     getUserBySkills(searchIDs)
+  //       .then((searchedUsers) => {
+  //         setIsLoadingSearchedUsers(false);
+  //         if (searchedUsers.length > 0) {
+  //           setUserList(sortUsersByMatching(processUsers(searchedUsers)));
+  //         } else {
+  //           setUserList([]);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error fetching searched users:', error);
+  //       })
+  //       .finally(() => {
+  //         setIsLoadingSearchedUsers(false);
+  //       });
+  //   } else {
+  //     setUserList([]);
+  //   }
+  // }, [searchIDs]);
 
   useEffect(() => {
     if (
@@ -232,16 +234,18 @@ const Home = () => {
 
       {/* {!isLoading && <SearchForm categories={categories || []} setSearchIDs={setSearchIDs} />} */}
 
-      <Tabs defaultValue='related' className='mb-6'>
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6'>
         <TabsList className='mb-4'>
-          <TabsTrigger value='related'>Top Related</TabsTrigger>
-          <TabsTrigger value='teaching'>Teaching My Skills</TabsTrigger>
-          <TabsTrigger value='learning'>Has Skills I Want</TabsTrigger>
+          {TABS_DATA.map((data) => (
+            <TabsTrigger key={data.value} value={data.value}>
+              {data.tabTrigger}
+            </TabsTrigger>
+          ))}
         </TabsList>
 
         <TabsContent value='related'>
           <h2 className='text-2xl font-bold'>Top Related</h2>
-          {isLoadingSearchedUsers && <LoadingSpinner className='mx-auto mt-10' />}
+          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
           {!isLoadingUsers &&
             !isLoadingSearchedUsers &&
             (userList && userList.length > 0 ? (
@@ -253,7 +257,7 @@ const Home = () => {
 
         <TabsContent value='teaching'>
           <h2 className='text-2xl font-bold'>People Who Want to Learn What I Teach</h2>
-          {isLoadingSearchedUsers && <LoadingSpinner className='mx-auto mt-10' />}
+          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
           {!isLoadingUsers &&
             !isLoadingSearchedUsers &&
             (userList && userList.length > 0 ? (
@@ -265,7 +269,7 @@ const Home = () => {
 
         <TabsContent value='learning'>
           <h2 className='text-2xl font-bold '>People Who Can Teach What I Want to Learn</h2>
-          {isLoadingSearchedUsers && <LoadingSpinner className='mx-auto mt-10' />}
+          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
           {!isLoadingUsers &&
             !isLoadingSearchedUsers &&
             (userList && userList.length > 0 ? (
@@ -275,6 +279,7 @@ const Home = () => {
             ))}
         </TabsContent>
       </Tabs>
+
       {user && showCompleteProfile && (
         <UpdateProfileModal
           open={showCompleteProfile}
