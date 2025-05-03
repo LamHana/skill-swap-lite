@@ -29,26 +29,37 @@ const useGetUsers = () => {
           const cachedUser = matchCache.current.get(cacheKey)!;
           return { ...cachedUser, percent: cachedUser.percent ?? 0 };
         }
-        const percent = matchingIndicator(user, userItem);
-        const { learning, teaching } = skillMapping(userItem);
-        const newUserItem: UserWithPercent = { ...userItem, learn: learning ?? [], teach: teaching ?? [], percent };
+        const { percent, reorderedLearn, reorderedTeach, learnMatchCount, teachMatchCount } = matchingIndicator(
+          user,
+          userItem,
+        );
+
+        const { learning, teaching } = skillMapping(reorderedLearn || [], reorderedTeach || []);
+        const newUserItem: UserWithPercent = {
+          ...userItem,
+          learn: learning ?? [],
+          teach: teaching ?? [],
+          percent,
+          matchedLearn: learnMatchCount,
+          matchedTeach: teachMatchCount,
+        };
         matchCache.current.set(cacheKey, newUserItem);
         return newUserItem;
       });
     },
-    [skillMapping],
+    [skillMapping, user],
   );
 
   const processedUsers: UserWithPercent[] = React.useMemo(() => {
     return processUsers(data || []);
-  }, [data, user, skillMapping]);
+  }, [data, processUsers]);
 
-  const sortUsersByMatching = (list: UserWithPercent[]) => {
+  const sortUsersByMatching = React.useCallback((list: UserWithPercent[]) => {
     return [...list].sort((a, b) => b.percent - a.percent);
-  };
+  }, []);
 
   return {
-    users: processedUsers,
+    users: React.useMemo(() => sortUsersByMatching(processedUsers), [processedUsers, sortUsersByMatching]),
     isLoading: isLoading,
     isError,
     processUsers,

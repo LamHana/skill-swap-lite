@@ -1,5 +1,6 @@
 import { LoadingSpinner } from '@/components/common/loading-spinner';
 import { PageHeader } from '@/components/common/page-header';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -14,7 +15,7 @@ import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/u
 import { getUserBySkills } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
 
-import { CheckIcon, ChevronDown, FilterIcon, SearchIcon, X } from 'lucide-react';
+import { BookOpenIcon, CheckIcon, ChevronDown, FilterIcon, GraduationCapIcon, SearchIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
@@ -31,7 +32,7 @@ const Home = () => {
   const { user } = useAuth();
   const { users, isLoading: isLoadingUsers, processUsers, sortUsersByMatching } = useGetUsers();
 
-  const { skillCategories } = useSkill();
+  const { skillCategories, currentLearning: myLearning, currentTeaching: myTeaching } = useSkill();
 
   useEffect(() => {
     setUserList(users);
@@ -89,6 +90,51 @@ const Home = () => {
   return (
     <>
       <PageHeader />
+      <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 mb-4'>
+        <div className='flex flex-col md:flex-row gap-3'>
+          <div className='flex-1'>
+            <Avatar className='h-10 w-10  mx-auto'>
+              <AvatarImage src={user?.photoURL.toString()} />
+              <AvatarFallback>{user?.fullName.toString().charAt(0).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </div>
+          {/* Teaching Skills */}
+          <div className='flex-5'>
+            <div className='flex items-center gap-1 mb-1'>
+              <GraduationCapIcon className='h-4 w-4 text-emerald-500' />
+              <h3 className='text-sm font-medium'>Teaching</h3>
+            </div>
+            <div className='flex flex-wrap gap-1'>
+              {myTeaching?.map((skill, index) => (
+                <>
+                  <Badge
+                    key={index}
+                    variant={'outline'}
+                    className='bg-emerald-100 dark:bg-emerald-700 border-emerald-500'
+                  >
+                    {skill}
+                  </Badge>
+                </>
+              ))}
+            </div>
+          </div>
+
+          {/* Learning Skills */}
+          <div className='flex-5'>
+            <div className='flex items-center gap-1 mb-1'>
+              <BookOpenIcon className='h-4 w-4 text-blue-500' />
+              <h3 className='text-sm font-medium'>Learning</h3>
+            </div>
+            <div className='flex flex-wrap gap-1'>
+              {myLearning?.map((skill, index) => (
+                <Badge key={index} variant={'outline'} className='bg-blue-100 dark:bg-blue-700 border-blue-500'>
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Search and Multi-Select Filter */}
       <div className='flex flex-col gap-3 mb-6'>
         {/* Search and Filter Controls */}
@@ -185,21 +231,6 @@ const Home = () => {
       </div>
 
       {/* {!isLoading && <SearchForm categories={categories || []} setSearchIDs={setSearchIDs} />} */}
-
-      <div className='container mx-auto p-4 md:p-8'>
-        <p className='text-3xl font-bold'>
-          {searchIDs ? (
-            <>
-              Search Result{' '}
-              <span className='font-medium text-2xl text-gray-500'>
-                {!isLoadingSearchedUsers && `(${userList?.length})`}
-              </span>
-            </>
-          ) : (
-            `Top Related`
-          )}
-        </p>
-      </div>
 
       <Tabs defaultValue='related' className='mb-6'>
         <TabsList className='mb-4'>

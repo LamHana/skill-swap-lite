@@ -17,6 +17,8 @@ interface PreviewCardProps {
   photoUrl?: string;
   button: ReactNode;
   className?: string;
+  matchedLearn?: number;
+  matchedTeach?: number;
   setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   listPendingUsers?: Record<string, boolean>;
 }
@@ -30,6 +32,8 @@ export default function PreviewCard({
   photoUrl,
   button,
   className = '',
+  matchedLearn = 0,
+  matchedTeach = 0,
   setListPendingUsers,
   listPendingUsers,
 }: PreviewCardProps) {
@@ -78,7 +82,11 @@ export default function PreviewCard({
               <div className='flex flex-wrap gap-1.5'>
                 {teachDisplay.map((skill, index) => {
                   return (
-                    <Badge key={index} variant={'outline'}>
+                    <Badge
+                      key={index}
+                      variant={'outline'}
+                      className={`${index < matchedLearn ? 'bg-blue-100 dark:bg-blue-700 border-blue-500' : ''}`}
+                    >
                       {skill}
                     </Badge>
                   );
@@ -95,7 +103,11 @@ export default function PreviewCard({
               <div className='flex flex-wrap gap-1.5'>
                 {learnDisplay.map((skill, index) => {
                   return (
-                    <Badge key={index} variant={'outline'}>
+                    <Badge
+                      key={index}
+                      variant={'outline'}
+                      className={`${index < matchedTeach ? 'bg-emerald-100 dark:bg-emerald-700 border-emerald-500' : ''}`}
+                    >
                       {skill}
                     </Badge>
                   );

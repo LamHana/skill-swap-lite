@@ -18,7 +18,6 @@ interface PreviewCardListProps {
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
   const { user: currentUser } = useAuth();
   if (!currentUser) return;
-
   const [clickUser, setClickUser] = useState<string | null>(null);
   const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>(
     Array.isArray(currentUser.sentConnections)
@@ -68,6 +67,8 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             teach={Array.isArray(result.teach) ? result.teach : []}
             learn={Array.isArray(result.learn) ? result.learn : []}
             photoUrl={result.photoURL.toString()}
+            matchedLearn={result.matchedLearn}
+            matchedTeach={result.matchedTeach}
             setListPendingUsers={setListPendingUsers}
             listPendingUsers={listPendingUsers}
             button={
