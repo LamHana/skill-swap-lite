@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingSpinner } from '@/components/common/loading-spinner';
 import firebase from '@/config/firebase';
 import { useAuth } from '@/hooks';
 
@@ -212,9 +213,8 @@ export default function Chat() {
   // ---------- 5) Render cả Mobile & Desktop ----------
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-[calc(100vh-64px)] w-full'>
-        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-gray-400' />
-        <span className='ml-2 text-gray-600'>Đang tải cuộc trò chuyện…</span>
+      <div className='fixed inset-0 flex items-center justify-center'>
+        <LoadingSpinner size='lg' />
       </div>
     );
   }
