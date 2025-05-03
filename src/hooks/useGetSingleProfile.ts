@@ -11,13 +11,15 @@ import useAuth from './useAuth';
 
 import { useQuery } from '@tanstack/react-query';
 
+type QueryResult = { userData: User; connectedUsers: User[] };
+
 const useGetSingleProfile = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const uid = id ? id : user?.id;
-  console.log('uid', id);
-  const { data: cur } = useQuery({
+
+  const { data: cur } = useQuery<QueryResult>({
     queryKey: [GET_SINGLE_USER, uid],
     queryFn: async () => {
       if (!uid) {
@@ -33,7 +35,10 @@ const useGetSingleProfile = () => {
       const connectionIds = (userData.connections ?? []) as string[];
 
       if (connectionIds.length === 0) {
-        return [];
+        return {
+          userData,
+          connectedUsers: [], // Empty array instead of returning just []
+        };
       }
 
       // get the connected users data
@@ -45,6 +50,7 @@ const useGetSingleProfile = () => {
       };
     },
     enabled: !!user?.id,
+    refetchOnWindowFocus: false,
   });
 
   const { data: skills } = useQuery({

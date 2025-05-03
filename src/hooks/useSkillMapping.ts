@@ -12,7 +12,7 @@ const useSkillMapping = async (userSkills: string[]) => {
     {} as Record<string, Skill>,
   );
 
-  let mappingSkills = Array.isArray(userSkills)
+  const mappingSkills = Array.isArray(userSkills)
     ? (userSkills as string[]).map((skillId) => skillsMap[skillId]?.name || 'Unknown Skill')
     : [];
 
