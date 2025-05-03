@@ -5,12 +5,11 @@ import useGetUsers from '@/hooks/useGetUsers';
 import { getSkills } from '@/services/skill.service';
 import { getUserByUID, updateUser } from '@/services/user.service';
 import { Skill } from '@/types/skill.type';
-import { User } from '@/types/user.type';
 import { mapConnectionInformation, mapSkillInformation } from '@/utils/mapUserInformation';
 
 import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,9 +32,7 @@ interface ProfileModalProps {
 
 const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPendingUsers }: ProfileModalProps) => {
   if (!userId) return;
-  const [learn, setLearn] = useState<Skill[]>([]);
-  const [teach, setTeach] = useState<Skill[]>([]);
-  const [connections, setConnections] = useState<User[]>([]);
+
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
   const { users } = useGetUsers();
@@ -49,9 +46,30 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
   });
 
   const { data: skills } = useQuery({
-    queryKey: ['skills'],
+    queryKey: ['skills', userId],
     queryFn: () => getSkills(),
   });
+
+  const { data: userInfoProcessed } = useQuery({
+    queryKey: ['processed-user', userId],
+    queryFn: () => {
+      if (!user || !skills || !users) return null;
+
+      const { learnSkills, teachSkills } = mapSkillInformation(user, skills);
+      const { connectedUsers } = mapConnectionInformation(user, users);
+
+      return {
+        learnSkills,
+        teachSkills,
+        connectedUsers,
+      };
+    },
+    enabled: !!user && !!skills && !!users,
+  });
+
+  const learn = userInfoProcessed?.learnSkills ?? [];
+  const teach = userInfoProcessed?.teachSkills ?? [];
+  const connections = userInfoProcessed?.connectedUsers ?? [];
 
   const { mutate: connectMutate, status: connectStatus } = useMutation({
     mutationFn: () => {
@@ -84,16 +102,6 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
       connectMutate();
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      const { learnSkills, teachSkills } = mapSkillInformation(user, skills || []);
-      setLearn(learnSkills);
-      setTeach(teachSkills);
-      const { connectedUsers } = mapConnectionInformation(user, users);
-      setConnections(connectedUsers);
-    }
-  }, [user, skills, users]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -211,6 +219,7 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
           </DialogFooter>
         </div>
       </DialogContent>
+
       <WithdrawAlertDialog
         open={isOpenModal}
         onCancle={() => setIsOpenModal(false)}
