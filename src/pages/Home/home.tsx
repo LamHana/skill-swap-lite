@@ -25,8 +25,8 @@ import { useQuery } from '@tanstack/react-query';
 const Home = () => {
   const [currentTab, setCurrentTab] = useState('related');
   const [searchIDs, setSearchIDs] = useState<string[] | null>(null);
-  const [userList, setUserList] = useState<UserWithPercent[] | null>(null);
-  const [isLoadingSearchedUsers, setIsLoadingSearchedUsers] = useState(false);
+  const [userList, _setUserList] = useState<UserWithPercent[] | null>(null);
+  const [isLoadingSearchedUsers, _setIsLoadingSearchedUsers] = useState(false);
   const [openCategoryFilter, setOpenCategoryFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
