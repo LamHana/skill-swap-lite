@@ -5,7 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useAuth } from '@/hooks';
 import useInvitations from '@/hooks/useInvitations';
 import useSkillMapping from '@/hooks/useSkillMapping';
-import { updateUser } from '@/services/user.service';
+import { GET_ALL_USERS, updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
 import { matchingIndicator } from '@/utils/matchingIndicator';
 import { asString, asStringArray } from '@/utils/userHelpers';
@@ -48,6 +48,10 @@ const Invitations = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invitations', currentUser.id] });
       queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      queryClient.invalidateQueries({
+        queryKey: [GET_ALL_USERS, 'related'],
+        type: 'all',
+      });
       toast.success('Invitation denied successfully!');
     },
     onError: (error) => {
@@ -68,6 +72,10 @@ const Invitations = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invitations', currentUser.id] });
       queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      queryClient.invalidateQueries({
+        queryKey: [GET_ALL_USERS, 'related'],
+        type: 'all',
+      });
       toast.success('Invitation accepted successfully!');
     },
     onError: (error) => {
