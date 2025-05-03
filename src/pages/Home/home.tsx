@@ -8,9 +8,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks';
 import useGetUsers from '@/hooks/useGetUsers';
+import useSkill from '@/hooks/useSkill';
 import { cn } from '@/lib/utils';
 import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
-import { GET_SKILL_CATEGORIES_QUERY_KEY, getCategoriesWithSkills } from '@/services/skill.service';
 import { getUserBySkills } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
 
@@ -18,9 +18,6 @@ import { CheckIcon, ChevronDown, FilterIcon, SearchIcon, X } from 'lucide-react'
 import { useEffect, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
-import SearchForm from './components/searchForm';
-
-import { useQuery } from '@tanstack/react-query';
 
 const Home = () => {
   const [searchIDs, setSearchIDs] = useState<string[] | null>(null);
@@ -34,10 +31,7 @@ const Home = () => {
   const { user } = useAuth();
   const { users, isLoading: isLoadingUsers, processUsers, sortUsersByMatching } = useGetUsers();
 
-  const { data: categories, isLoading } = useQuery({
-    queryKey: [GET_SKILL_CATEGORIES_QUERY_KEY],
-    queryFn: () => getCategoriesWithSkills(),
-  });
+  const { skillCategories } = useSkill();
 
   useEffect(() => {
     setUserList(users);
@@ -123,7 +117,7 @@ const Home = () => {
                 <CommandList>
                   <CommandEmpty>No categories found.</CommandEmpty>
                   <CommandGroup>
-                    {categories?.map((category) => {
+                    {skillCategories?.map((category) => {
                       const isSelected = selectedCategories.includes(category?.category);
                       return (
                         <CommandItem
@@ -167,7 +161,7 @@ const Home = () => {
           <div className='flex flex-wrap items-center gap-2 mt-2'>
             <span className='text-sm text-muted-foreground'>Filters:</span>
             {selectedCategories.map((categoryValue) => {
-              const category = categories?.find((c) => c.category === categoryValue);
+              const category = skillCategories?.find((c) => c.category === categoryValue);
               return (
                 <Badge key={categoryValue} variant='secondary' className='px-2 py-0 h-6'>
                   {category?.category}
@@ -190,7 +184,7 @@ const Home = () => {
         )}
       </div>
 
-      {!isLoading && <SearchForm categories={categories || []} setSearchIDs={setSearchIDs} />}
+      {/* {!isLoading && <SearchForm categories={categories || []} setSearchIDs={setSearchIDs} />} */}
 
       <div className='container mx-auto p-4 md:p-8'>
         <p className='text-3xl font-bold'>
@@ -216,7 +210,7 @@ const Home = () => {
 
         <TabsContent value='related'>
           <h2 className='text-2xl font-bold'>Top Related</h2>
-          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
+          {isLoadingSearchedUsers && <LoadingSpinner className='mx-auto mt-10' />}
           {!isLoadingUsers &&
             !isLoadingSearchedUsers &&
             (userList && userList.length > 0 ? (
@@ -228,7 +222,7 @@ const Home = () => {
 
         <TabsContent value='teaching'>
           <h2 className='text-2xl font-bold'>People Who Want to Learn What I Teach</h2>
-          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
+          {isLoadingSearchedUsers && <LoadingSpinner className='mx-auto mt-10' />}
           {!isLoadingUsers &&
             !isLoadingSearchedUsers &&
             (userList && userList.length > 0 ? (
@@ -240,7 +234,7 @@ const Home = () => {
 
         <TabsContent value='learning'>
           <h2 className='text-2xl font-bold '>People Who Can Teach What I Want to Learn</h2>
-          {(isLoading || isLoadingSearchedUsers) && <LoadingSpinner className='mx-auto mt-10' />}
+          {isLoadingSearchedUsers && <LoadingSpinner className='mx-auto mt-10' />}
           {!isLoadingUsers &&
             !isLoadingSearchedUsers &&
             (userList && userList.length > 0 ? (
