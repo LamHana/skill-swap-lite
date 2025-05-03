@@ -35,7 +35,7 @@ const Home = () => {
   const previousTabRef = useRef(currentTab);
 
   const { user } = useAuth();
-  const { users, isLoading: isLoadingUsers } = useGetUsers(currentTab);
+  const { users, isLoading: isLoadingUsers } = useGetUsers();
 
   const {
     skillCategories,

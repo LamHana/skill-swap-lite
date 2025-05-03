@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useAuth } from '@/hooks';
 import useInvitations from '@/hooks/useInvitations';
+import useSkillMapping from '@/hooks/useSkillMapping';
 import { updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
+import { matchingIndicator } from '@/utils/matchingIndicator';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
 import { arrayRemove, arrayUnion } from 'firebase/firestore';
@@ -13,8 +15,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import useSkillMapping from '@/hooks/useSkillMapping';
-import { matchingIndicator } from '@/utils/matchingIndicator';
 
 const Invitations = () => {
   const queryClient = useQueryClient();

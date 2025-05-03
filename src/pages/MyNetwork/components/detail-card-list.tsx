@@ -1,13 +1,14 @@
 import { LoadingSpinner } from '@/components/common/loading-spinner';
+import { useAuth } from '@/hooks';
 import useConnections from '@/hooks/useConnections';
+import useSkillMapping from '@/hooks/useSkillMapping';
 import { User } from '@/types/user.type';
+import { matchingIndicator } from '@/utils/matchingIndicator';
+import { asStringArray } from '@/utils/userHelpers';
+
+import { useEffect, useState } from 'react';
 
 import DetailCard from './detail-card';
-import { useEffect, useState } from 'react';
-import useSkillMapping from '@/hooks/useSkillMapping';
-import { useAuth } from '@/hooks';
-import { asStringArray } from '@/utils/userHelpers';
-import { matchingIndicator } from '@/utils/matchingIndicator';
 
 const DetailCardList = () => {
   const { data: users, isLoading } = useConnections();

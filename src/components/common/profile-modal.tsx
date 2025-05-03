@@ -1,9 +1,8 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { config } from '@/config/app';
 import { useAuth } from '@/hooks';
-import useGetUsers from '@/hooks/useGetUsers';
 import { getSkills } from '@/services/skill.service';
-import { getUserByUID, updateUser } from '@/services/user.service';
+import { getAllUsers, getUserByUID, updateUser } from '@/services/user.service';
 import { Skill } from '@/types/skill.type';
 import { mapConnectionInformation, mapSkillInformation } from '@/utils/mapUserInformation';
 
@@ -35,10 +34,14 @@ const ProfileModal = ({ open, onOpenChange, userId, setListPendingUsers, listPen
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { users } = useGetUsers();
   const { user: currentUser } = useAuth();
 
   if (!currentUser) return;
+
+  const { data: users } = useQuery({
+    queryKey: ['users'],
+    queryFn: getAllUsers,
+  });
 
   const { data: user } = useQuery({
     queryKey: ['user', userId],

@@ -96,3 +96,8 @@ export const getUserBySkills = async (skills: string[]) => {
     ...(docSnap.data() as Omit<User, 'id'>),
   }));
 };
+
+export const getAllUsers = async () => {
+  const { data: users } = await getDocuments(config.collections.users);
+  return users as User[];
+};
