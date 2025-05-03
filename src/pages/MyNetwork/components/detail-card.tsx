@@ -19,7 +19,7 @@ import { User } from '@/types/user.type';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
 import { arrayRemove } from 'firebase/firestore';
-import { UserRoundX } from 'lucide-react';
+import { BookOpenIcon, GraduationCapIcon, UserRoundX } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -81,57 +81,39 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
 
           <div className='flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4'>
             <div className='flex-1'>
-              <CardHeader className='p-0 pb-2'>
+              <CardHeader className='p-0'>
                 <h2 className='text-base md:text-lg font-medium'>{asString(user.fullName)}</h2>
               </CardHeader>
 
               <CardContent className='p-0 space-y-4'>
-                <p className='text-xs md:text-sm'>{asString(user.bio)}</p>
+                <p className='text-xs md:text-sm line-clamp-3'>{asString(user.bio)}</p>
 
-                <div className='flex flex-col md:flex-row gap-6 items-start md:items-center'>
-                  <div className='flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center'>
-                    <p className='font-bold text-xs md:text-sm'>Teaching</p>
-                    <div className='flex flex-row gap-2 items-center'>
-                      {asStringArray(user.teach)
-                        .slice(0, 2)
-                        .map((skill) => (
-                          <Badge
-                            key={skill}
-                            variant='outline'
-                            className='rounded-full px-4 py-1 text-xs md:text-xs border-secondary-foreground'
-                          >
-                            {skill}
-                          </Badge>
-                        ))}
-
-                      {asStringArray(user.teach).length > 2 && (
-                        <p className='text-xs md:text-xs font-semibold text-zinc-500'>
-                          +{asStringArray(user.teach).length - 2}
-                        </p>
-                      )}
+                <div className='flex flex-col md:flex-col gap-6 items-start md:items-start'>
+                  <div className='flex flex-col md:flex-col space-y-2 md:space-y-0 md:space-x-2 items-start md:items-start'>
+                    <div className='text-sm font-medium mb-1.5 flex items-start'>
+                      <GraduationCapIcon className='h-3.5 w-3.5 mr-1.5 text-emerald-500' />
+                      Teaching
+                    </div>
+                    <div className='flex flex-wrap gap-1.5'>
+                      {asStringArray(user.teach).map((skill) => (
+                        <Badge key={skill} variant='outline' className='px-4 py-1 text-xs md:text-xs'>
+                          {skill}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
 
-                  <div className='flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 items-start md:items-center'>
-                    <p className='font-bold text-xs md:text-sm'>Learning</p>
-                    <div className='flex flex-row gap-2 items-center'>
-                      {asStringArray(user.learn)
-                        .slice(0, 2)
-                        .map((skill) => (
-                          <Badge
-                            key={skill}
-                            variant='outline'
-                            className='rounded-full px-4 py-1 text-xs md:text-xs border-secondary-foreground'
-                          >
-                            {skill}
-                          </Badge>
-                        ))}
-
-                      {asStringArray(user.learn).length > 2 && (
-                        <p className='text-xs md:text-xs font-semibold text-zinc-500'>
-                          +{asStringArray(user.learn).length - 2}
-                        </p>
-                      )}
+                  <div className='flex flex-col md:flex-col space-y-2 md:space-y-0 md:space-x-2 items-start md:items-start'>
+                    <div className='text-sm font-medium mb-1.5 flex items-start'>
+                      <BookOpenIcon className='h-3.5 w-3.5 mr-1.5 text-blue-500' />
+                      Learning
+                    </div>
+                    <div className='flex-wrap gap-1.5'>
+                      {asStringArray(user.learn).map((skill) => (
+                        <Badge key={skill} variant='outline' className='px-4 py-1 text-xs md:text-xs'>
+                          {skill}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                 </div>
