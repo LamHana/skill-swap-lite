@@ -55,7 +55,7 @@ export function ChatMessages({
               message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground',
             )}
           >
-            <p className='break-words'>{message.content}</p>
+            <p className='break-all whitespace-pre-wrap'>{message.content}</p>
             <span className={cn('text-[0.65rem] opacity-75', message.sender === 'user' ? 'self-end' : 'self-start')}>
               {formatTimestamp(message.timestamp)}
             </span>
