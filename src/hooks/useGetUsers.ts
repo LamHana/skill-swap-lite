@@ -1,84 +1,67 @@
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { GET_ALL_USERS, getUsers } from '@/services/user.service';
-import { Skill } from '@/types/skill.type';
+import { GET_ALL_USERS, GET_CURRENT_USER, getUserByUID, getUsersByMode } from '@/services/user.service';
 import { User, UserWithPercent } from '@/types/user.type';
 import { matchingIndicator } from '@/utils/matchingIndicator';
-
-import React, { useRef } from 'react';
 
 import useAuth from './useAuth';
 
 import { useQuery } from '@tanstack/react-query';
 
-const useGetUsers = () => {
+const useGetUsers = (mode: string = 'related') => {
   const { user } = useAuth();
-  const matchCache = useRef(new Map<string, UserWithPercent>());
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: [GET_ALL_USERS],
-    queryFn: () => getUsers(user?.id || ''),
-    enabled: !!user?.id,
+  const { data: currentUser, isLoading: isLoadingCurrentUser } = useQuery({
+    queryKey: [GET_CURRENT_USER],
+    queryFn: () => getUserByUID(user?.id),
+    enabled: !!user && !!user.id,
+    refetchOnWindowFocus: false,
   });
 
-  const { data: skills } = useQuery({
+  const excludedIds = currentUser
+    ? [
+        currentUser.id,
+        ...(Array.isArray(currentUser.connections) ? currentUser.connections : []),
+        ...(Array.isArray(currentUser.requestConnections) ? currentUser.requestConnections : []),
+      ]
+    : [];
+
+  const { data: users, isLoading: isLoadingUsers } = useQuery({
+    queryKey: [GET_ALL_USERS, mode],
+    queryFn: () => getUsersByMode(excludedIds, currentUser || undefined, mode),
+    enabled: !!currentUser,
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: skills, isLoading: isLoadingSkills } = useQuery({
     queryKey: [GET_SKILLS_QUERY_KEY],
     queryFn: () => getSkills(),
+    refetchOnWindowFocus: false,
   });
 
-  const skillsMap =
-    skills?.reduce(
-      (map, skill) => {
-        map[skill.id] = skill;
-        return map;
-      },
-      {} as Record<string, Skill>,
-    ) || {};
+  const skillsMap = Object.fromEntries((skills ?? []).map((s) => [s.id, s.name]));
 
-  const skillMapping = React.useCallback(
-    (user: User) => {
-      if (!skills || !Array.isArray(user.learn) || !Array.isArray(user.teach)) {
-        return { learn: [], teach: [] };
-      }
-      const learning = user.learn.map((id: string) => skillsMap[id]?.name || 'Unknown Skill');
-      const teaching = user.teach.map((id: string) => skillsMap[id]?.name || 'Unknown Skill');
-      return { learning, teaching };
-    },
-    [data],
-  );
-
-  const processUsers = React.useCallback(
-    (users: User[]) => {
-      if (!users || !user) return [];
-      return users.map((userItem: User) => {
-        const cacheKey = `${user.id}->${userItem.id}`;
-        if (matchCache.current.has(cacheKey)) {
-          const cachedUser = matchCache.current.get(cacheKey)!;
-          return { ...cachedUser, percent: cachedUser.percent ?? 0 };
-        }
-        const percent = matchingIndicator(user, userItem);
-        const { learning, teaching } = skillMapping(userItem);
-        const newUserItem: UserWithPercent = { ...userItem, learn: learning ?? [], teach: teaching ?? [], percent };
-        matchCache.current.set(cacheKey, newUserItem);
-        return newUserItem;
-      });
-    },
-    [skillMapping],
-  );
-
-  const processedUsers: UserWithPercent[] = React.useMemo(() => {
-    return processUsers(data || []);
-  }, [data, user, skillMapping]);
-
-  const sortUsersByMatching = (list: UserWithPercent[]) => {
-    return [...list].sort((a, b) => b.percent - a.percent);
+  const mapSkillIdsToObjects = (ids: string[] = []): string[] => {
+    return ids.map((id) => skillsMap[id]).filter(Boolean);
   };
 
+  const matchedUsers: UserWithPercent[] =
+    users?.map((user) => {
+      const teachSkills = Array.isArray(user.teach) ? mapSkillIdsToObjects(user.teach) : [];
+      const learnSkills = Array.isArray(user.learn) ? mapSkillIdsToObjects(user.learn) : [];
+
+      return {
+        ...user,
+        percent: currentUser ? matchingIndicator(currentUser, user as User) : 0,
+        learn: learnSkills,
+        teach: teachSkills,
+      };
+    }) ?? [];
+
+  const sortedMatchedUsers = matchedUsers.sort((a, b) => b.percent - a.percent);
+
   return {
-    users: processedUsers,
-    isLoading: isLoading,
-    isError,
-    processUsers,
-    sortUsersByMatching,
+    users: sortedMatchedUsers,
+    isLoading: isLoadingCurrentUser || isLoadingUsers || isLoadingSkills,
   };
 };
 
