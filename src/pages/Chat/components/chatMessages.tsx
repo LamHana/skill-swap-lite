@@ -7,15 +7,30 @@ import { Timestamp } from 'firebase/firestore';
 import type { Contact, Message } from './types';
 
 import './style.css';
+import { useState } from 'react';
 
 function formatTimestamp(ts: Timestamp) {
   const date = ts.toDate();
+  const now = new Date();
+
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const showDate = date < startOfToday;
+  let datePart = '';
+  if (showDate) {
+    const d = String(date.getDate()).padStart(2, '0');
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const y = date.getFullYear();
+    datePart = `${d}/${m}/${y} `;
+  }
+
   let h = date.getHours();
-  const m = date.getMinutes();
+  const mnts = date.getMinutes();
   const ampm = h >= 12 ? 'pm' : 'am';
   h = h % 12 || 12;
-  const mins = m < 10 ? `0${m}` : m;
-  return `${h}:${mins}${ampm}`;
+  const mins = mnts < 10 ? `0${mnts}` : mnts;
+
+  return `${datePart}${h}:${mins}${ampm}`;
 }
 
 export function ChatMessages({
@@ -27,13 +42,25 @@ export function ChatMessages({
   contact: Contact;
   endRef: React.RefObject<HTMLDivElement>;
 }) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  function toggle(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   return (
     <div className='chat-scrollbar flex-1 overflow-auto p-4 flex flex-col'>
       {messages.map((message) => (
         <div
           key={message.id}
+          onClick={() => toggle(message.id)}
           className={cn(
-            'flex items-end mb-2', // cách các message
+            'flex items-end mb-2 cursor-pointer',
             message.sender === 'user' ? 'justify-end' : 'justify-start',
           )}
         >
@@ -56,9 +83,12 @@ export function ChatMessages({
             )}
           >
             <p className='break-all whitespace-pre-wrap'>{message.content}</p>
-            <span className={cn('text-[0.65rem] opacity-75', message.sender === 'user' ? 'self-end' : 'self-start')}>
-              {formatTimestamp(message.timestamp)}
-            </span>
+            {expanded.has(message.id) && (
+              <span className={cn('text-[0.65rem] opacity-75', message.sender === 'user' ? 'self-end' : 'self-start')}>
+                {' '}
+                {formatTimestamp(message.timestamp)}
+              </span>
+            )}
           </div>
         </div>
       ))}
