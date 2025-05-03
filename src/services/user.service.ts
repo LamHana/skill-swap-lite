@@ -35,6 +35,21 @@ export const getUsersByMode = async (excludedIds?: string[], currentUser?: User,
   return filteredUsers as User[];
 };
 
+export const getUsers = async (excludedIds?: string[]) => {
+  const usersRef = collection(config.firebase.db, config.collections.users);
+  const q = query(usersRef);
+  const querySnapshot = await getDocs(q);
+
+  const users = querySnapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...(docSnap.data() as Omit<User, 'id'>),
+  }));
+
+  const filteredUsers = excludedIds ? users.filter((user) => !excludedIds.includes(user.id)) : users;
+  console.log('filteredUsers', filteredUsers);
+  return filteredUsers as User[];
+};
+
 export const getUserByUID = async (uid: string | undefined) => {
   if (!uid) return null;
 

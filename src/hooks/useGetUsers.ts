@@ -1,14 +1,13 @@
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { GET_ALL_USERS, GET_CURRENT_USER, getUserByUID, getUsersByMode } from '@/services/user.service';
+import { GET_ALL_USERS, GET_CURRENT_USER, getUserByUID, getUsers } from '@/services/user.service';
 import { User, UserWithPercent } from '@/types/user.type';
 import { matchingIndicator } from '@/utils/matchingIndicator';
 
 import useAuth from './useAuth';
-import useSkill from './useSkill';
 
 import { useQuery } from '@tanstack/react-query';
 
-const useGetUsers = (mode: string = 'related') => {
+const useGetUsers = () => {
   const { user } = useAuth();
 
   const { data: currentUser, isLoading: isLoadingCurrentUser } = useQuery({
@@ -27,8 +26,8 @@ const useGetUsers = (mode: string = 'related') => {
     : [];
 
   const { data: users, isLoading: isLoadingUsers } = useQuery({
-    queryKey: [GET_ALL_USERS, mode],
-    queryFn: () => getUsersByMode(excludedIds, currentUser || undefined, mode),
+    queryKey: [GET_ALL_USERS],
+    queryFn: () => getUsers(excludedIds),
     enabled: !!currentUser,
     refetchOnWindowFocus: false,
   });

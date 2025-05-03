@@ -60,7 +60,7 @@ const useSkill = () => {
     [skills, skillsMap],
   );
 
-  const { skillSet, currentLearning, currentTeaching } = React.useMemo(() => {
+  const { currentLearning, currentTeaching } = React.useMemo(() => {
     if (!currentUser)
       return {
         skillSet: { learningSet: new Set<string>(), teachingSet: new Set<string>() },
@@ -71,16 +71,14 @@ const useSkill = () => {
       (currentUser && asStringArray(currentUser.learn)) || [],
       (currentUser && asStringArray(currentUser.teach)) || [],
     );
-    const learningSet = new Set<string>(learning);
-    const teachingSet = new Set<string>(teaching);
-    return { skillSet: { learningSet, teachingSet }, currentLearning: learning, currentTeaching: teaching };
+    return { currentLearning: learning, currentTeaching: teaching };
   }, [currentUser, skillMapping]);
 
-  const checkMatching = (skillArray: string[], type: 'learn' | 'teach') => {
-    if (!skills || skillArray.length === 0) return false;
+  const checkMatching = (skillArray: string[], baseSet: Set<string>) => {
+    if (!baseSet || skillArray.length === 0) return { matchedSkills: [], hasMatch: false, matchedSkillsCount: 0 };
+    const compareSet = baseSet;
     const matches: string[] = [];
     const nonMatches: string[] = [];
-    const compareSet = type === 'learn' ? skillSet.teachingSet : skillSet.learningSet;
     skillArray.forEach((skill) => {
       if (compareSet.has(skill)) {
         matches.push(skill);

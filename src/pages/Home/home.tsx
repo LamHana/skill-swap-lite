@@ -12,62 +12,161 @@ import useGetUsers from '@/hooks/useGetUsers';
 import useSkill from '@/hooks/useSkill';
 import { cn } from '@/lib/utils';
 import { UpdateProfileModal } from '@/pages/Home/components/updateProfileModal/update-profile-modal';
-import { GET_SKILL_CATEGORIES_QUERY_KEY, getCategoriesWithSkills } from '@/services/skill.service';
-import { getUserBySkills } from '@/services/user.service';
 import { UserWithPercent } from '@/types/user.type';
+import { asStringArray } from '@/utils/userHelpers';
 
 import { BookOpenIcon, CheckIcon, ChevronDown, FilterIcon, GraduationCapIcon, SearchIcon, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
-import SearchForm from './components/searchForm';
-import { TABS_DATA } from './constants';
-
-import { useQuery } from '@tanstack/react-query';
+import { TABS_DATA, TABS_SEARCH, TabsDataType } from './constants';
 
 const Home = () => {
-  const [currentTab, setCurrentTab] = useState('related');
-  const [searchIDs, setSearchIDs] = useState<string[] | null>(null);
+  const [currentTab, setCurrentTab] = useState<string>('related');
   const [userList, setUserList] = useState<UserWithPercent[] | null>(null);
   const [isLoadingSearchedUsers, setIsLoadingSearchedUsers] = useState(false);
   const [openCategoryFilter, setOpenCategoryFilter] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [searchMode, setSearchMode] = useState<boolean>(false);
+  const [tabsData, setTabsData] = useState<TabsDataType[]>(TABS_DATA);
+
+  const previousTabRef = useRef(currentTab);
 
   const { user } = useAuth();
   const { users, isLoading: isLoadingUsers } = useGetUsers(currentTab);
 
-  const { skillCategories, currentLearning: myLearning, currentTeaching: myTeaching } = useSkill();
+  const {
+    skillCategories,
+    currentLearning: myLearning,
+    currentTeaching: myTeaching,
+    skills,
+    checkMatching,
+  } = useSkill();
+  const applicableSkills = useMemo(() => {
+    if (!selectedCategories.length || !skillCategories) return [];
+
+    const skills: string[] = [];
+    skillCategories.forEach((category) => {
+      if (selectedCategories.includes(category.category)) {
+        category.skills.forEach((skill) => {
+          skills.push(skill.name);
+        });
+      }
+    });
+    return skills;
+  }, [selectedCategories, skillCategories]);
+
+  // Memoize filtered users based on search criteria
+
+  const onSearch = useCallback(
+    (mode: string) => {
+      if (!users) return [];
+      if (selectedCategories.length === 0 && !searchKeyword) {
+        setSearchMode(false);
+
+        setSelectedCategories([]);
+        setSearchKeyword('');
+        setUserList(users);
+        setCurrentTab(() => 'related');
+        setTabsData(TABS_DATA);
+        return;
+      }
+      setIsLoadingSearchedUsers(true);
+      setSearchMode(true);
+      const searchSkills: string[] = [];
+      const searchedUsers: UserWithPercent[] = [];
+
+      // If no applicable skills and we have a keyword, just filter by name
+      if (applicableSkills.length === 0 && searchKeyword) {
+        const lowercaseKeyword = searchKeyword.toLowerCase();
+        skills?.forEach((skill) => {
+          if (skill.name.toLowerCase().includes(lowercaseKeyword)) searchSkills.push(skill.name);
+        });
+      } else if (applicableSkills.length > 0 && !searchKeyword) {
+        // If we have applicable skills but no keyword
+        searchSkills.push(...applicableSkills);
+      } else if (applicableSkills.length > 0 && searchKeyword) {
+        const lowercaseKeyword = searchKeyword.toLowerCase();
+        searchSkills.push(...applicableSkills.filter((skill) => skill.toLowerCase().includes(lowercaseKeyword)));
+      }
+
+      if (mode === 'related') {
+        mode = 'learning';
+      }
+
+      if (mode === 'teaching') {
+        const baseSet = new Set<string>(searchSkills);
+        users.forEach((user) => {
+          const { hasMatch, matchedSkills, matchedSkillsCount } = checkMatching(asStringArray(user.learn), baseSet);
+          if (user.learn && hasMatch) {
+            searchedUsers.push(user);
+            user.learn = matchedSkills;
+            user.matchedTeach = matchedSkillsCount;
+            user.matchedLearn = 0;
+          } else if (searchKeyword && user.fullName.toString().toLowerCase().includes(searchKeyword.toLowerCase())) {
+            searchedUsers.push(user);
+          }
+        });
+      } else if (mode === 'learning') {
+        const baseSet = new Set<string>(searchSkills);
+        users.forEach((user) => {
+          const { hasMatch, matchedSkills, matchedSkillsCount } = checkMatching(asStringArray(user.teach), baseSet);
+          if (user.teach && hasMatch) {
+            searchedUsers.push(user);
+            user.teach = matchedSkills;
+            user.matchedLearn = matchedSkillsCount;
+            user.matchedTeach = 0;
+          } else if (searchKeyword && user.fullName.toString().toLowerCase().includes(searchKeyword.toLowerCase())) {
+            searchedUsers.push(user);
+          }
+        });
+      }
+      setUserList(searchedUsers);
+
+      setTabsData(TABS_SEARCH);
+      setCurrentTab(mode);
+      setIsLoadingSearchedUsers(false);
+    },
+    [applicableSkills, searchKeyword, users],
+  );
 
   // useEffect(() => {
-  //   setUserList(users);
-  // }, [users]);
-
-  // useEffect(() => {
-  //   console.log(searchIDs, 'searchIDs in Home');
-  //   if (!searchIDs) {
+  //   if (!users) return;
+  //   // Only set the initial user list if we're not in search mode
+  //   if ((!searchMode && !userList) || userList?.length === 0) {
+  //     setTabsData(TABS_DATA);
   //     setUserList(users);
-  //   } else if (searchIDs.length > 0) {
-  //     setIsLoadingSearchedUsers(true);
-  //     getUserBySkills(searchIDs)
-  //       .then((searchedUsers) => {
-  //         setIsLoadingSearchedUsers(false);
-  //         if (searchedUsers.length > 0) {
-  //           setUserList(sortUsersByMatching(processUsers(searchedUsers)));
-  //         } else {
-  //           setUserList([]);
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error fetching searched users:', error);
-  //       })
-  //       .finally(() => {
-  //         setIsLoadingSearchedUsers(false);
-  //       });
-  //   } else {
-  //     setUserList([]);
   //   }
-  // }, [searchIDs]);
+  // }, [users, searchMode, userList]);
+
+  // Handle tab changes and re-run search if in search mode
+  useEffect(() => {
+    // Skip on initial render
+    if (previousTabRef.current === currentTab) return;
+
+    // Update the ref
+    previousTabRef.current = currentTab;
+
+    // If we're in search mode, perform search with the new tab
+    if (searchMode && users) {
+      onSearch(currentTab);
+      setTabsData(TABS_SEARCH);
+    }
+    // If not in search mode, just use the users from the hook
+    else if (users) {
+      let filteredUsers = users;
+      if (currentTab === 'learning') {
+        filteredUsers = users.filter((cur) => cur.matchedLearn > 0);
+      } else if (currentTab === 'teaching') {
+        filteredUsers = users.filter((cur) => cur.matchedTeach > 0);
+      }
+
+      setTabsData(TABS_DATA);
+      setUserList(filteredUsers);
+    }
+  }, [currentTab, users, searchMode, onSearch]);
 
   useEffect(() => {
     if (
@@ -88,6 +187,9 @@ const Home = () => {
   // Clear all selected categories
   const clearCategories = () => {
     setSelectedCategories([]);
+    setSearchKeyword('');
+    setUserList(users);
+    setTabsData(TABS_DATA);
   };
 
   return (
@@ -138,6 +240,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       {/* Search and Multi-Select Filter */}
       <div className='flex flex-col gap-3 mb-6'>
         {/* Search and Filter Controls */}
@@ -195,11 +298,16 @@ const Home = () => {
           {/* Search Input */}
           <div className='relative flex-1'>
             <SearchIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
-            <Input placeholder='Search...' className='pl-9' />
+            <Input
+              placeholder='Search...'
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              className='pl-9'
+            />
           </div>
 
           {/* Search Button */}
-          <Button className='bg-red-600 hover:bg-red-700'>
+          <Button className='bg-red-600 hover:bg-red-700' onClick={() => onSearch(currentTab)}>
             <SearchIcon className='h-4 w-4 mr-2' />
             Search
           </Button>
@@ -233,18 +341,16 @@ const Home = () => {
         )}
       </div>
 
-      {/* {!isLoading && <SearchForm categories={categories || []} setSearchIDs={setSearchIDs} />} */}
-
       <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6'>
-        <TabsList className='mb-4'>
-          {TABS_DATA.map((data) => (
+        <TabsList className='mb-4  z-100'>
+          {tabsData.map((data) => (
             <TabsTrigger key={data.value} value={data.value}>
               {data.tabTrigger}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {TABS_DATA.map((data) => (
+        {tabsData.map((data) => (
           <TabsContent key={data.value} value={data.value}>
             <h2 className='text-2xl font-bold'>{data.tabHeader}</h2>
 
@@ -252,7 +358,7 @@ const Home = () => {
             {!isLoadingUsers &&
               !isLoadingSearchedUsers &&
               (users && users.length > 0 ? (
-                <PreviewCardList results={users} />
+                <PreviewCardList results={userList || users} />
               ) : (
                 <p className='text-center mt-10'>No users found</p>
               ))}

@@ -118,41 +118,7 @@ export default function PreviewCard({
           <CardFooter className='p-4'>{button}</CardFooter>
         </div>
       </Card>
-      {/* <Card>
-        <div className='absolute top-0 right-0 bg-primary text-white font-bold py-1 px-4 rounded-tr-lg rounded-bl-lg'>
-          {percent}%
-        </div>
-        <CardContent className='flex flex-col gap-1'>
-          <div className='flex items-center gap-1 '>
-            <span className='font-medium text-xs'>Teaching</span>
-            <div className='flex gap-1'>
-              {teachDisplay.map((item, index) =>
-                index !== 2 ? (
-                  <TooltipProvider key={index}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span
-                          key={index}
-                          className='rounded-full px-2 py-1 border border-gray-300 text-xs content-center text-center'
-                        >
-                          {item.length > 10 ? item.slice(0, 10) + '...' : item}
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{item}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ) : (
-                  <span key={index} className='my-auto text-xs'>
-                    {item}
-                  </span>
-                ),
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card> */}
+
       {showProfileModal && (
         <ProfileModal
           open={showProfileModal}
