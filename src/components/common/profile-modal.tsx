@@ -11,6 +11,7 @@ import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-rea
 import { useState } from 'react';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
@@ -20,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import WithdrawAlertDialog from './alert-dialog';
 import { LoadingButton } from './loading-button';
 
-import { QueryObserverResult, RefetchOptions, useMutation, useQuery } from '@tanstack/react-query';
+import { QueryObserverResult, RefetchOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 interface ProfileModalProps {
   open: boolean;
   onOpenChange: () => void;
@@ -31,6 +32,8 @@ interface ProfileModalProps {
 
 const ProfileModal = ({ open, onOpenChange, userId, currentUser, refetchCurrentUser }: ProfileModalProps) => {
   if (!userId || !currentUser) return;
+
+  const queryClient = useQueryClient();
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -100,6 +103,45 @@ const ProfileModal = ({ open, onOpenChange, userId, currentUser, refetchCurrentU
     },
   });
 
+  const denialMutation = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(userId, { sentConnections: arrayRemove(currentUser.id) }),
+        updateUser(currentUser.id, { requestConnections: arrayRemove(userId) }),
+      ]);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invitations', currentUser.id] });
+      queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      toast.success('Invitation denied successfully!');
+      onOpenChange();
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+    },
+  });
+
+  const acceptMutation = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(currentUser.id, { requestConnections: arrayRemove(userId) }),
+        updateUser(userId, { sentConnections: arrayRemove(currentUser.id) }),
+        updateUser(currentUser.id, { connections: arrayUnion(userId) }),
+        updateUser(userId, { connections: arrayUnion(currentUser.id) }),
+      ]);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invitations', currentUser.id] });
+      queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      toast.success('Invitation accepted successfully!');
+      onOpenChange();
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+      toast.error('Error accepting invitation!');
+    },
+  });
+
   const handleConnect = async () => {
     await connectMutate();
   };
@@ -112,8 +154,19 @@ const ProfileModal = ({ open, onOpenChange, userId, currentUser, refetchCurrentU
     setIsOpenModal(true);
   };
 
+  const handleDeny = async () => {
+    await denialMutation.mutateAsync();
+  };
+
+  const handleAccept = async () => {
+    await acceptMutation.mutateAsync();
+  };
+
   const isSentConnectionUser =
     Array.isArray(currentUser.sentConnections) && currentUser.sentConnections?.includes(userId);
+
+  const isRequestConnectionUser =
+    Array.isArray(currentUser.requestConnections) && currentUser.requestConnections?.includes(userId);
 
   return (
     <>
@@ -220,6 +273,25 @@ const ProfileModal = ({ open, onOpenChange, userId, currentUser, refetchCurrentU
                 <LoadingButton type='submit' loading={connectStatus === 'pending'} onClick={handlePending}>
                   Pending
                 </LoadingButton>
+              ) : isRequestConnectionUser ? (
+                <div>
+                  <LoadingButton
+                    variant='ghost'
+                    className='text-gray-700 font-medium flex-auto'
+                    onClick={handleDeny}
+                    loading={denialMutation.isPending}
+                  >
+                    Deny
+                  </LoadingButton>
+                  <LoadingButton
+                    variant='default'
+                    className='bg-primary text-white rounded-md px-4 py-2 flex-auto'
+                    onClick={handleAccept}
+                    loading={acceptMutation.isPending}
+                  >
+                    Accept
+                  </LoadingButton>
+                </div>
               ) : (
                 <LoadingButton type='submit' onClick={handleConnect}>
                   Connect
