@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks';
-import { updateUser } from '@/services/user.service';
+import { GET_ALL_USERS, updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
@@ -44,6 +44,10 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['connections', currentUser.id] });
+      queryClient.invalidateQueries({
+        queryKey: [GET_ALL_USERS, 'related'],
+        type: 'all',
+      });
       setOpen(false);
     },
     onError: (error) => {
