@@ -1,4 +1,4 @@
-import { CircleAlert, Home, LucideIcon } from 'lucide-react';
+import { Home, LucideIcon, MessageCircle, UserRound } from 'lucide-react';
 
 type MenuItemType = {
   title: string;
@@ -16,8 +16,13 @@ export const mainMenu: MenuType = [
     icon: Home,
   },
   {
-    title: 'Error',
-    url: '/404',
-    icon: CircleAlert,
+    title: 'My Network',
+    url: '/my-network',
+    icon: UserRound,
+  },
+  {
+    title: 'Message',
+    url: '/chat',
+    icon: MessageCircle,
   },
 ];

@@ -1,7 +1,8 @@
-import * as React from 'react';
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
-
 import { cn } from '@/lib/utils';
+
+import * as React from 'react';
+
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
 
 function Avatar({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) {
   return (
@@ -29,4 +30,4 @@ function AvatarFallback({ className, ...props }: React.ComponentProps<typeof Ava
   );
 }
 
-export { Avatar, AvatarImage, AvatarFallback };
+export { Avatar, AvatarFallback, AvatarImage };
