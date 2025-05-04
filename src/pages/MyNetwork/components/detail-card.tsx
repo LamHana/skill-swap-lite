@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks';
+import useSkillMapping from '@/hooks/useSkillMapping';
 import { GET_ALL_USERS, updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
 import { asString, asStringArray } from '@/utils/userHelpers';
@@ -26,7 +27,6 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import useSkillMapping from '@/hooks/useSkillMapping';
 
 const DetailCard = ({ user, percentage }: { user: User; percentage: number | null }) => {
   const navigate = useNavigate();

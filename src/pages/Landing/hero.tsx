@@ -1,3 +1,5 @@
+import { config } from '@/config/app';
+
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -58,7 +60,7 @@ const Hero: React.FC = () => {
             about cooking.
           </p>
           <Link
-            to='#'
+            to={config.routes.login}
             className='w-max px-6 py-4 bg-primary text-primary-foreground rounded-full uppercase font-black cursor-pointer'
           >
             Start Swapping

@@ -156,41 +156,39 @@ const Invitations = ({ currentUser, refetchCurrentUser }: InvitationProps) => {
       >
         <CarouselContent>
           {users?.map((user, index) => (
-            <CarouselItem key={index} className='pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3'>
-              <div className='p-1'>
-                <PreviewCard
-                  id={user.id}
-                  name={asString(user.fullName)}
-                  percent={userWithSkills ? matchingIndicator(userWithSkills, user).percent : 0}
-                  teach={sortSkillsByMatching(asStringArray(user.teach), 'teach').skills}
-                  learn={sortSkillsByMatching(asStringArray(user.learn), 'learn').skills}
-                  matchedLearn={sortSkillsByMatching(asStringArray(user.teach), 'teach').matchedSkillsCount}
-                  matchedTeach={sortSkillsByMatching(asStringArray(user.learn), 'learn').matchedSkillsCount}
-                  currentUser={currentUser}
-                  refetchCurrentUser={refetchCurrentUser}
-                  button={
-                    <div className='flex flex-row w-full gap-4 items-center'>
-                      <Button
-                        variant='ghost'
-                        className='text-gray-700 font-medium flex-auto'
-                        onClick={(e) => handleDeny(e, user)}
-                        disabled={pendingUserId === user.id && denialMutation.status === 'pending'}
-                      >
-                        Deny
-                      </Button>
-                      <Button
-                        variant='default'
-                        className='bg-primary text-white rounded-md px-4 py-2 flex-auto'
-                        onClick={(e) => handleAccept(e, user)}
-                        disabled={pendingUserId === user.id && acceptMutation.status === 'pending'}
-                      >
-                        Accept
-                      </Button>
-                    </div>
-                  }
-                  className='!mx-0'
-                />
-              </div>
+            <CarouselItem key={index} className='pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/4'>
+              <PreviewCard
+                id={user.id}
+                name={asString(user.fullName)}
+                percent={userWithSkills ? matchingIndicator(userWithSkills, user).percent : 0}
+                teach={sortSkillsByMatching(asStringArray(user.teach), 'teach').skills}
+                learn={sortSkillsByMatching(asStringArray(user.learn), 'learn').skills}
+                matchedLearn={sortSkillsByMatching(asStringArray(user.teach), 'teach').matchedSkillsCount}
+                matchedTeach={sortSkillsByMatching(asStringArray(user.learn), 'learn').matchedSkillsCount}
+                currentUser={currentUser}
+                refetchCurrentUser={refetchCurrentUser}
+                button={
+                  <div className='flex flex-row w-full gap-4 items-center'>
+                    <Button
+                      variant='ghost'
+                      className='text-gray-700 font-medium flex-auto'
+                      onClick={(e) => handleDeny(e, user)}
+                      disabled={pendingUserId === user.id && denialMutation.status === 'pending'}
+                    >
+                      Deny
+                    </Button>
+                    <Button
+                      variant='default'
+                      className='bg-primary text-white rounded-md px-4 py-2 flex-auto'
+                      onClick={(e) => handleAccept(e, user)}
+                      disabled={pendingUserId === user.id && acceptMutation.status === 'pending'}
+                    >
+                      Accept
+                    </Button>
+                  </div>
+                }
+                className='!mx-0'
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
