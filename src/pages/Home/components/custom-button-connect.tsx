@@ -1,59 +1,63 @@
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks';
+import { LoadingButton } from '@/components/common/loading-button';
 import { updateUser } from '@/services/user.service';
+import { User } from '@/types/user.type';
 
 import { arrayUnion } from 'firebase/firestore';
 
-import { useMutation } from '@tanstack/react-query';
+import { QueryObserverResult, RefetchOptions, useMutation } from '@tanstack/react-query';
 
 interface CustomButtonConnectProps {
-  listPendingUsers: Record<string, boolean>;
+  currentUser: User;
+  refetchCurrentUser: (options?: RefetchOptions) => Promise<QueryObserverResult<User | null, Error>>;
   userId: string;
   setClickUser: React.Dispatch<React.SetStateAction<string | null>>;
-  setListPendingUsers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
 const CustomButtonConnect: React.FC<CustomButtonConnectProps> = ({
-  listPendingUsers,
+  currentUser,
+  refetchCurrentUser,
   userId,
   className,
   setClickUser,
-  setListPendingUsers,
   setIsOpenModal,
 }) => {
-  const { user: currentUser } = useAuth();
-  if (!currentUser) return;
-
-  const { mutate: connectMutate, status: connectStatus } = useMutation({
+  const { mutateAsync: connectMutate, status: connectStatus } = useMutation({
     mutationFn: () => {
       return Promise.all([
         updateUser(userId, { requestConnections: arrayUnion(currentUser.id) }),
         updateUser(currentUser.id, { sentConnections: arrayUnion(userId) }),
       ]);
     },
+    onSuccess: async () => {
+      await refetchCurrentUser();
+    },
   });
 
-  const handleConnect = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleConnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!listPendingUsers[userId]) {
-      setListPendingUsers({ ...listPendingUsers, [userId]: true });
-      connectMutate();
-    } else {
-      setIsOpenModal(true);
-      setClickUser(userId);
-    }
+    await connectMutate();
+    setClickUser(userId);
   };
 
-  return (
-    <Button
-      className={className}
-      disabled={listPendingUsers[userId] && connectStatus === 'pending'}
-      onClick={handleConnect}
-    >
-      {listPendingUsers[userId] ? 'Pending' : 'Connect'}
-    </Button>
+  const handlePending = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setIsOpenModal(true);
+    setClickUser(userId);
+  };
+
+  const isSentConnectionUser =
+    Array.isArray(currentUser.sentConnections) && currentUser.sentConnections?.includes(userId);
+
+  return isSentConnectionUser || connectStatus === 'pending' ? (
+    <LoadingButton className={className} loading={connectStatus === 'pending'} onClick={handlePending}>
+      Pending
+    </LoadingButton>
+  ) : (
+    <LoadingButton className={className} onClick={handleConnect}>
+      Connect
+    </LoadingButton>
   );
 };
 export default CustomButtonConnect;
