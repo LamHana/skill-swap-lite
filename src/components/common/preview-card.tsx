@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { User } from '@/types/user.type';
 
 import { BookOpenIcon, GraduationCapIcon } from 'lucide-react';
 import { ReactNode, useState } from 'react';
@@ -7,6 +8,8 @@ import { ReactNode, useState } from 'react';
 import { Badge } from '../ui/badge';
 
 import ProfileModal from './profile-modal';
+
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 
 interface PreviewCardProps {
   id: string;
@@ -19,8 +22,8 @@ interface PreviewCardProps {
   className?: string;
   matchedLearn?: number;
   matchedTeach?: number;
-  setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  listPendingUsers?: Record<string, boolean>;
+  currentUser?: User;
+  refetchCurrentUser?: (options?: RefetchOptions) => Promise<QueryObserverResult<User | null, Error>>;
 }
 
 export default function PreviewCard({
@@ -34,8 +37,8 @@ export default function PreviewCard({
   className = '',
   matchedLearn = 0,
   matchedTeach = 0,
-  setListPendingUsers,
-  listPendingUsers,
+  currentUser,
+  refetchCurrentUser,
 }: PreviewCardProps) {
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -124,8 +127,8 @@ export default function PreviewCard({
           open={showProfileModal}
           onOpenChange={handleCloseProfileModal}
           userId={id}
-          listPendingUsers={listPendingUsers}
-          setListPendingUsers={setListPendingUsers}
+          currentUser={currentUser}
+          refetchCurrentUser={refetchCurrentUser}
         />
       )}
     </>

@@ -17,6 +17,16 @@ interface AlertDialogProps {
 }
 
 const WithdrawAlertDialog: React.FC<AlertDialogProps> = ({ open, onCancle, onConfirm, confirmStatus }) => {
+  const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onConfirm();
+  };
+
+  const handleCancle = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onCancle();
+  };
+
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
@@ -25,8 +35,8 @@ const WithdrawAlertDialog: React.FC<AlertDialogProps> = ({ open, onCancle, onCon
           <AlertDialogDescription>Are you sure you want to withdraw the invitation?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancle}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} disabled={confirmStatus === 'pending'}>
+          <AlertDialogCancel onClick={handleCancle}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirm} disabled={confirmStatus === 'pending'}>
             Withdraw
           </AlertDialogAction>
         </AlertDialogFooter>
