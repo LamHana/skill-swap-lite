@@ -31,6 +31,7 @@ const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [searchMode, setSearchMode] = useState<boolean>(false);
   const [tabsData, setTabsData] = useState<TabsDataType[]>(TABS_DATA);
+  const [isClearCategories, setIsClearCategories] = useState(false);
 
   const previousTabRef = useRef(currentTab);
 
@@ -124,12 +125,11 @@ const Home = () => {
         });
       }
       setUserList(searchedUsers);
-
       setTabsData(TABS_SEARCH);
       setCurrentTab(mode);
       setIsLoadingSearchedUsers(false);
     },
-    [applicableSkills, searchKeyword, users],
+    [applicableSkills, checkMatching, searchKeyword, selectedCategories.length, skills, users],
   );
 
   // Handle tab changes and re-run search if in search mode
@@ -175,7 +175,6 @@ const Home = () => {
     );
   };
 
-  const [isClearCategories, setIsClearCategories] = useState(false);
   // Clear all selected categories
   const clearCategories = () => {
     setSelectedCategories([]);
@@ -224,7 +223,7 @@ const Home = () => {
           </div>
 
           {/* Learning Skills */}
-          <div className='flex-5 z-100'>
+          <div className='flex-5 z-30'>
             <div className='flex items-center gap-1 mb-1'>
               <BookOpenIcon className='h-4 w-4 text-blue-500' />
               <h3 className='text-sm font-medium'>Learning</h3>
@@ -341,7 +340,7 @@ const Home = () => {
       </div>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6'>
-        <TabsList className='mb-4  z-50'>
+        <TabsList className='mb-4  z-10'>
           {tabsData.map((data) => (
             <TabsTrigger key={data.value} value={data.value}>
               {data.tabTrigger}
