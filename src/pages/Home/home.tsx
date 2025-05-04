@@ -16,7 +16,7 @@ import { UserWithPercent } from '@/types/user.type';
 import { asStringArray } from '@/utils/userHelpers';
 
 import { BookOpenIcon, CheckIcon, ChevronDown, FilterIcon, GraduationCapIcon, SearchIcon, X } from 'lucide-react';
-import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
 import { TABS_DATA, TABS_SEARCH, TabsDataType } from './constants';
