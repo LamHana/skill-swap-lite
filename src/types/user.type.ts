@@ -21,4 +21,4 @@ export type CreateUserResponse = User;
 
 export type UpdateUserResponse = User;
 
-export type UserWithPercent = User & { percent: number };
+export type UserWithPercent = User & { percent: number; matchedLearn: number; matchedTeach: number };

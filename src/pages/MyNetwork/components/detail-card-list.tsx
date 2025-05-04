@@ -34,7 +34,7 @@ const DetailCardList = () => {
     const calculatePercentages = async () => {
       const newPercentages: Record<string, number> = {};
       for (const user of users) {
-        newPercentages[user.id] = matchingIndicator(userWithSkills, user);
+        newPercentages[user.id] = matchingIndicator(userWithSkills, user).percent;
       }
       setPercentages(newPercentages);
       setIsPercentagesLoaded(true);
