@@ -1,39 +1,37 @@
 import WithdrawAlertDialog from '@/components/common/alert-dialog';
 import PreviewCard from '@/components/common/preview-card';
 import { useAuth } from '@/hooks';
-import { updateUser } from '@/services/user.service';
-import { UserWithPercent } from '@/types/user.type';
+import { getUserByUID, updateUser } from '@/services/user.service';
+import { User, UserWithPercent } from '@/types/user.type';
 
 import { arrayRemove } from 'firebase/firestore';
 import { useState } from 'react';
 
 import CustomButtonConnect from './custom-button-connect';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface PreviewCardListProps {
   results: UserWithPercent[];
 }
 
 const PreviewCardList = ({ results }: PreviewCardListProps) => {
-  const { user: currentUser } = useAuth();
-  if (!currentUser) return;
+  const { user: authUser } = useAuth();
+
+  const { data: currentUser, refetch: refetchCurrentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => getUserByUID(authUser?.id ?? ''),
+    enabled: !!authUser,
+  });
+
   const [clickUser, setClickUser] = useState<string | null>(null);
-  const [listPendingUsers, setListPendingUsers] = useState<Record<string, boolean>>(
-    Array.isArray(currentUser.sentConnections)
-      ? currentUser.sentConnections.reduce(
-          (acc, id) => {
-            acc[id] = true;
-            return acc;
-          },
-          {} as Record<string, boolean>,
-        )
-      : {},
-  );
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const { mutate: withdrawMutate, status: withdrawStatus } = useMutation({
-    mutationFn: ({ receiverUid }: { receiverUid: string }) => {
+    mutationFn: async ({ receiverUid }: { receiverUid: string }) => {
+      if (!currentUser) {
+        return Promise.reject(new Error('Current user is not defined'));
+      }
       return Promise.all([
         updateUser(receiverUid, { requestConnections: arrayRemove(currentUser.id) }),
         updateUser(currentUser.id, { sentConnections: arrayRemove(receiverUid) }),
@@ -46,10 +44,10 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
     withdrawMutate(
       { receiverUid: clickUser },
       {
-        onSuccess: () => {
-          setListPendingUsers({ ...listPendingUsers, [clickUser]: false });
+        onSuccess: async () => {
           setIsOpenModal(false);
           setClickUser(null);
+          await refetchCurrentUser();
         },
       },
     );
@@ -69,13 +67,13 @@ const PreviewCardList = ({ results }: PreviewCardListProps) => {
             photoUrl={result.photoURL.toString()}
             matchedLearn={result.matchedLearn}
             matchedTeach={result.matchedTeach}
-            setListPendingUsers={setListPendingUsers}
-            listPendingUsers={listPendingUsers}
+            currentUser={currentUser ?? ({} as User)}
+            refetchCurrentUser={refetchCurrentUser}
             button={
               <CustomButtonConnect
                 className='w-[100%]'
-                listPendingUsers={listPendingUsers}
-                setListPendingUsers={setListPendingUsers}
+                currentUser={currentUser ?? ({} as User)}
+                refetchCurrentUser={refetchCurrentUser}
                 setIsOpenModal={setIsOpenModal}
                 setClickUser={setClickUser}
                 userId={result.id}

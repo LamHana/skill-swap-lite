@@ -14,13 +14,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks';
+import useSkillMapping from '@/hooks/useSkillMapping';
 import { GET_ALL_USERS, updateUser } from '@/services/user.service';
 import { User } from '@/types/user.type';
 import { asString, asStringArray } from '@/utils/userHelpers';
 
 import { arrayRemove } from 'firebase/firestore';
 import { BookOpenIcon, GraduationCapIcon, UserRoundX } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import '../index.css';
@@ -32,8 +33,20 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
   const [open, setOpen] = useState(false);
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
+  const [userWithSkills, setUserWithSkills] = useState<User | null>(null);
 
   if (!currentUser) return;
+
+  useEffect(() => {
+    const fetchUserWithSkills = async () => {
+      if (!currentUser) return;
+      const teachSkills = await useSkillMapping(asStringArray(currentUser.teach));
+      const learnSkills = await useSkillMapping(asStringArray(currentUser.learn));
+      setUserWithSkills({ ...currentUser, teach: teachSkills, learn: learnSkills });
+    };
+
+    fetchUserWithSkills();
+  }, [currentUser]);
 
   const { mutate: disconnectedMutate, status: disconnectedStatus } = useMutation({
     mutationFn: () => {
@@ -92,7 +105,7 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
               <CardContent className='p-0 space-y-4'>
                 <p className='text-xs md:text-sm line-clamp-3'>{asString(user.bio)}</p>
 
-                <div className='flex flex-col md:flex-col gap-6 items-start md:items-start'>
+                <div className='flex flex-col md:flex-col gap-4 items-start md:items-start'>
                   <div className='flex flex-col md:flex-col space-y-2 md:space-y-0 md:space-x-2 items-start md:items-start'>
                     <div className='text-sm font-medium mb-1.5 flex items-start'>
                       <GraduationCapIcon className='h-3.5 w-3.5 mr-1.5 text-emerald-500' />
@@ -100,7 +113,11 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
                     </div>
                     <div className='flex flex-wrap gap-1.5'>
                       {asStringArray(user.teach).map((skill) => (
-                        <Badge key={skill} variant='outline' className='px-4 py-1 text-xs md:text-xs'>
+                        <Badge
+                          key={skill}
+                          variant='outline'
+                          className={`px-4 py-1 text-xs md:text-xs ${userWithSkills?.learn.toString().includes(skill) ? 'bg-blue-100 dark:bg-blue-700 border-blue-500' : ''}`}
+                        >
                           {skill}
                         </Badge>
                       ))}
@@ -114,7 +131,11 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
                     </div>
                     <div className='flex-wrap gap-1.5'>
                       {asStringArray(user.learn).map((skill) => (
-                        <Badge key={skill} variant='outline' className='px-4 py-1 text-xs md:text-xs'>
+                        <Badge
+                          key={skill}
+                          variant='outline'
+                          className={`px-4 py-1 text-xs md:text-xs ${userWithSkills?.teach.toString().includes(skill) ? 'bg-emerald-100 dark:bg-emerald-700 border-emerald-500' : ''}`}
+                        >
                           {skill}
                         </Badge>
                       ))}

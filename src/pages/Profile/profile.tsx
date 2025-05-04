@@ -1,28 +1,185 @@
+import WithdrawAlertDialog from '@/components/common/alert-dialog';
+import { LoadingButton } from '@/components/common/loading-button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/hooks';
 import useGetSingleProfile from '@/hooks/useGetSingleProfile';
+import { getUserByUID, updateUser } from '@/services/user.service';
 import { Skill } from '@/types/skill.type';
 
+import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { BookOpenIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const { user: authUser } = useAuth();
+
+  const [isOpenWithdrawModal, setIsOpenWithdrawModal] = useState<boolean>(false);
+  const [isOpenDisconnectedModal, setIsOpenDisconnectedModal] = useState<boolean>(false);
+
   const { id, currentUser, learn, teach, handleEditProfile, userConnections } = useGetSingleProfile();
   let actionButtonsGroup;
 
+  const { data: user, refetch: refetchUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => getUserByUID(authUser?.id ?? ''),
+    enabled: !!authUser,
+  });
+
+  const { mutateAsync: connectMutate, status: connectStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(id, { requestConnections: arrayUnion(user?.id ?? '') }),
+        updateUser(user?.id ?? '', { sentConnections: arrayUnion(id) }),
+      ]);
+    },
+    onSuccess: async () => {
+      await refetchUser();
+    },
+  });
+
+  const { mutateAsync: withdrawMutate, status: withdrawStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(id, { requestConnections: arrayRemove(user?.id ?? '') }),
+        updateUser(user?.id ?? '', { sentConnections: arrayRemove(id) }),
+      ]);
+    },
+    onSuccess: async () => {
+      await refetchUser();
+      setIsOpenWithdrawModal(false);
+    },
+  });
+
+  const denialMutation = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(id, { sentConnections: arrayRemove(user?.id ?? '') }),
+        updateUser(user?.id ?? '', { requestConnections: arrayRemove(id) }),
+      ]);
+    },
+    onSuccess: async () => {
+      toast.success('Invitation denied successfully!');
+      await refetchUser();
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+    },
+  });
+
+  const acceptMutation = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(user?.id ?? '', { requestConnections: arrayRemove(id) }),
+        updateUser(id, { sentConnections: arrayRemove(user?.id ?? '') }),
+        updateUser(user?.id ?? '', { connections: arrayUnion(id) }),
+        updateUser(id, { connections: arrayUnion(user?.id ?? '') }),
+      ]);
+    },
+    onSuccess: async () => {
+      toast.success('Invitation accepted successfully!');
+      await refetchUser();
+    },
+    onError: (error) => {
+      console.error('Error:', error);
+      toast.error('Error accepting invitation!');
+    },
+  });
+
+  const { mutateAsync: disconnectedMutate, status: disconnectedStatus } = useMutation({
+    mutationFn: () => {
+      return Promise.all([
+        updateUser(id, { connections: arrayRemove(user?.id ?? '') }),
+        updateUser(user?.id ?? '', { connections: arrayRemove(id) }),
+      ]);
+    },
+    onSuccess: async () => {
+      setIsOpenDisconnectedModal(false);
+      await refetchUser();
+    },
+    onError: (error) => {
+      console.error('Disconnect failed:', error);
+    },
+  });
+
+  const handleConnect = async () => {
+    await connectMutate();
+  };
+
+  const handleWithdraw = async () => {
+    await withdrawMutate();
+  };
+
+  const handleDeny = async () => {
+    await denialMutation.mutateAsync();
+  };
+
+  const handleAccept = async () => {
+    await acceptMutation.mutateAsync();
+  };
+
+  const handleDisconnected = async () => {
+    await disconnectedMutate();
+  };
+
+  const isSentConnectionUser = Array.isArray(user?.sentConnections) && id && user.sentConnections.includes(id);
+  const isRequestConnectionUser = Array.isArray(user?.requestConnections) && id && user.requestConnections.includes(id);
+  const isConnectionsUser = Array.isArray(user?.connections) && id && user.connections.includes(id);
+
   if (id) {
-    if (Array.isArray(currentUser?.connections) && currentUser?.connections.includes(id)) {
+    if (isConnectionsUser) {
       actionButtonsGroup = (
         <div className='flex gap-4 xl:gap-6'>
-          <Button className='grow'>Message</Button>
-          <Button variant={'outline'} className='grow'>
+          <Button className='grow' onClick={() => navigate('/chat', { state: { contactId: id } })}>
+            Message
+          </Button>
+          <Button variant={'outline'} className='grow' onClick={() => setIsOpenDisconnectedModal(true)}>
             Disconnect
           </Button>
         </div>
       );
+    } else if (isSentConnectionUser || connectStatus === 'pending') {
+      actionButtonsGroup = <Button onClick={() => setIsOpenWithdrawModal(true)}>Pending</Button>;
+    } else if (isRequestConnectionUser) {
+      actionButtonsGroup = (
+        <div>
+          <LoadingButton
+            variant='ghost'
+            className='text-gray-700 font-medium flex-auto'
+            onClick={handleDeny}
+            loading={denialMutation.isPending}
+          >
+            Deny
+          </LoadingButton>
+          <LoadingButton
+            variant='default'
+            className='bg-primary text-white rounded-md px-4 py-2 flex-auto'
+            onClick={handleAccept}
+            loading={acceptMutation.isPending}
+          >
+            Accept
+          </LoadingButton>
+        </div>
+      );
     } else {
-      actionButtonsGroup = <Button>Connect</Button>;
+      actionButtonsGroup = <Button onClick={handleConnect}>Connect</Button>;
     }
   } else {
     actionButtonsGroup = <Button onClick={handleEditProfile}>Edit profile</Button>;
@@ -138,6 +295,28 @@ const Profile = () => {
           <div className='flex justify-end'>{actionButtonsGroup}</div>
         </div>
       </div>
+      <WithdrawAlertDialog
+        open={isOpenWithdrawModal}
+        onCancle={() => setIsOpenWithdrawModal(false)}
+        onConfirm={handleWithdraw}
+        confirmStatus={withdrawStatus}
+      />
+      <AlertDialog open={isOpenDisconnectedModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove connection</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove them as a connection? Don't worry, they won't be notified.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsOpenDisconnectedModal(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={disconnectedStatus === 'pending'} onClick={handleDisconnected}>
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

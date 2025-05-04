@@ -1,5 +1,5 @@
 import { GET_SKILLS_QUERY_KEY, getSkills } from '@/services/skill.service';
-import { GET_ALL_USERS, GET_CURRENT_USER, getUserByUID, getUsers } from '@/services/user.service';
+import { GET_ALL_USERS, getUsers } from '@/services/user.service';
 import { User, UserWithPercent } from '@/types/user.type';
 import { matchingIndicator } from '@/utils/matchingIndicator';
 
@@ -8,14 +8,15 @@ import useAuth from './useAuth';
 import { useQuery } from '@tanstack/react-query';
 
 const useGetUsers = () => {
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
 
-  const { data: currentUser, isLoading: isLoadingCurrentUser } = useQuery({
-    queryKey: [GET_CURRENT_USER],
-    queryFn: () => getUserByUID(user?.id),
-    enabled: !!user && !!user.id,
-    refetchOnWindowFocus: false,
-  });
+  // const { data: currentUser, isLoading: isLoadingCurrentUser } = useQuery({
+  //   queryKey: [GET_CURRENT_USER],
+  //   queryFn: () => getUserByUID(user?.id),
+  //   enabled: !!user && !!user.id,
+  //   refetchOnWindowFocus: false,
+  //   notifyOnChangeProps: ['data'],
+  // });
 
   const excludedIds = currentUser
     ? [
@@ -68,7 +69,7 @@ const useGetUsers = () => {
 
   return {
     users: sortedMatchedUsers,
-    isLoading: isLoadingCurrentUser || isLoadingUsers || isLoadingSkills,
+    isLoading: isLoadingUsers || isLoadingSkills,
   };
 };
 
