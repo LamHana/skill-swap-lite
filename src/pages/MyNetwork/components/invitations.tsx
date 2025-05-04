@@ -98,6 +98,45 @@ const Invitations = ({ currentUser, refetchCurrentUser }: InvitationProps) => {
     await acceptMutation.mutateAsync(user);
   };
 
+  const sortSkillsByMatching = (skills: string[], type: string) => {
+    const result: { skills: string[]; matchedSkillsCount: number } = { skills: [], matchedSkillsCount: 0 };
+    const added = new Set<string>();
+
+    if (!userWithSkills) return result;
+
+    if (type === 'learn') {
+      asStringArray(userWithSkills.teach).forEach((skill) => {
+        if (skills.includes(skill)) {
+          result.matchedSkillsCount += 1;
+          result.skills.push(skill);
+          added.add(skill);
+        }
+      });
+
+      asStringArray(skills).forEach((skill) => {
+        if (!added.has(skill)) {
+          result.skills.push(skill);
+        }
+      });
+    } else {
+      asStringArray(userWithSkills.learn).forEach((skill) => {
+        if (skills.includes(skill)) {
+          result.matchedSkillsCount += 1;
+          result.skills.push(skill);
+          added.add(skill);
+        }
+      });
+
+      asStringArray(skills).forEach((skill) => {
+        if (!added.has(skill)) {
+          result.skills.push(skill);
+        }
+      });
+    }
+
+    return result;
+  };
+
   return isLoading || !isPercentagesLoaded ? (
     <div className='w-full flex items-center justify-center py-20'>
       <LoadingSpinner size='md' />
@@ -123,8 +162,10 @@ const Invitations = ({ currentUser, refetchCurrentUser }: InvitationProps) => {
                   id={user.id}
                   name={asString(user.fullName)}
                   percent={userWithSkills ? matchingIndicator(userWithSkills, user).percent : 0}
-                  teach={asStringArray(user.teach)}
-                  learn={asStringArray(user.learn)}
+                  teach={sortSkillsByMatching(asStringArray(user.teach), 'teach').skills}
+                  learn={sortSkillsByMatching(asStringArray(user.learn), 'learn').skills}
+                  matchedLearn={sortSkillsByMatching(asStringArray(user.teach), 'teach').matchedSkillsCount}
+                  matchedTeach={sortSkillsByMatching(asStringArray(user.learn), 'learn').matchedSkillsCount}
                   currentUser={currentUser}
                   refetchCurrentUser={refetchCurrentUser}
                   button={
