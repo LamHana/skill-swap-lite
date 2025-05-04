@@ -17,6 +17,8 @@ interface PreviewCardProps {
   photoUrl?: string;
   button: ReactNode;
   className?: string;
+  matchedLearn?: number;
+  matchedTeach?: number;
   setListPendingUsers?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   listPendingUsers?: Record<string, boolean>;
 }
@@ -30,6 +32,8 @@ export default function PreviewCard({
   photoUrl,
   button,
   className = '',
+  matchedLearn = 0,
+  matchedTeach = 0,
   setListPendingUsers,
   listPendingUsers,
 }: PreviewCardProps) {
@@ -78,7 +82,11 @@ export default function PreviewCard({
               <div className='flex flex-wrap gap-1.5'>
                 {teachDisplay.map((skill, index) => {
                   return (
-                    <Badge key={index} variant={'outline'}>
+                    <Badge
+                      key={index}
+                      variant={'outline'}
+                      className={`${index < matchedLearn ? 'bg-blue-100 dark:bg-blue-700 border-blue-500' : ''}`}
+                    >
                       {skill}
                     </Badge>
                   );
@@ -95,7 +103,11 @@ export default function PreviewCard({
               <div className='flex flex-wrap gap-1.5'>
                 {learnDisplay.map((skill, index) => {
                   return (
-                    <Badge key={index} variant={'outline'}>
+                    <Badge
+                      key={index}
+                      variant={'outline'}
+                      className={`${index < matchedTeach ? 'bg-emerald-100 dark:bg-emerald-700 border-emerald-500' : ''}`}
+                    >
                       {skill}
                     </Badge>
                   );
@@ -106,41 +118,7 @@ export default function PreviewCard({
           <CardFooter className='p-4'>{button}</CardFooter>
         </div>
       </Card>
-      {/* <Card>
-        <div className='absolute top-0 right-0 bg-primary text-white font-bold py-1 px-4 rounded-tr-lg rounded-bl-lg'>
-          {percent}%
-        </div>
-        <CardContent className='flex flex-col gap-1'>
-          <div className='flex items-center gap-1 '>
-            <span className='font-medium text-xs'>Teaching</span>
-            <div className='flex gap-1'>
-              {teachDisplay.map((item, index) =>
-                index !== 2 ? (
-                  <TooltipProvider key={index}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span
-                          key={index}
-                          className='rounded-full px-2 py-1 border border-gray-300 text-xs content-center text-center'
-                        >
-                          {item.length > 10 ? item.slice(0, 10) + '...' : item}
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{item}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ) : (
-                  <span key={index} className='my-auto text-xs'>
-                    {item}
-                  </span>
-                ),
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card> */}
+
       {showProfileModal && (
         <ProfileModal
           open={showProfileModal}

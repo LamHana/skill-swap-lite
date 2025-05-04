@@ -109,7 +109,7 @@ const Invitations = () => {
                 <PreviewCard
                   id={user.id}
                   name={asString(user.fullName)}
-                  percent={userWithSkills ? matchingIndicator(userWithSkills, user) : 0}
+                  percent={userWithSkills ? matchingIndicator(userWithSkills, user).percent : 0}
                   teach={asStringArray(user.teach)}
                   learn={asStringArray(user.learn)}
                   button={
