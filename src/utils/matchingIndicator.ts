@@ -43,7 +43,7 @@ export const matchingIndicator = (cur: User, user: User) => {
         }, 0) / user.learn.length;
 
   return {
-    percent: Math.round(((matchA + matchB) / 2) * 100),
+    percent: Math.round(((matchA + matchB) / 2) * 100) || 0,
     reorderedLearn: [...matchedTeach, ...nonMatchedTeach],
     reorderedTeach: [...matchedLearn, ...nonMatchedLearn],
     learnMatchCount: matchedLearn.length,
