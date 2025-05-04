@@ -2,7 +2,6 @@ import { LoadingSpinner } from '@/components/common/loading-spinner';
 import PreviewCard from '@/components/common/preview-card';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useAuth } from '@/hooks';
 import useInvitations from '@/hooks/useInvitations';
 import useSkillMapping from '@/hooks/useSkillMapping';
 import { GET_ALL_USERS, updateUser } from '@/services/user.service';
@@ -14,17 +13,19 @@ import { arrayRemove, arrayUnion } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { QueryObserverResult, RefetchOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 
-const Invitations = () => {
+interface InvitationProps {
+  currentUser: User;
+  refetchCurrentUser?: (options?: RefetchOptions) => Promise<QueryObserverResult<User | null, Error>>;
+}
+
+const Invitations = ({ currentUser, refetchCurrentUser }: InvitationProps) => {
   const queryClient = useQueryClient();
-  const { user: currentUser } = useAuth();
   const { data: users, isLoading } = useInvitations();
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
   const [userWithSkills, setUserWithSkills] = useState<User | null>(null);
   const [isPercentagesLoaded, setIsPercentagesLoaded] = useState(false);
-
-  if (!currentUser) return;
 
   useEffect(() => {
     const fetchUserWithSkills = async () => {
@@ -85,9 +86,21 @@ const Invitations = () => {
     onSettled: () => setPendingUserId(null),
   });
 
+  const handleDeny = async (e: React.MouseEvent<HTMLButtonElement>, user: User) => {
+    e.stopPropagation();
+    setPendingUserId(user.id);
+    await denialMutation.mutateAsync(user);
+  };
+
+  const handleAccept = async (e: React.MouseEvent<HTMLButtonElement>, user: User) => {
+    e.stopPropagation();
+    setPendingUserId(user.id);
+    await acceptMutation.mutateAsync(user);
+  };
+
   const sortSkillsByMatching = (skills: string[], type: string) => {
-    let result: { skills: string[]; matchedSkillsCount: number } = { skills: [], matchedSkillsCount: 0 };
-    let added = new Set<string>();
+    const result: { skills: string[]; matchedSkillsCount: number } = { skills: [], matchedSkillsCount: 0 };
+    const added = new Set<string>();
 
     if (!userWithSkills) return result;
 
@@ -121,8 +134,6 @@ const Invitations = () => {
       });
     }
 
-    console.log('Skills:', skills, 'Type:', type, 'Result:', result);
-
     return result;
   };
 
@@ -155,12 +166,14 @@ const Invitations = () => {
                   learn={sortSkillsByMatching(asStringArray(user.learn), 'learn').skills}
                   matchedLearn={sortSkillsByMatching(asStringArray(user.teach), 'teach').matchedSkillsCount}
                   matchedTeach={sortSkillsByMatching(asStringArray(user.learn), 'learn').matchedSkillsCount}
+                  currentUser={currentUser}
+                  refetchCurrentUser={refetchCurrentUser}
                   button={
                     <div className='flex flex-row w-full gap-4 items-center'>
                       <Button
                         variant='ghost'
                         className='text-gray-700 font-medium flex-auto'
-                        onClick={() => denialMutation.mutate(user)}
+                        onClick={(e) => handleDeny(e, user)}
                         disabled={pendingUserId === user.id && denialMutation.status === 'pending'}
                       >
                         Deny
@@ -168,7 +181,7 @@ const Invitations = () => {
                       <Button
                         variant='default'
                         className='bg-primary text-white rounded-md px-4 py-2 flex-auto'
-                        onClick={() => acceptMutation.mutate(user)}
+                        onClick={(e) => handleAccept(e, user)}
                         disabled={pendingUserId === user.id && acceptMutation.status === 'pending'}
                       >
                         Accept
