@@ -99,6 +99,7 @@ const Home = () => {
 
       if (mode === 'teaching') {
         const baseSet = new Set<string>(searchSkills);
+        const baseSkillCategories = new Set<string>(applicableSkills);
         users.forEach((user) => {
           const { hasMatch, matchedSkills, matchedSkillsCount } = checkMatching(asStringArray(user.learn), baseSet);
           if (user.learn && hasMatch) {
@@ -106,12 +107,26 @@ const Home = () => {
             user.learn = matchedSkills;
             user.matchedTeach = matchedSkillsCount;
             user.matchedLearn = 0;
-          } else if (searchKeyword && user.fullName.toString().toLowerCase().includes(searchKeyword.toLowerCase())) {
-            searchedUsers.push(user);
+          } else {
+            const { hasMatch, matchedSkills, matchedSkillsCount } = checkMatching(
+              asStringArray(user.learn),
+              baseSkillCategories,
+            );
+            if (
+              searchKeyword &&
+              user.fullName.toString().toLowerCase().includes(searchKeyword.toLowerCase()) &&
+              hasMatch
+            ) {
+              searchedUsers.push(user);
+              user.learn = matchedSkills;
+              user.matchedTeach = matchedSkillsCount;
+              user.matchedLearn = 0;
+            }
           }
         });
       } else if (mode === 'learning') {
         const baseSet = new Set<string>(searchSkills);
+        const baseSkillCategories = new Set<string>(applicableSkills);
         users.forEach((user) => {
           const { hasMatch, matchedSkills, matchedSkillsCount } = checkMatching(asStringArray(user.teach), baseSet);
           if (user.teach && hasMatch) {
@@ -119,8 +134,21 @@ const Home = () => {
             user.teach = matchedSkills;
             user.matchedLearn = matchedSkillsCount;
             user.matchedTeach = 0;
-          } else if (searchKeyword && user.fullName.toString().toLowerCase().includes(searchKeyword.toLowerCase())) {
-            searchedUsers.push(user);
+          } else {
+            const { hasMatch, matchedSkills, matchedSkillsCount } = checkMatching(
+              asStringArray(user.teach),
+              baseSkillCategories,
+            );
+            if (
+              searchKeyword &&
+              user.fullName.toString().toLowerCase().includes(searchKeyword.toLowerCase()) &&
+              hasMatch
+            ) {
+              searchedUsers.push(user);
+              user.teach = matchedSkills;
+              user.matchedLearn = matchedSkillsCount;
+              user.matchedTeach = 0;
+            }
           }
         });
       }
@@ -340,7 +368,7 @@ const Home = () => {
       </div>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6'>
-        <TabsList className='mb-4  z-10'>
+        <TabsList className='mb-4  z-50'>
           {tabsData.map((data) => (
             <TabsTrigger key={data.value} value={data.value}>
               {data.tabTrigger}
