@@ -372,7 +372,7 @@ const Home = () => {
         )}
       </div>
 
-      <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6'>
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6 z-0'>
         <TabsList className='mb-4  z-50'>
           {tabsData.map((data) => (
             <TabsTrigger key={data.value} value={data.value}>
