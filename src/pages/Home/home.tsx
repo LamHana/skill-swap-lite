@@ -16,7 +16,7 @@ import { UserWithPercent } from '@/types/user.type';
 import { asStringArray } from '@/utils/userHelpers';
 
 import { BookOpenIcon, CheckIcon, ChevronDown, FilterIcon, GraduationCapIcon, SearchIcon, X } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import PreviewCardList from './components/previewCardList';
 import { TABS_DATA, TABS_SEARCH, TabsDataType } from './constants';
@@ -132,15 +132,6 @@ const Home = () => {
     [applicableSkills, searchKeyword, users],
   );
 
-  // useEffect(() => {
-  //   if (!users) return;
-  //   // Only set the initial user list if we're not in search mode
-  //   if ((!searchMode && !userList) || userList?.length === 0) {
-  //     setTabsData(TABS_DATA);
-  //     setUserList(users);
-  //   }
-  // }, [users, searchMode, userList]);
-
   // Handle tab changes and re-run search if in search mode
   useEffect(() => {
     // Skip on initial render
@@ -184,13 +175,21 @@ const Home = () => {
     );
   };
 
+  const [isClearCategories, setIsClearCategories] = useState(false);
   // Clear all selected categories
   const clearCategories = () => {
     setSelectedCategories([]);
     setSearchKeyword('');
     setUserList(users);
-    setTabsData(TABS_DATA);
+    setCurrentTab('related');
+    setIsClearCategories(true);
   };
+  useEffect(() => {
+    if (isClearCategories) {
+      setTabsData(TABS_DATA);
+      setIsClearCategories(false);
+    }
+  }, [tabsData, isClearCategories]);
 
   return (
     <>
@@ -225,7 +224,7 @@ const Home = () => {
           </div>
 
           {/* Learning Skills */}
-          <div className='flex-5'>
+          <div className='flex-5 z-100'>
             <div className='flex items-center gap-1 mb-1'>
               <BookOpenIcon className='h-4 w-4 text-blue-500' />
               <h3 className='text-sm font-medium'>Learning</h3>
@@ -342,7 +341,7 @@ const Home = () => {
       </div>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab} className='mb-6'>
-        <TabsList className='mb-4  z-100'>
+        <TabsList className='mb-4  z-50'>
           {tabsData.map((data) => (
             <TabsTrigger key={data.value} value={data.value}>
               {data.tabTrigger}

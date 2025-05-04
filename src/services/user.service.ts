@@ -46,7 +46,6 @@ export const getUsers = async (excludedIds?: string[]) => {
   }));
 
   const filteredUsers = excludedIds ? users.filter((user) => !excludedIds.includes(user.id)) : users;
-  console.log('filteredUsers', filteredUsers);
   return filteredUsers as User[];
 };
 
