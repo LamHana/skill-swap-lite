@@ -39,6 +39,7 @@ const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       }
 
       let userData = await getUserByUID(user.uid);
+
       if (!userData) {
         userData = {
           id: user.uid,
