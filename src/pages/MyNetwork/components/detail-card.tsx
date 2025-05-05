@@ -129,7 +129,7 @@ const DetailCard = ({ user, percentage }: { user: User; percentage: number | nul
                       <BookOpenIcon className='h-3.5 w-3.5 mr-1.5 text-blue-500' />
                       Learning
                     </div>
-                    <div className='flex-wrap gap-1.5'>
+                    <div className='flex flex-wrap gap-1.5'>
                       {asStringArray(user.learn).map((skill) => (
                         <Badge
                           key={skill}

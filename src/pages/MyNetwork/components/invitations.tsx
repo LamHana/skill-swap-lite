@@ -142,7 +142,7 @@ const Invitations = ({ currentUser, refetchCurrentUser }: InvitationProps) => {
       <LoadingSpinner size='md' />
     </div>
   ) : users && users.length > 0 ? (
-    <div className='flex flex-col items-start mt-10 w-full'>
+    <div className='flex flex-col items-start w-full'>
       <h2 className='text-xl font-bold mb-4'>
         Invitations
         <span className='font-medium'>{users ? ` (${users?.length})` : ` (${0})`}</span>
