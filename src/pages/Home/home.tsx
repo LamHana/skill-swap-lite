@@ -1,5 +1,4 @@
 import { LoadingSpinner } from '@/components/common/loading-spinner';
-import { PageHeader } from '@/components/common/page-header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
