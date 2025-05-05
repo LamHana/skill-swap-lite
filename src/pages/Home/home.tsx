@@ -220,8 +220,7 @@ const Home = () => {
 
   return (
     <>
-      <PageHeader />
-      <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 mb-4'>
+      <div className='bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 mt-4 mb-4'>
         <div className='flex flex-col md:flex-row gap-3'>
           <div className='flex-1'>
             <Avatar className='h-10 w-10  mx-auto'>

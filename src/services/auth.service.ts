@@ -97,6 +97,7 @@ export const signUpWithEmail = async (body: RegisterFormData) => {
     requestConnections: [],
     sentConnections: [],
     photoURL: '',
+    bio: '',
   });
 
   return result;

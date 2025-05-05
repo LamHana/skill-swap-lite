@@ -39,8 +39,6 @@ const EditProfile = () => {
     },
   ];
 
-  console.log(avatar);
-
   return (
     <div className='flex flex-col space-y-8 mt-10 mb-20 xl:flex-row xl:space-x-12 lxl:space-y-0'>
       <aside className='lg:w-1/5'>

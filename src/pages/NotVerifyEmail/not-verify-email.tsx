@@ -1,8 +1,10 @@
 import { LoadingButton } from '@/components/common/loading-button';
 import { buttonVariants } from '@/components/ui/button';
 import { config } from '@/config/app';
+import { patchUser } from '@/contexts/auth/auth.reducer';
 import { useAuth } from '@/hooks';
 import useSignOut from '@/hooks/useSignOut';
+import { getUserByUID } from '@/services/user.service';
 import handleFirebaseError from '@/utils/handlerFirebaseError';
 
 import { sendEmailVerification } from 'firebase/auth';
@@ -12,7 +14,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const NotVerifyEmail = () => {
-  const { userFirebase } = useAuth();
+  const { userFirebase, dispatch } = useAuth();
   const { onSignOut } = useSignOut();
   const [loading, setLoading] = useState<boolean>(false);
   const [_, setForceUpdate] = useState(0);
@@ -22,11 +24,14 @@ const NotVerifyEmail = () => {
     if (userFirebase) {
       interval = setInterval(async () => {
         await userFirebase.reload();
+        const user = await getUserByUID(userFirebase.uid);
+        if (!user) return;
+        dispatch(patchUser({ user }));
         setForceUpdate((f) => f + 1);
       }, 5000);
     }
     return () => clearInterval(interval);
-  }, [userFirebase]);
+  }, [userFirebase, dispatch]);
 
   const handleSendEmailVerification = useCallback(async () => {
     try {

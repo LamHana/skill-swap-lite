@@ -156,7 +156,7 @@ const Invitations = ({ currentUser, refetchCurrentUser }: InvitationProps) => {
       >
         <CarouselContent>
           {users?.map((user, index) => (
-            <CarouselItem key={index} className='pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/4'>
+            <CarouselItem key={index} className='pl-4 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/4 xl:basis-1/4'>
               <PreviewCard
                 id={user.id}
                 name={asString(user.fullName)}
